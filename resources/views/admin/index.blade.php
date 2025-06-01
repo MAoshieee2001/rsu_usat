@@ -10,6 +10,7 @@
     <p>Bienvenidos al panel de administración</p>
     Hola javier..
     Hola mundo!
+    Hola practica lo que debía saber
 @stop
 
 @section('css')
