@@ -65,11 +65,15 @@ class VehicleController extends Controller
                     ';
                 })
                 ->addColumn('image', function ($vehicle) {
-                    // Buscar la primera imagen vinculada al vehículo
                     $image = VehicleImage::where('vehicle_id', $vehicle->id)
-                        ->orderByDesc('id') // o 'created_at' si prefieres
+                        ->where('profile', 1)
                         ->first();
-
+                    if (!$image) {
+                        // Si no hay imagen de perfil, tomar la última
+                        $image = VehicleImage::where('vehicle_id', $vehicle->id)
+                            ->orderByDesc('id')
+                            ->first();
+                    }
                     $path = $image && $image->image ? asset($image->image) : asset('storage/brands/empty.png');
 
                     return '<img src="' . $path . '" alt="Imagen del vehículo" style="width: 70px; height: 50px; object-fit: contain;">';
@@ -175,8 +179,6 @@ class VehicleController extends Controller
                     'profile' => $request->profile ?? 'main', // default a 'main'
                 ]);
             }
-
-
             return response()->json([
                 'success' => true,
                 'message' => 'Vehículo registrado con éxito.',
@@ -256,7 +258,7 @@ class VehicleController extends Controller
                 VehicleImage::create([
                     'vehicle_id' => $vehicle->id,
                     'image' => 'storage/' . $path,
-                    'profile' => $request->profile ?? 'main', // por defecto "main"
+                    'profile' => $request->profile ?? '0', // por defecto "0"
                 ]);
             }
 
@@ -297,4 +299,74 @@ class VehicleController extends Controller
             return response()->json(['success' => false, 'message' => 'Error al eliminar el vehiculo: ' . $e->getMessage()], 500);
         }
     }
+
+    /** Establecer una imagen como foto de perfil*/
+    public function setProfileImage(Request $request, $imageId)
+    {
+        try {
+            // Buscar la imagen por ID
+            $image = VehicleImage::findOrFail($imageId);
+            $vehicleId = $request->vehicle_id;
+            // Remover el perfil de todas las imágenes del vehículo
+            // Establecer is_profile a false para todas las imágenes del vehículo
+            VehicleImage::where('vehicle_id', $vehicleId)
+                    ->update(['profile' => false]);
+            
+            // Establecer la nueva imagen como perfil
+            $image->update(['profile' => true]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Foto de perfil actualizada correctamente.'
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al establecer la foto de perfil: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /** Eliminar una imagen*/
+    public function deleteImage($imageId)
+    {
+        try {
+            $image = VehicleImage::findOrFail($imageId);        
+            // Verificar que no sea la única imagen del vehículo
+            $totalImages = VehicleImage::where('vehicle_id', $image->vehicle_id)->count();      
+            if ($totalImages <= 1) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se puede eliminar la única imagen del vehículo.'
+                ], 400);
+            }     
+            // Si es la imagen de perfil, asignar otra como perfil
+            if ($image->is_profile) {
+                $newProfileImage = VehicleImage::where('vehicle_id', $image->vehicle_id)
+                                            ->where('id', '!=', $image->id)
+                                            ->first();      
+                if ($newProfileImage) {
+                    $newProfileImage->update(['is_profile' => true]);
+                }
+            }
+            // Eliminar el archivo físico
+            // Extraer la ruta sin 'storage/' para usar con Storage
+            $imagePath = str_replace('storage/', '', $image->image);
+            if (Storage::disk('public')->exists($imagePath)) {
+                Storage::disk('public')->delete($imagePath);
+            }
+            // Eliminar el registro de la base de datos
+            $image->delete();
+            return response()->json([
+                'success' => true,
+                'message' => 'Imagen eliminada correctamente.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al eliminar la imagen: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
 }
