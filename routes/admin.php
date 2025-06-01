@@ -7,7 +7,6 @@ use App\Http\Controllers\admin\TypeController;
 use App\Http\Controllers\admin\VehicleController;
 use Illuminate\Support\Facades\Route;
 
-
 Route::resource('/', AdminController::class)->names('admin');
 // Registrar todas las rutas del recurso BrandController
 Route::resource('brands', BrandController::class)->names('admin.brands');
