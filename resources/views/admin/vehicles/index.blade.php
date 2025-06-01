@@ -374,8 +374,8 @@
                         data.forEach(img => {
                             html += `
                             <div class="me-3 mb-3 d-inline-block text-center">
-                                <img src="${img.image}" alt="Foto" style="width: 200px; height: 150px; object-fit: contain;" class="img-thumbnail" />
-                                <p class="text-center mt-1">${img.profile}</p>
+                                <img src="${img.image}" alt="Foto" style="width: 150px; height: 70px; object-fit: contain;" class="img-thumbnail" />
+                                <p class="text-center mt-1">${img.profile === 1 ? 'Foto de perfil' : 'Foto secundaria'}</p>
                             </div>
                         `;
                         });
