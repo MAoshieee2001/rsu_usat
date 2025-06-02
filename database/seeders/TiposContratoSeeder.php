@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\ContractType;
+use DB;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
