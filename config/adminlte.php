@@ -336,23 +336,13 @@ return [
             'route' => 'admin.vehicles.index',
             'icon' => 'fas fa-car',
         ],
+        ['header' => 'Mantenimiento'],
+        [
+            'text' => 'Vacaciones',
+            'url' => 'admin.brands.index',
+            'icon' => 'fas fa-street-view',
+        ],
 
-        ['header' => 'labels'],
-        [
-            'text' => 'important',
-            'icon_color' => 'red',
-            'url' => '#',
-        ],
-        [
-            'text' => 'warning',
-            'icon_color' => 'yellow',
-            'url' => '#',
-        ],
-        [
-            'text' => 'information',
-            'icon_color' => 'cyan',
-            'url' => '#',
-        ],
     ],
 
     /*
