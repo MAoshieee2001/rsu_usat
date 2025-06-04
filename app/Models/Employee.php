@@ -10,4 +10,9 @@ class Employee extends Model
     use HasFactory;
 
     protected $table = 'employees';
+
+    public function getFullnamesAttribute()
+    {
+        return $this->names . ' ' . $this->lastnames;
+    }
 }

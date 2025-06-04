@@ -101,42 +101,43 @@
 </div>
 
 <!-- Modal para ver fotos mejorado -->
-<div class="modal fade" id="modalFotosVehiculo" tabindex="-1" aria-labelledby="fotosVehiculoLabel" aria-hidden="true" role="dialog">
-  <div class="modal-dialog modal-xl" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="fotosVehiculoLabel">
-          <i class="fas fa-images"></i> Fotos del Vehículo
-        </h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-
-      <div class="modal-body">
-        <div class="row">
-          <div class="col-12 mb-3">
-            <div class="alert alert-info">
-              <i class="fas fa-info-circle"></i>
-              <strong>Instrucciones:</strong>
-              <ul class="mb-0 mt-2">
-                <li>Haz clic en la <strong>estrella</strong> para establecer como foto de perfil</li>
-                <li>Haz clic en el <strong>botón rojo</strong> para eliminar una foto</li>
-                <li>La foto de perfil actual aparece marcada con una estrella dorada</li>
-              </ul>
+<div class="modal fade" id="modalFotosVehiculo" tabindex="-1" aria-labelledby="fotosVehiculoLabel" aria-hidden="true"
+    role="dialog">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="fotosVehiculoLabel">
+                    <i class="fas fa-images"></i> Fotos del Vehículo
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-          </div>
+
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12 mb-3">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Instrucciones:</strong>
+                            <ul class="mb-0 mt-2">
+                                <li>Haz clic en la <strong>estrella</strong> para establecer como foto de perfil</li>
+                                <li>Haz clic en el <strong>botón rojo</strong> para eliminar una foto</li>
+                                <li>La foto de perfil actual aparece marcada con una estrella dorada</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contenedor de imágenes -->
+                <div class="row" id="contenedorImagenes">
+                    <!-- Cada imagen se insertará como .col-6 col-md-3 por JS -->
+                </div>
+            </div>
+
+
         </div>
-
-        <!-- Contenedor de imágenes -->
-        <div class="row" id="contenedorImagenes">
-          <!-- Cada imagen se insertará como .col-6 col-md-3 por JS -->
-        </div>
-      </div>
-
-
     </div>
-  </div>
 </div>
 
 @stop
@@ -243,7 +244,9 @@
                                     title: "Proceso exitoso",
                                     icon: "success",
                                     text: response.message,
-                                    draggable: true
+                                    draggable: true,
+                                    timer: 2000,
+                                    timerProgressBar: true,
                                 });
                             },
                             error: function (xhr) {
@@ -252,7 +255,9 @@
                                     title: "Error",
                                     icon: "error",
                                     text: response.message,
-                                    draggable: true
+                                    draggable: true,
+                                    timer: 2000,
+                                    timerProgressBar: true,
                                 });
                             }
                         })
@@ -369,11 +374,11 @@
                     if (data.length > 0) {
                         data.forEach(img => {
                             html += `
-                            <div class="me-3 mb-3 d-inline-block text-center">
-                                <img src="${img.image}" alt="Foto" style="width: 150px; height: 70px; object-fit: contain;" class="img-thumbnail" />
-                                <p class="text-center mt-1">${img.profile === 1 ? 'Foto de perfil' : 'Foto secundaria'}</p>
-                            </div>
-                        `;
+                                                    <div class="me-3 mb-3 d-inline-block text-center">
+                                                        <img src="${img.image}" alt="Foto" style="width: 150px; height: 70px; object-fit: contain;" class="img-thumbnail" />
+                                                        <p class="text-center mt-1">${img.profile === 1 ? 'Foto de perfil' : 'Foto secundaria'}</p>
+                                                    </div>
+                                                `;
                         });
                     } else {
                         html = '<p class="text-center w-100">No hay imágenes para este vehículo.</p>';
@@ -404,48 +409,48 @@
                     if (data.length > 0) {
                         data.forEach(img => {
                             const isProfile = img.is_profile == 1 || img.is_profile == true;
-                            const profileBadge = isProfile ? 
+                            const profileBadge = isProfile ?
                                 '<span class="badge badge-warning position-absolute" style="top: 5px; left: 5px;"><i class="fas fa-star"></i> Perfil</span>' : '';
-                            
+
                             html += `
-                                <div class="col-lg-4 col-md-6 col-12 mb-4">
-                                    <div class="card shadow-sm">
-                                        <div class="position-relative">
-                                            ${profileBadge}
-                                            <img src="${img.image}" alt="Foto ${img.id}" 
-                                                style="width: 100%; height: 250px; object-fit: cover;" 
-                                                class="card-img-top" />
-                                        </div>
-                                        <div class="card-body p-2">
-                                            <h6 class="card-title text-center mb-2">${img.profile || 'Sin descripción'}</h6>
-                                            <div class="text-center">
-                                                <div class="btn-group" role="group">
-                                                    <button type="button" class="btn btn-warning btn-sm btnSetProfile" 
-                                                            data-image-id="${img.id}" data-vehicle-id="${vehicleId}"
-                                                            ${isProfile ? 'disabled' : ''}>
-                                                        <i class="fas fa-star"></i> 
-                                                        ${isProfile ? 'Es Perfil' : 'Hacer Perfil'}
-                                                    </button>
-                                                    <button type="button" class="btn btn-danger btn-sm btnDeleteImage" 
-                                                            data-image-id="${img.id}" data-vehicle-id="${vehicleId}">
-                                                        <i class="fas fa-trash"></i> Eliminar
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
+                                                        <div class="col-lg-4 col-md-6 col-12 mb-4">
+                                                            <div class="card shadow-sm">
+                                                                <div class="position-relative">
+                                                                    ${profileBadge}
+                                                                    <img src="${img.image}" alt="Foto ${img.id}" 
+                                                                        style="width: 100%; height: 250px; object-fit: cover;" 
+                                                                        class="card-img-top" />
+                                                                </div>
+                                                                <div class="card-body p-2">
+                                                                    <h6 class="card-title text-center mb-2">${img.profile || 'Sin descripción'}</h6>
+                                                                    <div class="text-center">
+                                                                        <div class="btn-group" role="group">
+                                                                            <button type="button" class="btn btn-warning btn-sm btnSetProfile" 
+                                                                                    data-image-id="${img.id}" data-vehicle-id="${vehicleId}"
+                                                                                    ${isProfile ? 'disabled' : ''}>
+                                                                                <i class="fas fa-star"></i> 
+                                                                                ${isProfile ? 'Es Perfil' : 'Hacer Perfil'}
+                                                                            </button>
+                                                                            <button type="button" class="btn btn-danger btn-sm btnDeleteImage" 
+                                                                                    data-image-id="${img.id}" data-vehicle-id="${vehicleId}">
+                                                                                <i class="fas fa-trash"></i> Eliminar
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    `;
                         });
                     } else {
                         html = `
-                            <div class="col-12">
-                                <div class="text-center py-5">
-                                    <i class="fas fa-images fa-3x text-muted mb-3"></i>
-                                    <p class="text-muted">No hay imágenes para este vehículo.</p>
-                                </div>
-                            </div>
-                        `;
+                                                    <div class="col-12">
+                                                        <div class="text-center py-5">
+                                                            <i class="fas fa-images fa-3x text-muted mb-3"></i>
+                                                            <p class="text-muted">No hay imágenes para este vehículo.</p>
+                                                        </div>
+                                                    </div>
+                                                `;
                     }
 
                     $('#contenedorImagenes').html(html);
@@ -456,7 +461,9 @@
                         title: "Error",
                         icon: "error",
                         text: "Error al cargar las imágenes del vehículo.",
-                        draggable: true
+                        draggable: true,
+                        timer: 2000,
+                        timerProgressBar: true,
                     });
                 }
             });
@@ -466,7 +473,7 @@
         $(document).on('click', '.btnSetProfile', function () {
             const imageId = $(this).data('image-id');
             const vehicleId = $(this).data('vehicle-id');
-            
+
             Swal.fire({
                 title: "¿Establecer como foto de perfil?",
                 text: "Esta imagen será la que se muestre en la tabla principal.",
@@ -488,10 +495,10 @@
                         success: function (response) {
                             // Recargar las imágenes del modal
                             $('.btnFoto[id="' + vehicleId + '"]').click();
-                            
+
                             // Refrescar la tabla principal
                             refreshTable();
-                            
+
                             Swal.fire({
                                 title: "¡Perfecto!",
                                 icon: "success",
@@ -507,7 +514,9 @@
                                 title: "Error",
                                 icon: "error",
                                 text: response.message || "Error al establecer la foto de perfil.",
-                                draggable: true
+                                draggable: true,
+                                timer: 2000,
+                                timerProgressBar: true,
                             });
                         }
                     });
@@ -519,7 +528,7 @@
         $(document).on('click', '.btnDeleteImage', function () {
             const imageId = $(this).data('image-id');
             const vehicleId = $(this).data('vehicle-id');
-            
+
             Swal.fire({
                 title: "¿Eliminar esta imagen?",
                 text: "Esta acción no se puede deshacer.",
@@ -540,10 +549,10 @@
                         success: function (response) {
                             // Recargar las imágenes del modal
                             $('.btnFoto[id="' + vehicleId + '"]').click();
-                            
+
                             // Refrescar la tabla principal
                             refreshTable();
-                            
+
                             Swal.fire({
                                 title: "¡Eliminada!",
                                 icon: "success",
@@ -559,7 +568,9 @@
                                 title: "Error",
                                 icon: "error",
                                 text: response.message || "Error al eliminar la imagen.",
-                                draggable: true
+                                draggable: true,
+                                timer: 2000,
+                                timerProgressBar: true,
                             });
                         }
                     });
@@ -575,7 +586,9 @@
                 title: "Proceso exitoso",
                 icon: "success",
                 text: "{{ session('success') }}",
-                draggable: true
+                draggable: true,
+                timer: 2000,
+                timerProgressBar: true,
             });
         </script>
     @endif
@@ -585,7 +598,9 @@
                 title: "Error",
                 icon: "error",
                 text: "{{ session('error') }}",
-                draggable: true
+                draggable: true,
+                timer: 2000,
+                timerProgressBar: true,
             });
         </script>
     @endif
@@ -596,43 +611,43 @@
 {{--
 <link rel="stylesheet" href="/css/admin_custom.css"> --}}
 <style>
-#modalFotosVehiculo .card {
-  transition: transform 0.2s ease-in-out;
-  margin-bottom: 1rem;
-}
+    #modalFotosVehiculo .card {
+        transition: transform 0.2s ease-in-out;
+        margin-bottom: 1rem;
+    }
 
-#modalFotosVehiculo .card:hover {
-  transform: translateY(-2px);
-}
+    #modalFotosVehiculo .card:hover {
+        transform: translateY(-2px);
+    }
 
-#modalFotosVehiculo .btn-group {
-  gap: 0.4rem;
-  flex-wrap: wrap;
-}
+    #modalFotosVehiculo .btn-group {
+        gap: 0.4rem;
+        flex-wrap: wrap;
+    }
 
-#modalFotosVehiculo .btn-group .btn {
-  font-size: 0.5rem;
-  padding: 0.25rem 0.5rem;
-  margin-top: 0.25rem;
-}
+    #modalFotosVehiculo .btn-group .btn {
+        font-size: 0.5rem;
+        padding: 0.25rem 0.5rem;
+        margin-top: 0.25rem;
+    }
 
-#modalFotosVehiculo .card-img-top {
-  border-bottom: 1px solid #dee2e6;
-  max-height: 140px;
-  object-fit: cover;
-  width: 50%;
-}
+    #modalFotosVehiculo .card-img-top {
+        border-bottom: 1px solid #dee2e6;
+        max-height: 140px;
+        object-fit: cover;
+        width: 50%;
+    }
 
-@media (max-width: 400px) {
-  #modalFotosVehiculo .btn-group {
-    flex-direction: column;
-    gap: 2px;
-  }
+    @media (max-width: 400px) {
+        #modalFotosVehiculo .btn-group {
+            flex-direction: column;
+            gap: 2px;
+        }
 
-  #modalFotosVehiculo .btn-group .btn {
-    width: 50%;
-  }
-}
+        #modalFotosVehiculo .btn-group .btn {
+            width: 50%;
+        }
+    }
 </style>
 
 @stop

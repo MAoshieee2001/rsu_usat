@@ -156,6 +156,8 @@
                                     title: "Proceso exitoso",
                                     icon: "success",
                                     text: response.message,
+                                    timer: 2000,
+                                    timerProgressBar: true,
                                     draggable: true
                                 });
                             },
@@ -165,6 +167,8 @@
                                     title: "Error",
                                     icon: "error",
                                     text: response.message,
+                                    timer: 2000,
+                                    timerProgressBar: true,
                                     draggable: true
                                 });
                             }
@@ -283,6 +287,8 @@
             Swal.fire({
                 title: "Proceso exitoso",
                 icon: "success",
+                timer: 2000,
+                timerProgressBar: true,
                 text: "{{ session('success') }}",
                 draggable: true
             });
@@ -293,6 +299,8 @@
             Swal.fire({
                 title: "Error",
                 icon: "error",
+                timer: 2000,
+                timerProgressBar: true,
                 text: "{{ session('error') }}",
                 draggable: true
             });

@@ -102,7 +102,7 @@
                         "data": "options",
                         "orderable": false,
                         "searchable": false,
-                        "width": "4%",
+                        "width": "10%",
 
                     },
                 ]
@@ -136,6 +136,8 @@
                                     title: "Proceso exitoso",
                                     icon: "success",
                                     text: response.message,
+                                    timer: 2000,
+                                    timerProgressBar: true,
                                     draggable: true
                                 });
                             },
@@ -145,6 +147,8 @@
                                     title: "Error",
                                     icon: "error",
                                     text: response.message,
+                                    timer: 2000,
+                                    timerProgressBar: true,
                                     draggable: true
                                 });
                             }
@@ -152,7 +156,7 @@
                     })
                 }
             })
-        })
+        });
 
         $(document).on('click', '.btnEditar', function () {
             var id = $(this).attr("id");
@@ -160,7 +164,7 @@
                 url: "{{ route('admin.brands.edit', 'id') }}".replace('id', id),
                 type: "GET",
                 success: function (response) {
-                    $('.modal-title').html("<i class='fas fa-edit'></i> Editar marca");
+                    $('.modal-title').html("<i class='fas fa-edit'></i> Editar Vacaciones");
                     $('#ModalCenter .modal-body').html(response);
                     $('#ModalCenter').modal('show');
 

@@ -296,7 +296,8 @@
                 title: '¡Éxito!',
                 text: '{{ session('success') }}',
                 showConfirmButton: false,
-                timer: 2000
+                timer: 2000,
+                timerProgressBar: true,
             });
         </script>
     @endif
@@ -308,7 +309,8 @@
                 title: '¡Error!',
                 text: '{{ session('error') }}',
                 showConfirmButton: false,
-                timer: 2000
+                timer: 2000,
+                timerProgressBar: true,
             });
         </script>
     @endif
