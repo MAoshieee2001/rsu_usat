@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Employee;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\DB;
 
 class EmployeeController extends Controller
 {
@@ -14,21 +15,32 @@ class EmployeeController extends Controller
      */
     public function index(Request $request)
     {
-        $employees = Employee::select(
-            'employees.id',
-            'CONCAT(employee.name, " ", employee.name)',
-        )
-            ->join('contract_types as ct', 'employees.contract_id', '=', 'ct.id')
-            ->get();
-
         if ($request->ajax()) {
+            $employees = Employee::select(
+                'employees.id',
+                'employees.dni',
+                DB::raw('CONCAT(employees.names, " ", employees.lastnames) as full_name'),
+                'employees.birthday',
+                'employees.license',
+                'employees.address',
+                'employees.email',
+                'employees.phone',
+                'employees.status',
+                'ct.name as contract_type',
+                't.name as type_name',
+                'employees.created_at',
+                'employees.updated_at'
+            )
+                ->join('contract_types as ct', 'employees.contract_id', '=', 'ct.id')
+                ->join('types as t', 'employees.type_id', '=', 't.id'); // sin ->get()
+
             return DataTables::of($employees)
                 ->addColumn('options', function ($employee) {
                     return '
-                        <button class="btn btn-sm btn-warning btnEditar" id="' . $employee->id . '">
+                        <button class="btn btn-sm btn-warning btnEditar" data-id="' . $employee->id . '">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <form action="' . route('admin.models.destroy', $employee->id) . '" method="POST" class="d-inline frmDelete">
+                        <form action="' . route('admin.employees.destroy', $employee->id) . '" method="POST" class="d-inline frmDelete">
                             ' . csrf_field() . method_field('DELETE') . '
                             <button type="submit" class="btn btn-sm btn-danger">
                                 <i class="fas fa-trash"></i>
@@ -38,9 +50,9 @@ class EmployeeController extends Controller
                 })
                 ->rawColumns(['options'])
                 ->make(true);
-        } else {
-            return view('admin.employees.index', compact('employees'));
         }
+
+        return view('admin.employees.index');
     }
 
     /**
@@ -48,7 +60,7 @@ class EmployeeController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.employees.create');
     }
 
     /**
@@ -56,7 +68,19 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'dni' => 'required|unique:employees,dni',
+            'names' => 'required|string|max:100',
+            'lastnames' => 'required|string|max:100',
+            'email' => 'required|email|unique:employees,email',
+            'phone' => 'nullable|string|max:20',
+            'contract_id' => 'required|exists:contract_types,id',
+            'type_id' => 'required|exists:types,id',
+        ]);
+
+        Employee::create($request->all());
+
+        return redirect()->route('admin.employees.index')->with('success', 'Empleado registrado exitosamente.');
     }
 
     /**
@@ -64,7 +88,8 @@ class EmployeeController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $employee = Employee::with(['contractType', 'type'])->findOrFail($id);
+        return view('admin.employees.show', compact('employee'));
     }
 
     /**
@@ -72,7 +97,8 @@ class EmployeeController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $employee = Employee::findOrFail($id);
+        return view('admin.employees.edit', compact('employee'));
     }
 
     /**
@@ -80,7 +106,21 @@ class EmployeeController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $employee = Employee::findOrFail($id);
+
+        $request->validate([
+            'dni' => 'required|unique:employees,dni,' . $employee->id,
+            'names' => 'required|string|max:100',
+            'lastnames' => 'required|string|max:100',
+            'email' => 'required|email|unique:employees,email,' . $employee->id,
+            'phone' => 'nullable|string|max:20',
+            'contract_id' => 'required|exists:contract_types,id',
+            'type_id' => 'required|exists:types,id',
+        ]);
+
+        $employee->update($request->all());
+
+        return redirect()->route('admin.employees.index')->with('success', 'Empleado actualizado correctamente.');
     }
 
     /**
@@ -88,6 +128,9 @@ class EmployeeController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $employee = Employee::findOrFail($id);
+        $employee->delete();
+
+        return redirect()->route('admin.employees.index')->with('success', 'Empleado eliminado.');
     }
 }

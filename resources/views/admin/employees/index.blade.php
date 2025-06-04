@@ -71,7 +71,7 @@
         <button type="button" class="btn btn-primary" id="btnNuevo"><i class="fas fa-plus"></i>
             Nuevo Registro
         </button>
-        <a href="{{ route('admin.brands.index') }}" class="btn btn-success"><i class="fas fa-sync"></i>
+        <a href="{{ route('admin.employees.index') }}" class="btn btn-success"><i class="fas fa-sync"></i>
             Actualizar
         </a>
     </div>
@@ -101,7 +101,7 @@
         $(document).ready(function () {
             $('#tbtEntity').DataTable({
 
-                "ajax": "{{ route('admin.brands.index') }}",
+                "ajax": "{{ route('admin.employees.index') }}",
                 "columns": [
                     {
                         "data": "logo",
@@ -139,7 +139,7 @@
         $('#btnNuevo').click(function () {
             // Permite aperturar el modal y realizar peticion
             $.ajax({
-                url: "{{ route('admin.brands.create') }}",
+                url: "{{ route('admin.employees.create') }}",
                 type: "GET",
                 success: function (response) {
                     $('.modal-title').html("<i class='fas fa-plus'></i> Nueva marca");
@@ -184,7 +184,7 @@
         $(document).on('click', '.btnEditar', function () {
             var id = $(this).attr("id");
             $.ajax({
-                url: "{{ route('admin.brands.edit', 'id') }}".replace('id', id),
+                url: "{{ route('admin.employees.edit', 'id') }}".replace('id', id),
                 type: "GET",
                 success: function (response) {
                     $('.modal-title').html("<i class='fas fa-edit'></i> Editar marca");
