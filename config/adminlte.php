@@ -315,34 +315,49 @@ return [
             'url' => 'admin/blog',
             'can' => 'manage-blog',
         ],
-        ['header' => 'Gestión de vehículos'],
         [
-            'text' => 'Marcas',
-            'route' => 'admin.brands.index',
-            'icon' => 'fas fa-copyright',
-        ],
-        [
-            'text' => 'Modelos',
-            'route' => 'admin.models.index',
-            'icon' => 'fas fa-film',
-        ],
-        [
-            'text' => 'Tipo',
-            'route' => 'admin.types.index',
-            'icon' => 'fas fa-tape',
-        ],
-        [
-            'text' => 'Vehiculo',
-            'route' => 'admin.vehicles.index',
-            'icon' => 'fas fa-car',
-        ],
-        ['header' => 'Mantenimiento'],
-        [
-            'text' => 'Vacaciones',
-            'url' => 'admin.brands.index',
-            'icon' => 'fas fa-street-view',
+            'text' => 'Gestión de vehículos',
+            'icon' => 'fas fa-warehouse',
+            'submenu' => [
+                [
+                    'text' => 'Marcas',
+                    'route' => 'admin.brands.index',
+                    'icon' => 'fas fa-copyright',
+                ],
+                [
+                    'text' => 'Modelos',
+                    'route' => 'admin.models.index',
+                    'icon' => 'fas fa-film',
+                ],
+                [
+                    'text' => 'Tipos',
+                    'route' => 'admin.types.index',
+                    'icon' => 'fas fa-tape',
+                ],
+                [
+                    'text' => 'Vehículos',
+                    'route' => 'admin.vehicles.index',
+                    'icon' => 'fas fa-car',
+                ],
+            ],
         ],
 
+        [
+            'text' => 'Mantenimiento',
+            'icon' => 'fas fa-wrench',
+            'submenu' => [
+                [
+                    'text' => 'Empleado',
+                    'route' => 'admin.brands.index',
+                    'icon' => 'fas fa-user',
+                ],
+                [
+                    'text' => 'Vacaciones',
+                    'route' => 'admin.models.index',
+                    'icon' => 'fas fa-calendar',
+                ],
+            ],
+        ],
     ],
 
     /*
