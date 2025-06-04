@@ -161,7 +161,7 @@
         $(document).on('click', '.btnEditar', function () {
             var id = $(this).attr("id");
             $.ajax({
-                url: "{{ route('admin.brands.edit', 'id') }}".replace('id', id),
+                url: "{{ route('admin.vacations.edit', 'id') }}".replace('id', id),
                 type: "GET",
                 success: function (response) {
                     $('.modal-title').html("<i class='fas fa-edit'></i> Editar Vacaciones");

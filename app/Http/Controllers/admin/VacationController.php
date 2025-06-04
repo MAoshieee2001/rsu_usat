@@ -40,7 +40,7 @@ class VacationController extends Controller
                         <button class="btn btn-sm btn-warning btnEditar" id="' . $vacation->id . '">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <button class="btn btn-sm btn-secondary btnEditar" id="' . $vacation->id . '" ' . $disabled . '>
+                        <button class="btn btn-sm btn-secondary btnPrograming" id="' . $vacation->id . '" ' . $disabled . '>
                             <i class="fas fa-clock"></i>
                         </button>
                         <form action="' . route('admin.vacations.destroy', $vacation->id) . '" method="POST" class="d-inline frmDelete">
@@ -158,7 +158,13 @@ class VacationController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        try {
+            $vacation = Vacation::findOrFail($id);
+            $employee = Employee::all()->pluck('fullnames', 'id');
+            return view('admin.vacations.edit', compact('vacation', 'employee'));
+        } catch (\Exception $e) {
+            return redirect()->route('admin.vacations.index')->with('error', 'Ocurrió un error al intentar editar las vacaciones.');
+        }
     }
 
     /**
@@ -166,7 +172,66 @@ class VacationController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        try {
+            $request->validate([
+                'employee_id' => 'required|exists:employees,id',
+                'date_start' => 'required|date',
+                'date_end' => 'required|date',
+            ]);
+
+
+            // ? VALIDO SI HAY UN PROBLEMA DE HORARIO
+            $dateStart = Carbon::parse($request->date_start);
+            $dateEnd = Carbon::parse($request->date_end);
+
+            if ($dateEnd->lt($dateStart)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'La fecha de fin no puede ser menor a la fecha de inicio.',
+                ], 422);
+            }
+
+            if ($dateEnd->diffInDays($dateStart) < 30) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'La fecha de fin debe ser al menos 30 días después de la fecha de inicio.',
+                ], 422);
+            }
+
+            $existeVacacion = Vacation::where('employee_id', $request->employee_id)
+                ->where('id', '!=', $id)
+                ->where(function ($query) use ($request) {
+                    $query->whereBetween('date_start', [$request->date_start, $request->date_end])
+                        ->orWhereBetween('date_end', [$request->date_start, $request->date_end])
+                        ->orWhere(function ($query) use ($request) {
+                            $query->where('date_start', '<=', $request->date_start)
+                                ->where('date_end', '>=', $request->date_end);
+                        });
+                })
+                ->exists();
+
+            if ($existeVacacion) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Ya existe un registro de vacaciones para este empleado en ese rango de fechas.',
+                ], 422);
+            }
+
+            $vacation = Vacation::findOrFail($id);
+
+            $vacation->update([
+                'employee_id' => $request->employee_id,
+                'date_start' => $request->date_start,
+                'date_end' => $request->date_end,
+                'status' => 'INACTIVO'
+            ]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Vacaciones registrada con éxito.',
+            ], 200);
+        } catch (\Exception $e) {
+            return redirect()->route('admin.vacations.index')->with('error', 'Error al crear el vacaciones: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -174,6 +239,12 @@ class VacationController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $vacation = Vacation::findOrFail($id);
+            $vacation->delete();
+            return redirect()->route('admin.vacations.index')->with('success', 'Vacaciones eliminada con éxito.');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.vacations.index')->with('error', 'Ocurrió un error al intentar eliminar las vacaciones.' . $e->getMessage());
+        }
     }
 }
