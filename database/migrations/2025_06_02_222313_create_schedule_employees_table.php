@@ -13,7 +13,7 @@ class CreateScheduleEmployeesTable extends Migration
             $table->foreignId('schedule_id')->constrained('schedules')->onDelete('cascade');
             $table->foreignId('employee_id')->constrained('employees')->onDelete('cascade');
             $table->string('status')->default('activo');
-            $table->foreignId('employeetype_id')->constrained('employee_types')->onDelete('cascade');
+            $table->foreignId('employeetype_id')->constrained('employeetypes')->onDelete('cascade');
             $table->timestamps();
         });
     }
