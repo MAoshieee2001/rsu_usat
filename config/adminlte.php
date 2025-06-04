@@ -353,7 +353,7 @@ return [
                 ],
                 [
                     'text' => 'Vacaciones',
-                    'route' => 'admin.models.index',
+                    'route' => 'admin.vacations.index',
                     'icon' => 'fas fa-calendar',
                 ],
             ],

@@ -12,8 +12,8 @@ class Vehicle extends Model
     protected $table = 'vehicles';
     protected $guarded = [];
 
-public function images()
-{
-    return $this->hasMany(VehicleImage::class);
-}
+    public function images()
+    {
+        return $this->hasMany(VehicleImage::class);
+    }
 }

@@ -10,4 +10,6 @@ class Vacation extends Model
     use HasFactory;
 
     protected $table = 'vacations';
+
+    protected $guarded = [];
 }
