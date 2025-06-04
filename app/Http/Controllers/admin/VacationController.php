@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Employee;
 use App\Models\Vacation;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
@@ -58,7 +59,12 @@ class VacationController extends Controller
      */
     public function create()
     {
-        //
+        try {
+            $employee = Employee::pluck('names', 'id');
+            return view('admin.vacations.create', compact('employee'));
+        } catch (\Exception $e) {
+            return redirect()->route('admin.vacations.index')->with('error', 'Ocurrió un error al intentar crear un nueva vacación.');
+        }
     }
 
     /**

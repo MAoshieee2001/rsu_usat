@@ -112,10 +112,10 @@
         $('#btnNuevo').click(function () {
             // Permite aperturar el modal y realizar peticion
             $.ajax({
-                url: "{{ route('admin.brands.create') }}",
+                url: "{{ route('admin.vacations.create') }}",
                 type: "GET",
                 success: function (response) {
-                    $('.modal-title').html("<i class='fas fa-plus'></i> Nueva marca");
+                    $('.modal-title').html("<i class='fas fa-plus'></i> Nueva Vacaciones");
                     $('#ModalCenter .modal-body').html(response);
                     $('#ModalCenter').modal('show');
 
