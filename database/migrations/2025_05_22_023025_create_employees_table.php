@@ -25,7 +25,6 @@ return new class extends Migration
             $table->string('password', 100)->nullable();
             $table->integer('status');
             $table->foreignId('type_id')->constrained('employeetypes')->onDelete('restrict');
-            $table->foreignId('contract_id')->constrained('contract_types')->onDelete('restrict');
             $table->timestamps();
         });
     }

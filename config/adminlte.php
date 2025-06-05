@@ -335,6 +335,11 @@ return [
                     'icon' => 'fas fa-tape',
                 ],
                 [
+                    'text' => 'Colores',
+                    'url' => 'admin.types.index',
+                    'icon' => 'fas fa-eye-dropper',
+                ],
+                [
                     'text' => 'Vehículos',
                     'route' => 'admin.vehicles.index',
                     'icon' => 'fas fa-car',
@@ -343,13 +348,18 @@ return [
         ],
 
         [
-            'text' => 'Mantenimiento',
-            'icon' => 'fas fa-wrench',
+            'text' => 'Gestión de personal',
+            'icon' => 'fas fa-users',
             'submenu' => [
                 [
                     'text' => 'Empleado',
                     'route' => 'admin.brands.index',
                     'icon' => 'fas fa-user',
+                ],
+                [
+                    'text' => 'Contracto',
+                    'url' => 'admin.brands.index',
+                    'icon' => 'fas fa-file-contract',
                 ],
                 [
                     'text' => 'Vacaciones',

@@ -255,56 +255,6 @@
             });
         });
 
-        $(document).on('click', '.btnPrograming', function () {
-            var id = $(this).attr("id");
-            $.ajax({
-                url: "{{ route('admin.vacation_changes.create') }}",
-                type: "GET",
-                success: function (response) {
-                    $('.modal-title').html("<i class='fas fa-edit'></i> Solicitud de nuevas vacaciones");
-                    $('#ModalCenter .modal-body').html(response);
-                    $('#ModalCenter').modal('show');
-
-                    $('#ModalCenter form').on('submit', function (e) {
-                        e.preventDefault();
-                        var form = $(this);
-                        var formdata = new FormData(this);
-                        $.ajax({
-                            url: form.attr('action'),
-                            type: form.attr('method'),
-                            data: formdata,
-                            processData: false,
-                            contentType: false,
-                            success: function (response) {
-                                $('#ModalCenter').modal('hide');
-                                refreshTable();
-                                Swal.fire({
-                                    title: "Proceso exitoso",
-                                    icon: "success",
-                                    timer: 2000,
-                                    timerProgressBar: true,
-                                    text: response.message,
-                                    confirmButtonText: 'Continuar.',
-                                    draggable: true
-                                });
-                            },
-                            error: function (xhr) {
-                                var response = xhr.responseJSON;
-                                Swal.fire({
-                                    title: "Error",
-                                    icon: "error",
-                                    timer: 2000,
-                                    timerProgressBar: true,
-                                    text: response.message,
-                                    draggable: true
-                                });
-                            }
-                        })
-                    })
-                }
-            })
-        });
-
 
         function refreshTable() {
             var table = $('#tbtEntity').DataTable();
