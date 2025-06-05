@@ -22,7 +22,7 @@ Route::resource('employees', EmployeeController::class)->names('admin.employees'
 Route::resource('contracts', EmployeeContractController::class)->names('admin.contracts');
 Route::resource('vacations', VacationController::class)->names('admin.vacations');
 
-
+// Hoola
 // Rutas para gestión de imágenes de vehículos
 Route::get('models-by-brand/{brand_id}', [VehicleController::class, 'getModelsByBrand'])->name('admin.models.byBrand');
 // Ruta para obtener las iamgenes de los vehiculos
