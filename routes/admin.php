@@ -9,6 +9,7 @@ use App\Http\Controllers\admin\TypeController;
 use App\Http\Controllers\admin\VacationChangeController;
 use App\Http\Controllers\admin\VacationController;
 use App\Http\Controllers\admin\VehicleController;
+use App\Http\Controllers\admin\ColorController;
 use Illuminate\Support\Facades\Route;
 
 Route::resource('/', AdminController::class)->names('admin');
@@ -21,6 +22,7 @@ Route::resource('vehicles', VehicleController::class)->names('admin.vehicles');
 Route::resource('employees', EmployeeController::class)->names('admin.employees');
 Route::resource('contracts', EmployeeContractController::class)->names('admin.contracts');
 Route::resource('vacations', VacationController::class)->names('admin.vacations');
+Route::resource('colors', ColorController::class)->names('admin.colors');
 
 // Hoola
 //HOlA MOISES

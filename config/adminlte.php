@@ -336,7 +336,7 @@ return [
                 ],
                 [
                     'text' => 'Colores',
-                    'url' => 'admin.types.index',
+                    'route' => 'admin.colors.index',
                     'icon' => 'fas fa-eye-dropper',
                 ],
                 [
