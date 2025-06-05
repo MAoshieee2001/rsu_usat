@@ -3,6 +3,7 @@
 use App\Http\Controllers\admin\AdminController;
 use App\Http\Controllers\admin\BrandController;
 use App\Http\Controllers\admin\BrandModelController;
+use App\Http\Controllers\admin\EmployeeContractController;
 use App\Http\Controllers\admin\EmployeeController;
 use App\Http\Controllers\admin\TypeController;
 use App\Http\Controllers\admin\VacationChangeController;
@@ -18,6 +19,7 @@ Route::resource('models', BrandmodelController::class)->names('admin.models');
 Route::resource('types', TypeController::class)->names('admin.types');
 Route::resource('vehicles', VehicleController::class)->names('admin.vehicles');
 Route::resource('employees', EmployeeController::class)->names('admin.employees');
+Route::resource('contracts', EmployeeContractController::class)->names('admin.contracts');
 Route::resource('vacations', VacationController::class)->names('admin.vacations');
 
 

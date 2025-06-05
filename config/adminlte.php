@@ -353,12 +353,12 @@ return [
             'submenu' => [
                 [
                     'text' => 'Empleado',
-                    'route' => 'admin.brands.index',
+                    'route' => 'admin.employees.index',
                     'icon' => 'fas fa-user',
                 ],
                 [
                     'text' => 'Contracto',
-                    'url' => 'admin.brands.index',
+                    'route' => 'admin.contracts.index',
                     'icon' => 'fas fa-file-contract',
                 ],
                 [
