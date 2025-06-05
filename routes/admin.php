@@ -23,6 +23,7 @@ Route::resource('contracts', EmployeeContractController::class)->names('admin.co
 Route::resource('vacations', VacationController::class)->names('admin.vacations');
 
 // Hoola
+//HOlA MOISES
 // Rutas para gestión de imágenes de vehículos
 Route::get('models-by-brand/{brand_id}', [VehicleController::class, 'getModelsByBrand'])->name('admin.models.byBrand');
 // Ruta para obtener las iamgenes de los vehiculos
