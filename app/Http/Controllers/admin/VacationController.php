@@ -28,7 +28,8 @@ class VacationController extends Controller
             'vacations.updated_at'
         )
             ->join('employees as em', 'vacations.employee_id', '=', 'em.id')
-            ->join('contract_types as ce', 'em.contract_id', '=', 'ce.id')
+            ->join('employee_contracts as ec', 'ec.employee_id', '=', 'em.id')
+            ->join('contract_types as ce', 'ec.contract_id', '=', 'ce.id')
             ->join('employeetypes as te', 'em.type_id', '=', 'te.id')
             ->get();
 
