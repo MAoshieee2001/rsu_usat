@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('employee_contracts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('employee_id')->constrained('employees')->onDelete('restrict');
-            $table->foreignId('contract_type')->constrained('contract_types')->onDelete('restrict');
+            $table->foreignId('contract_id')->constrained('contract_types')->onDelete('restrict');
             $table->date('date_start');
             $table->date('date_end')->nullable();
             $table->string('status')->default('Activo');

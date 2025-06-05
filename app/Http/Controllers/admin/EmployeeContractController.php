@@ -26,7 +26,7 @@ class EmployeeContractController extends Controller
             'employee_contracts.updated_at',
         )
             ->join('employees as emp', 'employee_contracts.employee_id', '=', 'emp.id')
-            ->join('contract_types as ctp', 'employee_contracts.contract_id', '=', 'contract_.id')
+            ->join('contract_types as ctp', 'employee_contracts.contract_id', '=', 'ctp.id')
             ->get();
 
         if ($request->ajax()) {
