@@ -5,6 +5,7 @@ use App\Http\Controllers\admin\BrandController;
 use App\Http\Controllers\admin\BrandModelController;
 use App\Http\Controllers\admin\EmployeeController;
 use App\Http\Controllers\admin\TypeController;
+use App\Http\Controllers\admin\VacationChangeController;
 use App\Http\Controllers\admin\VacationController;
 use App\Http\Controllers\admin\VehicleController;
 use Illuminate\Support\Facades\Route;

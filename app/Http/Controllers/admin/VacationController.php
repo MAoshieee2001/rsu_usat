@@ -40,9 +40,6 @@ class VacationController extends Controller
                         <button class="btn btn-sm btn-warning btnEditar" id="' . $vacation->id . '">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <button class="btn btn-sm btn-secondary btnPrograming" id="' . $vacation->id . '" ' . $disabled . '>
-                            <i class="fas fa-clock"></i>
-                        </button>
                         <form action="' . route('admin.vacations.destroy', $vacation->id) . '" method="POST" class="d-inline frmDelete">
                             ' . csrf_field() . method_field('DELETE') . '
                             <button type="submit" class="btn btn-sm btn-danger">
