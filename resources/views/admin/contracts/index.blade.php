@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Marcas')
+@section('title', 'Contractos')
 
 <!--@section('content_header')
 @stop-->
@@ -10,7 +10,7 @@
 <div class="card">
     <div class="card-header">
 
-        <h3 class="card-title"><i class="fas fa-search"></i> Listado de Marcas</h3>
+        <h3 class="card-title"><i class="fas fa-search"></i> Listado de contractos</h3>
     </div>
     <div class="card-body">
         <div class="table-responsive">
@@ -23,7 +23,8 @@
                         <th>Fecha de inicio</th>
                         <th>Fecha de fin</th>
                         <th>Creación</th>
-                        <th>Actualización</th>
+                        <th>ACtualización</th>
+                        <th>Opciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -69,18 +70,22 @@
                 "ajax": "{{ route('admin.contracts.index') }}",
                 "columns": [
                     {
-                        "data": "logo",
-                        "width": "4%",
-                        "orderable": false,
-                        "searchable": false
+                        "data": "contract_name",
                     },
                     {
-                        "data": "name",
-                        "width": "10%",
+                        "data": "full_name",
                     },
                     {
-                        "data": "description",
+                        "data": "status",
                         "width": "20%",
+                    },
+                    {
+                        "data": "date_start",
+                        "width": "15%",
+                    },
+                    {
+                        "data": "date_end",
+                        "width": "15%",
                     },
                     {
                         "data": "created_at",
