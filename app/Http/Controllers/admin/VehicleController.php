@@ -13,6 +13,8 @@ use DB;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
+
 
 class VehicleController extends Controller
 {
@@ -150,6 +152,12 @@ class VehicleController extends Controller
 
             $request->validate([
                 'capacity' => 'required|numeric|max:3',
+                'plate' => [
+                    'required',
+                    'regex:/^[A-Z0-9]{6}$|^[A-Z0-9]{2}-[A-Z0-9]{4}$|^[A-Z0-9]{3}-[A-Z0-9]{3}$/i',
+                    'unique:vehicles,plate'
+                ],
+                'year' => 'required|digits:4|integer|min:1900|max:' . date('Y'),
             ]);
 
             // Crear el vehículo
@@ -231,6 +239,12 @@ class VehicleController extends Controller
             $vehicle = Vehicle::findOrFail($id);
 
             $request->validate([
+                'plate' => [
+                    'required',
+                    'regex:/^[A-Z0-9]{6}$|^[A-Z0-9]{2}-[A-Z0-9]{4}$|^[A-Z0-9]{3}-[A-Z0-9]{3}$/i',
+                    Rule::unique('vehicles', 'plate')->ignore($vehicle->id)
+                ],
+                'year' => 'required|digits:4|integer|min:1900|max:' . date('Y'),
                 'capacity' => 'required|numeric|max:3',
             ]);
 
