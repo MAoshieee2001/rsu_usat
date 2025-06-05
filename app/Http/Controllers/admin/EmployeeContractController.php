@@ -18,11 +18,12 @@ class EmployeeContractController extends Controller
         $contracts = EmployeeContract::select(
             'employee_contracts.id',
             DB::raw('CONCAT(emp.names, " ", emp.lastnames) as full_name'),
-            'code',
-            'b.name as brand_name',
-            'brandmodels.description',
-            'brandmodels.created_at',
-            'brandmodels.updated_at'
+            'ctp.name as contract_name',
+            'employee_contracts.date_start',
+            'employee_contracts.date_end',
+            'employee_contracts.status',
+            'employee_contracts.created_at',
+            'employee_contracts.updated_at',
         )
             ->join('employees as emp', 'employee_contracts.employee_id', '=', 'emp.id')
             ->join('contract_types as ctp', 'employee_contracts.contract_id', '=', 'contract_.id')
