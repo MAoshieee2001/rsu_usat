@@ -130,7 +130,6 @@
                         "orderable": false,
                         "searchable": false,
                         "width": "4%",
-
                     },
                 ]
             });

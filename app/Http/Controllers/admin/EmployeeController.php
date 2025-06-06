@@ -32,7 +32,7 @@ class EmployeeController extends Controller
                 'employees.updated_at'
             )
                 ->join('contract_types as ct', 'employees.contract_id', '=', 'ct.id')
-                ->join('types as t', 'employees.type_id', '=', 't.id'); // sin ->get()
+                ->join('employeetypes as t', 'employees.type_id', '=', 't.id'); // sin ->get()
 
             return DataTables::of($employees)
                 ->addColumn('options', function ($employee) {
@@ -130,7 +130,6 @@ class EmployeeController extends Controller
     {
         $employee = Employee::findOrFail($id);
         $employee->delete();
-
         return redirect()->route('admin.employees.index')->with('success', 'Empleado eliminado.');
     }
 }
