@@ -67,7 +67,7 @@
                     "data": "options",
                     "orderable": false,
                     "searchable": false,
-                    "width": "15%" 
+                    "width": "4%" 
                 },
             ]
         });
