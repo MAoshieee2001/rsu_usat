@@ -28,7 +28,10 @@ class VacationController extends Controller
             'vacations.updated_at'
         )
             ->join('employees as em', 'vacations.employee_id', '=', 'em.id')
-            ->join('employee_contracts as ec', 'ec.employee_id', '=', 'em.id')
+            ->join('employee_contracts as ec', function ($join) {
+                $join->on('ec.employee_id', '=', 'em.id')
+                    ->whereRaw('ec.id = (SELECT id FROM employee_contracts WHERE employee_id = em.id ORDER BY created_at DESC LIMIT 1)');
+            })
             ->join('contract_types as ce', 'ec.contract_id', '=', 'ce.id')
             ->join('employeetypes as te', 'em.type_id', '=', 'te.id')
             ->get();

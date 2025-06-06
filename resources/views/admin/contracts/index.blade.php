@@ -10,7 +10,7 @@
 <div class="card">
     <div class="card-header">
 
-        <h3 class="card-title"><i class="fas fa-search"></i> Listado de contractos</h3>
+        <h3 class="card-title"><i class="fas fa-search"></i> Listado de contratos</h3>
     </div>
     <div class="card-body">
         <div class="table-responsive">
@@ -23,7 +23,7 @@
                         <th>Fecha de inicio</th>
                         <th>Fecha de fin</th>
                         <th>Creación</th>
-                        <th>ACtualización</th>
+                        <th>Actualización</th>
                         <th>Opciones</th>
                     </tr>
                 </thead>
@@ -77,7 +77,6 @@
                     },
                     {
                         "data": "status",
-                        "width": "20%",
                     },
                     {
                         "data": "date_start",
@@ -112,7 +111,7 @@
                 url: "{{ route('admin.contracts.create') }}",
                 type: "GET",
                 success: function (response) {
-                    $('.modal-title').html("<i class='fas fa-plus'></i> Nueva marca");
+                    $('.modal-title').html("<i class='fas fa-plus'></i> Nuevo contracto");
                     $('#ModalCenter .modal-body').html(response);
                     $('#ModalCenter').modal('show');
 
@@ -153,7 +152,7 @@
                     })
                 }
             })
-        })
+        });
 
         $(document).on('click', '.btnEditar', function () {
             var id = $(this).attr("id");

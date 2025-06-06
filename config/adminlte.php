@@ -357,7 +357,7 @@ return [
                     'icon' => 'fas fa-user',
                 ],
                 [
-                    'text' => 'Contracto',
+                    'text' => 'Contrato',
                     'route' => 'admin.contracts.index',
                     'icon' => 'fas fa-file-contract',
                 ],
