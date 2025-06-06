@@ -4,6 +4,7 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Employee;
+use App\Models\EmployeeType;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
@@ -59,14 +60,15 @@ class EmployeeController extends Controller
         return view('admin.employees.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        return view('admin.employees.create');
+        try {
+            $employeetypes = EmployeeType::pluck('name', 'id');
+            return view('admin.employees.create', compact('employeetypes'));
+        } catch (\Exception $e) {
+            return redirect()->route('admin.employees.index')->with('error', 'Ocurrió un error al intentar crear un nuevo empleado.');
+        }
     }
-
     /**
      * Store a newly created resource in storage.
      */
