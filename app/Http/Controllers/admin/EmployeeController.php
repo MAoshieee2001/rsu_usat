@@ -26,6 +26,7 @@ class EmployeeController extends Controller
                 'employees.email',
                 'employees.phone',
                 'employees.status',
+                'employees.password',
                 't.name as type_name',
                 'employees.created_at',
                 'employees.updated_at'

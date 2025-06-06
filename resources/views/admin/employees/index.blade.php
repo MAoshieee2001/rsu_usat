@@ -78,19 +78,43 @@
                         "searchable": false
                     },
                     {
-                        "data": "full_name",
+                        "data": "dni",
                         "width": "10%",
                     },
                     {
-                        "data": "description",
+                        "data": "type_name",
                         "width": "20%",
                     },
                     {
-                        "data": "created_at",
+                        "data": "full_name",
                         "width": "15%",
                     },
                     {
-                        "data": "updated_at",
+                        "data": "birthday",
+                        "width": "15%",
+                    },
+                    {
+                        "data": "license",
+                        "width": "15%",
+                    },
+                    {
+                        "data": "address",
+                        "width": "15%",
+                    },
+                    {
+                        "data": "email",
+                        "width": "15%",
+                    },
+                    {
+                        "data": "phone",
+                        "width": "15%",
+                    },
+                    {
+                        "data": "password",
+                        "width": "15%",
+                    },
+                    {
+                        "data": "status",
                         "width": "15%",
                     },
                     {
@@ -274,38 +298,38 @@
 @endsection
 
 @section('css')
-    <style>
-        /* Hace que la tabla use el 100% del contenedor */
-        .table-responsive {
-            overflow-x: auto;
-        }
+<style>
+    /* Hace que la tabla use el 100% del contenedor */
+    .table-responsive {
+        overflow-x: auto;
+    }
 
-        table#tbtEntity {
-            width: 100% !important;
-        }
+    table#tbtEntity {
+        width: 100% !important;
+    }
 
-        /* Mejora la apariencia del modal */
-        .modal-content {
-            border-radius: 0.5rem;
-        }
+    /* Mejora la apariencia del modal */
+    .modal-content {
+        border-radius: 0.5rem;
+    }
 
-        .card {
-            border-radius: 0.5rem;
-        }
+    .card {
+        border-radius: 0.5rem;
+    }
 
-        .card-header {
-            border-top-left-radius: 0.5rem;
-            border-top-right-radius: 0.5rem;
-        }
+    .card-header {
+        border-top-left-radius: 0.5rem;
+        border-top-right-radius: 0.5rem;
+    }
 
-        .card-footer {
-            border-bottom-left-radius: 0.5rem;
-            border-bottom-right-radius: 0.5rem;
-        }
+    .card-footer {
+        border-bottom-left-radius: 0.5rem;
+        border-bottom-right-radius: 0.5rem;
+    }
 
-        /* Estilo de botones */
-        .btn {
-            min-width: 130px;
-        }
-    </style>
+    /* Estilo de botones */
+    .btn {
+        min-width: 130px;
+    }
+</style>
 @stop
