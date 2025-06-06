@@ -85,13 +85,13 @@ class VacationController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-   public function store(Request $request)
+    public function store(Request $request)
     {
         /*
-        * ESTADO ACTIVO : ESTA EN VACACIONES
-        *        INACTIVO : PENDIENTE  
-        *        PROGRAMADO
-        */
+         * ESTADO ACTIVO : ESTA EN VACACIONES
+         *        INACTIVO : PENDIENTE  
+         *        PROGRAMADO
+         */
 
         try {
             $request->validate([
@@ -102,10 +102,17 @@ class VacationController extends Controller
 
             $employeeId = $request->employee_id;
 
-            // ✅ VALIDACIÓN DE CONTRATO
-            $employee = Employee::with('contract')->findOrFail($employeeId);
+            $employee = Employee::with('contractTypes')->findOrFail($employeeId);
 
-            if (!in_array($employee->contract->name, ['Nombrado', 'Permanente'])) {
+            // Tipos de contrato válidos
+            $contratosValidos = ['Nombrado', 'Permanente'];
+
+            // ¿Tiene al menos uno válido?
+            $tieneContratoValido = $employee->contractTypes->contains(function ($contract) use ($contratosValidos) {
+                return in_array($contract->name, $contratosValidos);
+            });
+
+            if (!$tieneContratoValido) {
                 return response()->json([
                     'success' => false,
                     'message' => 'El empleado no tiene un contrato válido para registrar vacaciones (solo "Nombrado" o "Permanente").',
