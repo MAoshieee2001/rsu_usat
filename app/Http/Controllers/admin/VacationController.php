@@ -85,13 +85,13 @@ class VacationController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+   public function store(Request $request)
     {
         /*
-         * ESTADO ACTIVO : ESTA EN VACACIONES
-         *        INACTIVO : PENDIENTE  
-         *        PROGRAMADO
-         */
+        * ESTADO ACTIVO : ESTA EN VACACIONES
+        *        INACTIVO : PENDIENTE  
+        *        PROGRAMADO
+        */
 
         try {
             $request->validate([
@@ -100,12 +100,20 @@ class VacationController extends Controller
                 'date_end' => 'required|date',
             ]);
 
-            // ? VALIDO SI EXISTE EL EMPLEAO EN LA TABLA VACACIONES
             $employeeId = $request->employee_id;
 
-            // Validar si ya existe registro para este empleado en vacaciones
-            $exists = Vacation::where('employee_id', $employeeId)->exists();
+            // ✅ VALIDACIÓN DE CONTRATO
+            $employee = Employee::with('contract')->findOrFail($employeeId);
 
+            if (!in_array($employee->contract->name, ['Nombrado', 'Permanente'])) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'El empleado no tiene un contrato válido para registrar vacaciones (solo "Nombrado" o "Permanente").',
+                ], 422);
+            }
+
+            //  Validar si ya tiene vacaciones
+            $exists = Vacation::where('employee_id', $employeeId)->exists();
             if ($exists) {
                 return response()->json([
                     'success' => false,
@@ -113,7 +121,7 @@ class VacationController extends Controller
                 ], 422);
             }
 
-            // ? VALIDO SI HAY UN PROBLEMA DE HORARIO
+            // 📅 Validaciones de fecha
             $dateStart = Carbon::parse($request->date_start);
             $dateEnd = Carbon::parse($request->date_end);
 
@@ -131,18 +139,22 @@ class VacationController extends Controller
                 ], 422);
             }
 
+            // ✅ Crear registro
             Vacation::create([
-                'employee_id' => $request->employee_id,
+                'employee_id' => $employeeId,
                 'date_start' => $request->date_start,
                 'date_end' => $request->date_end,
                 'status' => 'INACTIVO'
             ]);
+
             return response()->json([
                 'success' => true,
                 'message' => 'Vacaciones registrada con éxito.',
             ], 200);
+
         } catch (\Exception $e) {
-            return redirect()->route('admin.vacations.index')->with('error', 'Error al crear el vacaciones: ' . $e->getMessage());
+            return redirect()->route('admin.vacations.index')
+                ->with('error', 'Error al crear el vacaciones: ' . $e->getMessage());
         }
     }
 
@@ -180,8 +192,19 @@ class VacationController extends Controller
                 'date_end' => 'required|date',
             ]);
 
+            $employeeId = $request->employee_id;
 
-            // ? VALIDO SI HAY UN PROBLEMA DE HORARIO
+            // ✅ Validación de contrato
+            $employee = Employee::with('contract')->findOrFail($employeeId);
+
+            if (!in_array($employee->contract->name, ['Nombrado', 'Permanente'])) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'El empleado no tiene un contrato válido para registrar vacaciones (solo "Nombrado" o "Permanente").',
+                ], 422);
+            }
+
+            // 📅 Validaciones de fecha
             $dateStart = Carbon::parse($request->date_start);
             $dateEnd = Carbon::parse($request->date_end);
 
@@ -199,7 +222,8 @@ class VacationController extends Controller
                 ], 422);
             }
 
-            $existeVacacion = Vacation::where('employee_id', $request->employee_id)
+            // 🛡️ Validar solapamientos de vacaciones
+            $existeVacacion = Vacation::where('employee_id', $employeeId)
                 ->where('id', '!=', $id)
                 ->where(function ($query) use ($request) {
                     $query->whereBetween('date_start', [$request->date_start, $request->date_end])
@@ -218,26 +242,26 @@ class VacationController extends Controller
                 ], 422);
             }
 
+            // ✅ Actualizar registro
             $vacation = Vacation::findOrFail($id);
 
             $vacation->update([
-                'employee_id' => $request->employee_id,
+                'employee_id' => $employeeId,
                 'date_start' => $request->date_start,
                 'date_end' => $request->date_end,
                 'status' => 'INACTIVO'
             ]);
+
             return response()->json([
                 'success' => true,
-                'message' => 'Vacaciones registrada con éxito.',
+                'message' => 'Vacaciones actualizada con éxito.',
             ], 200);
         } catch (\Exception $e) {
-            return redirect()->route('admin.vacations.index')->with('error', 'Error al crear el vacaciones: ' . $e->getMessage());
+            return redirect()->route('admin.vacations.index')
+                ->with('error', 'Error al actualizar las vacaciones: ' . $e->getMessage());
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         try {
