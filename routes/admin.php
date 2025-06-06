@@ -24,8 +24,6 @@ Route::resource('contracts', EmployeeContractController::class)->names('admin.co
 Route::resource('vacations', VacationController::class)->names('admin.vacations');
 Route::resource('colors', ColorController::class)->names('admin.colors');
 
-// Hoola
-//HOlA MOISES
 // Rutas para gestión de imágenes de vehículos
 Route::get('models-by-brand/{brand_id}', [VehicleController::class, 'getModelsByBrand'])->name('admin.models.byBrand');
 // Ruta para obtener las iamgenes de los vehiculos
@@ -34,3 +32,4 @@ Route::get('vehicles/images/{id}', [VehicleController::class, 'getImages']);
 Route::post('vehicles/images/{image}/set-profile', [VehicleController::class, 'setProfileImage'])->name('admin.vehicles.images.set-profile');
 // Ruta para eliminar una imagene
 Route::delete('vehicles/images/{image}', [VehicleController::class, 'deleteImage'])->name('admin.vehicles.images.delete');
+
