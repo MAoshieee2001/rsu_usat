@@ -157,10 +157,10 @@
         $(document).on('click', '.btnEditar', function () {
             var id = $(this).attr("id");
             $.ajax({
-                url: "{{ route('admin.brands.edit', 'id') }}".replace('id', id),
+                url: "{{ route('admin.contracts.edit', 'id') }}".replace('id', id),
                 type: "GET",
                 success: function (response) {
-                    $('.modal-title').html("<i class='fas fa-edit'></i> Editar marca");
+                    $('.modal-title').html("<i class='fas fa-edit'></i> Editar contracto");
                     $('#ModalCenter .modal-body').html(response);
                     $('#ModalCenter').modal('show');
 
@@ -168,6 +168,7 @@
                         e.preventDefault();
                         var form = $(this);
                         var formdata = new FormData(this);
+                        console.log(form.attr('action'));
                         $.ajax({
                             url: form.attr('action'),
                             type: form.attr('method'),

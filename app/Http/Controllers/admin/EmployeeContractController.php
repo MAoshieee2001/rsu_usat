@@ -38,6 +38,14 @@ class EmployeeContractController extends Controller
                 ->editColumn('date_end', function ($contract) {
                     return $contract->date_end ? $contract->date_end : '-----------';
                 })
+                ->editColumn('status', function ($vehicle) {
+                    switch ($vehicle->status) {
+                        case 'Inactivo':
+                            return '<span class="badge bg-danger">Terminado</span>';
+                        case 'Activo':
+                            return '<span class="badge bg-primary text-dark">Activo</span>';
+                    }
+                })
                 ->addColumn('options', function ($contract) {
                     return '
                         <button class="btn btn-sm btn-warning btnEditar" id="' . $contract->id . '">
@@ -51,7 +59,7 @@ class EmployeeContractController extends Controller
                         </form>
                     ';
                 })
-                ->rawColumns(['options'])
+                ->rawColumns(['status', 'options'])
                 ->make(true);
         } else {
             return view('admin.contracts.index', compact('contracts'));
@@ -85,7 +93,7 @@ class EmployeeContractController extends Controller
                 ->whereHas('contractType', function ($query) {
                     $query->whereIn('name', ['Nombrado', 'Permanente']);
                 })
-                ->where('status', 'Activo') 
+                ->where('status', 'Activo')
                 ->first();
 
             if ($existingContract) {
@@ -137,15 +145,70 @@ class EmployeeContractController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        try {
+            $employeecontract = EmployeeContract::findOrFail($id);
+            $employee = Employee::all()->pluck('fullnames', 'id');
+            $contract = ContractType::all()->pluck('name', 'id');
+            return view('admin.contracts.edit', compact('employee', 'contract', 'employeecontract'));
+
+        } catch (\Exception $e) {
+            return redirect()->route('admin.contracts.index')
+                ->with('error', 'Ocurrió un error al intentar editar el contrato.');
+        }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        //
+        try {
+            $contract = ContractType::find($request->contract_id);
+
+            $employeeContract = EmployeeContract::findOrFail($id);
+
+            // Verificar si intenta cambiar a Nombrado o Permanente cuando ya tiene uno activo
+            $existingNamedOrPermanent = EmployeeContract::where('employee_id', $request->employee_id)
+                ->whereHas('contractType', function ($query) {
+                    $query->whereIn('name', ['Nombrado', 'Permanente']);
+                })
+                ->where('status', 'Activo')
+                ->where('id', '!=', $id)
+                ->first();
+
+            if ($existingNamedOrPermanent) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'El empleado ya tiene un contrato Nombrado o Permanente activo. No se puede modificar este contrato.',
+                ], 422);
+            }
+            // Validar contrato temporal con fecha fin obligatoria
+            if (strtolower($contract->name) === 'temporal' && empty($request->date_end)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'La fecha de finalización es obligatoria para contratos temporales.',
+                ], 422);
+            }
+
+            $employeeContract->update([
+                'employee_id' => $request->employee_id,
+                'contract_id' => $request->contract_id,
+                'date_start' => $request->date_start,
+                'date_end' => $request->date_end,
+                'status' => $request->status ?? $employeeContract->status,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Contrato actualizado con éxito.',
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar el contrato: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -153,6 +216,12 @@ class EmployeeContractController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $employeeContract = EmployeeContract::findOrFail($id);
+            $employeeContract->delete();
+            return redirect()->route('admin.contracts.index')->with('success', 'Contrato eliminada con éxito.');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.contracts.index')->with('error', 'Ocurrió un error al intentar eliminar el contrato.' . $e->getMessage());
+        }
     }
 }

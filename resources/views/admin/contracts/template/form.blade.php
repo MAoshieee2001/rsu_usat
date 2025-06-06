@@ -42,13 +42,20 @@
 
         select_contract = $('#contract_id');
         select_date_end = $('#date_end');
-        select_date_end.prop('disabled', true);
-        
+
+        let contract_id = parseInt(select_contract.val());
+        if ([0, 1, 2].includes(contract_id)) {
+            select_date_end.prop('disabled', true).val('');
+        } else {
+            select_date_end.prop('disabled', false);
+        }
+
+
         select_contract.on('change', function (evt) {
             evt.preventDefault();
             let contract_id = parseInt(select_contract.val());
             if ([0, 1, 2].includes(contract_id)) {
-                select_date_end.prop('disabled', true);  // Deshabilitar
+                select_date_end.prop('disabled', true).val('');
                 return;
             }
 
