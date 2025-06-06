@@ -33,6 +33,11 @@ class EmployeeController extends Controller
                 ->join('employeetypes as t', 'employees.type_id', '=', 't.id'); // sin ->get()
 
             return DataTables::of($employees)
+                ->addColumn('photo', function ($employee) {
+                    $logoPath = $employee->photo == '' ? 'storage/brands/empty.png' : $employee->photo;
+                    return '<img src="' . asset($logoPath) . '" width="50px" height="50px">';
+                })
+
                 ->addColumn('options', function ($employee) {
                     return '
                         <button class="btn btn-sm btn-warning btnEditar" data-id="' . $employee->id . '">
@@ -46,7 +51,7 @@ class EmployeeController extends Controller
                         </form>
                     ';
                 })
-                ->rawColumns(['options'])
+                ->rawColumns(['photo', 'options'])
                 ->make(true);
         }
 
