@@ -2,27 +2,24 @@
 
 @section('title', 'Empleados')
 
-<!--@section('content_header')
-@stop-->
-
 @section('content')
-<div class="p-2"></div>
-<div class="card">
-    <div class="card-header">
+<div class="p-3"></div>
 
-        <h3 class="card-title"><i class="fas fa-search"></i> Listado de Empleados</h3>
+<div class="card shadow-lg">
+    <div class="card-header bg-primary text-white">
+        <h3 class="card-title mb-0"><i class="fas fa-users"></i> Listado de Empleados</h3>
     </div>
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-sm table-bordered text-center" id="tbtEntity">
+            <table class="table table-sm table-bordered table-hover text-center w-100" id="tbtEntity">
                 <thead class="thead-dark">
                     <tr>
                         <th>Foto</th>
                         <th>DNI</th>
                         <th>Función</th>
                         <th>Nombres Completos</th>
-                        <th>Contracto</th>
-                        <th>Fecha nacimiento</th>
+                        <th>Contrato</th>
+                        <th>Fecha Nacimiento</th>
                         <th>Licencia</th>
                         <th>Dirección</th>
                         <th>Correo</th>
@@ -33,46 +30,18 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {{--
-                    @foreach ($brands as $brand)
-                    <tr>
-                        <td>
-                            <img src="{{ $brand->logo == '' ? asset('storage/brand_logo/no_image.png') : asset($brand->logo) }}"
-                                alt="" width="80px" height="50px">
-                        </td>
-                        <td>{{ $brand->name }}</td>
-                        <td>{{ $brand->description }}</td>
-                        <td>{{ $brand->created_at }}</td>
-                        <td>{{ $brand->updated_at }}</td>
-                        <td>
-                            <button class="btn btn-success btn-sm btnEditar" id="{{ $brand->id }}">
-                                <i class="fas fa-pen"></i>
-                            </button>
-                            <form action="{{ route('admin.brands.destroy', $brand->id) }}" method="POST"
-                                class="frmDelete">
-                                @csrf
-                                @method('delete')
-                                <button type="submit" class="btn btn-danger btn-sm">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </form>
-                        </td>
-                        <td></td>
-                    </tr>
-                    @endforeach
-                    --}}
-
+                    {{-- Aquí van los datos dinámicos --}}
                 </tbody>
             </table>
         </div>
     </div>
 
-    <div class="card-footer">
-        <button type="button" class="btn btn-primary" id="btnNuevo"><i class="fas fa-plus"></i>
-            Nuevo Registro
+    <div class="card-footer d-flex justify-content-between">
+        <button type="button" class="btn btn-primary" id="btnNuevo">
+            <i class="fas fa-plus"></i> Nuevo Registro
         </button>
-        <a href="{{ route('admin.employees.index') }}" class="btn btn-success"><i class="fas fa-sync"></i>
-            Actualizar
+        <a href="{{ route('admin.employees.index') }}" class="btn btn-success">
+            <i class="fas fa-sync"></i> Actualizar
         </a>
     </div>
 </div>
@@ -80,15 +49,15 @@
 <!-- Modal -->
 <div class="modal fade" id="ModalCenter" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle"
     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title" id="ModalLongTitle"></h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Cerrar">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body bg-light">
                 ...
             </div>
         </div>
@@ -307,7 +276,38 @@
 @endsection
 
 @section('css')
-{{-- Add here extra stylesheets --}}
-{{--
-<link rel="stylesheet" href="/css/admin_custom.css"> --}}
+    <style>
+        /* Hace que la tabla use el 100% del contenedor */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table#tbtEntity {
+            width: 100% !important;
+        }
+
+        /* Mejora la apariencia del modal */
+        .modal-content {
+            border-radius: 0.5rem;
+        }
+
+        .card {
+            border-radius: 0.5rem;
+        }
+
+        .card-header {
+            border-top-left-radius: 0.5rem;
+            border-top-right-radius: 0.5rem;
+        }
+
+        .card-footer {
+            border-bottom-left-radius: 0.5rem;
+            border-bottom-right-radius: 0.5rem;
+        }
+
+        /* Estilo de botones */
+        .btn {
+            min-width: 130px;
+        }
+    </style>
 @stop
