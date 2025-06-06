@@ -1,9 +1,9 @@
 <div class="row">
     <div class="form-group col-6">
-        {!! Form::label('contract_id', 'Contracto') !!}
+        {!! Form::label('contract_id', 'Contrato') !!}
         {!! Form::select('contract_id', $contract, null, [
     'class' => 'form-control',
-    'placeholder' => 'Seleccione un contracto.',
+    'placeholder' => 'Seleccione un contrato.',
     'required'
 ]) !!}
     </div>

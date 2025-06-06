@@ -111,7 +111,7 @@
                 url: "{{ route('admin.contracts.create') }}",
                 type: "GET",
                 success: function (response) {
-                    $('.modal-title').html("<i class='fas fa-plus'></i> Nuevo contracto");
+                    $('.modal-title').html("<i class='fas fa-plus'></i> Nuevo contrato");
                     $('#ModalCenter .modal-body').html(response);
                     $('#ModalCenter').modal('show');
 
@@ -160,7 +160,7 @@
                 url: "{{ route('admin.contracts.edit', 'id') }}".replace('id', id),
                 type: "GET",
                 success: function (response) {
-                    $('.modal-title').html("<i class='fas fa-edit'></i> Editar contracto");
+                    $('.modal-title').html("<i class='fas fa-edit'></i> Editar contrato");
                     $('#ModalCenter .modal-body').html(response);
                     $('#ModalCenter').modal('show');
 
