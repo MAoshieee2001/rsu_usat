@@ -26,12 +26,10 @@ class EmployeeController extends Controller
                 'employees.email',
                 'employees.phone',
                 'employees.status',
-                'ct.name as contract_type',
                 't.name as type_name',
                 'employees.created_at',
                 'employees.updated_at'
             )
-                ->join('contract_types as ct', 'employees.contract_id', '=', 'ct.id')
                 ->join('employeetypes as t', 'employees.type_id', '=', 't.id'); // sin ->get()
 
             return DataTables::of($employees)

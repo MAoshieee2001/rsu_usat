@@ -6,8 +6,8 @@
 <div class="p-3"></div>
 
 <div class="card shadow-lg">
-    <div class="card-header bg-primary text-white">
-        <h3 class="card-title mb-0"><i class="fas fa-users"></i> Listado de Empleados</h3>
+    <div class="card-header">
+        <h3 class="card-title mb-0"><i class="fas fa-search"></i> Listado de Empleados</h3>
     </div>
     <div class="card-body">
         <div class="table-responsive">
@@ -18,7 +18,6 @@
                         <th>DNI</th>
                         <th>Función</th>
                         <th>Nombres Completos</th>
-                        <th>Contrato</th>
                         <th>Fecha Nacimiento</th>
                         <th>Licencia</th>
                         <th>Dirección</th>
@@ -36,7 +35,7 @@
         </div>
     </div>
 
-    <div class="card-footer d-flex justify-content-between">
+    <div class="card-footer">
         <button type="button" class="btn btn-primary" id="btnNuevo">
             <i class="fas fa-plus"></i> Nuevo Registro
         </button>
@@ -73,13 +72,13 @@
                 "ajax": "{{ route('admin.employees.index') }}",
                 "columns": [
                     {
-                        "data": "logo",
+                        "data": "photo",
                         "width": "4%",
                         "orderable": false,
                         "searchable": false
                     },
                     {
-                        "data": "name",
+                        "data": "full_name",
                         "width": "10%",
                     },
                     {
