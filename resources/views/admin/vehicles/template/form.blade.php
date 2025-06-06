@@ -5,44 +5,39 @@
             <div class="form-group col-4">
                 {!! Form::label('code', 'Código del vehiculo') !!}
                 {!! Form::text('code', null, [
-    'class' => 'form-control',
-    'placeholder' => 'Ingrese el código del vehiculo.',
-    'required',
-    'autocomplete' => 'off'
-]) !!}
+                    'class' => 'form-control',
+                    'placeholder' => 'Ingrese el código del vehiculo.',
+                    'required',
+                    'autocomplete' => 'off'
+                ]) !!}
             </div>
-
             <div class="form-group col-4">
                 {!! Form::label('plate', 'Placa del vehiculo') !!}
                 {!! Form::text('plate', null, [
-    'class' => 'form-control',
-    'placeholder' => 'Ingrese la placa del vehiculo.',
-    'required',
-    'autocomplete' => 'off'
-]) !!}
+                    'class' => 'form-control',
+                    'placeholder' => 'Ingrese la placa del vehiculo.',
+                    'required',
+                    'autocomplete' => 'off'
+                ]) !!}
             </div>
-
             <div class="form-group col-md-4">
                 {!! Form::label('year', 'Año del vehiculo') !!}
                 {!! Form::number('year', null, [
-    'class' => 'form-control',
-    'placeholder' => 'Ingrese el año del vehículo',
-    'required',
-    'min' => 1900,
-    'max' => date('Y'),
-]) !!}
+                    'class' => 'form-control',
+                    'placeholder' => 'Ingrese el año del vehículo',
+                    'required',
+                    'min' => 1900,
+                    'max' => date('Y'),
+                ]) !!}
             </div>
-
             <div class="form-group col-md-4">
                 {!! Form::label('type_id', 'Tipo') !!}
                 {!! Form::select('type_id', $type, null, [
-    'class' => 'form-control',
-    'placeholder' => 'Seleccione un tipo.',
-    'required'
-]) !!}
+                    'class' => 'form-control',
+                    'placeholder' => 'Seleccione un tipo.',
+                    'required'
+                ]) !!}
             </div>
-
-
             <div class="form-group col-4">
                 {!! Form::label('brand_id', 'Marca') !!}
                 <select name="brand_id" id="brandSelect" class="form-control" required>
