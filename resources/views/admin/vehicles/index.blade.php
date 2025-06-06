@@ -30,10 +30,10 @@
                         <th>Carga</th>
                         <th>Combustible</th>
                         <th>Compatación</th>
-                        <th>Descripción</th>
+                        {{-- <th>Descripción</th> --}}
                         <th>Estado</th>
-                        <th>Creación</th>
-                        <th>Actualización</th>
+                        {{-- <th>Creación</th> --}}
+                        {{-- <th>Actualización</th> --}}
                         <th>Options</th>
                     </tr>
                 </thead>
@@ -194,18 +194,18 @@
                     {
                         "data": "compaction_capacity",
                     },
-                    {
-                        "data": "description",
-                    },
+                    // {
+                    //     "data": "description",
+                    // },
                     {
                         "data": "status",
                     },
-                    {
-                        "data": "created_at",
-                    },
-                    {
-                        "data": "updated_at",
-                    },
+                    // {
+                    //     "data": "created_at",
+                    // },
+                    // {
+                    //     "data": "updated_at",
+                    // },
                     {
                         "data": "options",
                         "orderable": false,

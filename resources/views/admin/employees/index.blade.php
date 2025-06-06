@@ -11,7 +11,7 @@
     </div>
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-sm table-bordered table-hover text-center w-100" id="tbtEntity">
+            <table class="table table-sm table-bordered text-center" id="tbtEntity">
                 <thead class="thead-dark">
                     <tr>
                         <th>Foto</th>
@@ -78,26 +78,41 @@
                         "searchable": false
                     },
                     {
+                        "data": "dni",
+                    },
+                    {
+                        "data": "type_name",
+                    },
+                    {
                         "data": "full_name",
-                        "width": "10%",
                     },
                     {
-                        "data": "description",
-                        "width": "20%",
+                        "data": "birthday",
                     },
                     {
-                        "data": "created_at",
-                        "width": "15%",
+                        "data": "license",
                     },
                     {
-                        "data": "updated_at",
-                        "width": "15%",
+                        "data": "address",
+                    },
+                    {
+                        "data": "email",
+                    },
+                    {
+                        "data": "phone",
+                    },
+                    {
+                        "data": "password",
+                    },
+                    {
+                        "data": "status",
                     },
                     {
                         "data": "options",
                         "orderable": false,
                         "searchable": false,
-                        "width": "4%",
+                        "width": "10%",
+
                     },
                 ]
             });
@@ -274,38 +289,4 @@
 @endsection
 
 @section('css')
-    <style>
-        /* Hace que la tabla use el 100% del contenedor */
-        .table-responsive {
-            overflow-x: auto;
-        }
-
-        table#tbtEntity {
-            width: 100% !important;
-        }
-
-        /* Mejora la apariencia del modal */
-        .modal-content {
-            border-radius: 0.5rem;
-        }
-
-        .card {
-            border-radius: 0.5rem;
-        }
-
-        .card-header {
-            border-top-left-radius: 0.5rem;
-            border-top-right-radius: 0.5rem;
-        }
-
-        .card-footer {
-            border-bottom-left-radius: 0.5rem;
-            border-bottom-right-radius: 0.5rem;
-        }
-
-        /* Estilo de botones */
-        .btn {
-            min-width: 130px;
-        }
-    </style>
 @stop
