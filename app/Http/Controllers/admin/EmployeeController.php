@@ -24,27 +24,29 @@ class EmployeeController extends Controller
             'employees.license',
             'employees.address',
             'employees.email',
+            'employees.photo',
             'employees.phone',
-            'employees.status',
             'employees.password',
+            'employees.status',
             't.name as type_name',
             'employees.created_at',
             'employees.updated_at'
         )
             ->join('employeetypes as t', 'employees.type_id', '=', 't.id');
+        
         if ($request->ajax()) {
             // sin ->get()
 
             return DataTables::of($employees)
-                ->addColumn('options', function ($vehicle) {
+                ->addColumn('options', function ($employee) {
                     return '
-                        <button class="btn btn-sm btn-warning btnEditar" id="' . $vehicle->id . '">
+                        <button class="btn btn-sm btn-warning btnEditar" id="' . $employee->id . '">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <button class="btn btn-sm btn-secondary btnFoto" id="' . $vehicle->id . '">
+                        <button class="btn btn-sm btn-secondary btnFoto" id="' . $employee->id . '">
                             <i class="fas fa-image"></i>
                         </button>
-                        <form action="' . route('admin.vehicles.destroy', $vehicle->id) . '" method="POST" class="d-inline frmDelete">
+                        <form action="' . route('admin.employees.destroy', $employee->id) . '" method="POST" class="d-inline frmDelete">
                             ' . csrf_field() . method_field('DELETE') . '
                             <button type="submit" class="btn btn-sm btn-danger">
                                 <i class="fas fa-trash"></i>
