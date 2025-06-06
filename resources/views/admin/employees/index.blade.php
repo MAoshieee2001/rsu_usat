@@ -36,11 +36,11 @@
     </div>
 
     <div class="card-footer">
-        <button type="button" class="btn btn-primary" id="btnNuevo">
-            <i class="fas fa-plus"></i> Nuevo Registro
+        <button type="button" class="btn btn-primary" id="btnNuevo"><i class="fas fa-plus"></i>
+            Nuevo Registro
         </button>
-        <a href="{{ route('admin.employees.index') }}" class="btn btn-success">
-            <i class="fas fa-sync"></i> Actualizar
+        <a href="{{ route('admin.employees.index') }}" class="btn btn-success"><i class="fas fa-sync"></i>
+            Actualizar
         </a>
     </div>
 </div>
@@ -48,15 +48,15 @@
 <!-- Modal -->
 <div class="modal fade" id="ModalCenter" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle"
     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
-        <div class="modal-content border-0 shadow">
-            <div class="modal-header bg-primary text-white">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
                 <h5 class="modal-title" id="ModalLongTitle"></h5>
-                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Cerrar">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body bg-light">
+            <div class="modal-body">
                 ...
             </div>
         </div>

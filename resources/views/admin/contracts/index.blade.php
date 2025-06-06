@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Contractos')
+@section('title', 'Contratos')
 
 <!--@section('content_header')
 @stop-->
@@ -17,7 +17,7 @@
             <table class="table table-sm table-bordered text-center" id="tbtEntity">
                 <thead class="thead-dark">
                     <tr>
-                        <th>Contracto</th>
+                        <th>Contrato</th>
                         <th>Empleado</th>
                         <th>Estado</th>
                         <th>Fecha de inicio</th>
