@@ -12,4 +12,10 @@ class EmployeeContract extends Model
     protected $table = 'employee_contracts';
 
     protected $guarded = [];
+
+    public function contractType()
+    {
+        return $this->belongsTo(ContractType::class, 'contract_id');
+    }
+
 }

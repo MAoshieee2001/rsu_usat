@@ -79,14 +79,23 @@ class EmployeeContractController extends Controller
     {
         try {
             $contract = ContractType::find($request->contract_id);
-            if (!$contract) {
+
+
+            $existingContract = EmployeeContract::where('employee_id', $request->employee_id)
+                ->whereHas('contractType', function ($query) {
+                    $query->whereIn('name', ['Nombrado', 'Permanente']);
+                })
+                ->where('status', 'Activo') 
+                ->first();
+
+            if ($existingContract) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Tipo de contrato no encontrado.',
+                    'message' => 'El empleado ya tiene un contrato Nombrado o Permanente activo, no se puede agregar otro.',
                 ], 422);
             }
 
-            // Si es Temporal, date_end obligatorio
+            // Validar contrato temporal con fecha fin obligatoria
             if (strtolower($contract->name) === 'temporal' && empty($request->date_end)) {
                 return response()->json([
                     'success' => false,
