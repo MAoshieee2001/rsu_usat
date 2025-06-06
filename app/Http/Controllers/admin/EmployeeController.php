@@ -78,20 +78,59 @@ class EmployeeController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+
     public function store(Request $request)
     {
-        $request->validate([
-            'dni' => 'required|unique:employees,dni',
-            'names' => 'required|string|max:100',
-            'lastnames' => 'required|string|max:100',
-            'email' => 'required|email|unique:employees,email',
-            'phone' => 'nullable|string|max:20',
-            'type_id' => 'required|exists:types,id',
-        ]);
+        try {
+            // Validaciones
+            $request->validate([
+                'dni' => 'required|string|size:8|unique:employees,dni',
+                'names' => 'required|string|max:100',
+                'lastnames' => 'required|string|max:100',
+                'birthday' => 'required|date|before:today',
+                'license' => 'nullable|string|max:20',
+                'address' => 'required|string|max:255',
+                'email' => 'required|email|max:100|unique:employees,email',
+                'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+                'phone' => 'required|string|max:15',
+                'password' => 'required|string|min:6|confirmed',
+                'status' => 'required|in:active,inactive',
+                'type_id' => 'required|integer|exists:employeetypes,id',
+            ]);
 
-        Employee::create($request->all());
+            // Crear empleado
+            $employee = Employee::create([
+                'dni' => $request->dni,
+                'names' => $request->names,
+                'lastnames' => $request->lastnames,
+                'birthday' => $request->birthday,
+                'license' => $request->license,
+                'address' => $request->address,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'password' => bcrypt($request->password),
+                'status' => $request->status,
+                'type_id' => $request->type_id,
+            ]);
 
-        return redirect()->route('admin.employees.index')->with('success', 'Empleado registrado exitosamente.');
+            // Manejo de foto (opcional)
+            if ($request->hasFile('photo')) {
+                $path = $request->file('photo')->store('employee_photos', 'public');
+                $employee->photo = 'storage/' . $path;
+                $employee->save();
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Empleado registrado con éxito.',
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al registrar el empleado: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
