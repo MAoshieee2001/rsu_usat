@@ -18,31 +18,31 @@
 
                     <!-- Apellidos -->
                     <div class="form-group col-md-4">
-                        {!! Form::label('lastnames', 'Apellidos') !!}
+                        {!! Form::label('lastnames', 'Apellidos del Empleado') !!}
                         {!! Form::text('lastnames', null, ['class' => 'form-control', 'placeholder' => 'Ingrese los apellidos', 'required', 'autocomplete' => 'off']) !!}
                     </div>
 
                     <!-- Fecha nacimiento -->
                     <div class="form-group col-md-4">
-                        {!! Form::label('birthday', 'Fecha de nacimiento') !!}
+                        {!! Form::label('birthday', 'Fecha de nacimiento del empleado') !!}
                         {!! Form::date('birthday', null, ['class' => 'form-control', 'required']) !!}
                     </div>
 
                     <!-- Licencia -->
                     <div class="form-group col-md-4">
-                        {!! Form::label('license', 'Licencia') !!}
+                        {!! Form::label('license', 'Licencia del empleado') !!}
                         {!! Form::text('license', null, ['class' => 'form-control', 'placeholder' => 'Ingrese la licencia', 'autocomplete' => 'off']) !!}
                     </div>
 
                     <!-- Dirección -->
                     <div class="form-group col-md-4">
-                        {!! Form::label('address', 'Dirección') !!}
+                        {!! Form::label('address', 'Dirección del empleado') !!}
                         {!! Form::text('address', null, ['class' => 'form-control', 'placeholder' => 'Ingrese la dirección', 'required', 'autocomplete' => 'off']) !!}
                     </div>
 
                     <!-- Correo -->
                     <div class="form-group col-md-4">
-                        {!! Form::label('email', 'Correo electrónico') !!}
+                        {!! Form::label('email', 'Correo electrónico del empleado') !!}
                         {!! Form::email('email', null, ['class' => 'form-control', 'placeholder' => 'Ingrese el correo electrónico', 'required', 'autocomplete' => 'off']) !!}
                     </div>
 
@@ -63,17 +63,29 @@
                         {!! Form::label('status', 'Estado') !!}
                         {!! Form::select('status', [1 => 'Activo', 0 => 'Inactivo'], null, ['class' => 'form-control', 'required']) !!}
                     </div>
-
                     <!-- Tipo de empleado -->
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-4">
                         {!! Form::label('type_id', 'Tipo de empleado') !!}
-                        {!! Form::select('type_id', $types, null, ['class' => 'form-control', 'placeholder' => 'Seleccione un tipo', 'required']) !!}
+                        <select name="type_id" id="employeeTypesSelect" class="form-control" required>
+                            <option value="">Seleccione un tipo de empleado</option>
+                            @foreach ($employeetypes as $id => $name)
+                                <option value="{{ $id }}" {{ isset($employees) && $employees->type_id == $id ? 'selected' : '' }}>
+                                    {{ $name }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
-
                     <!-- Contrato -->
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-4">
                         {!! Form::label('contract_id', 'Tipo de contrato') !!}
-                        {!! Form::select('contract_id', $contracts, null, ['class' => 'form-control', 'placeholder' => 'Seleccione un contrato', 'required']) !!}
+                        <select name="contract_id" id="contractTypesSelect" class="form-control" required>
+                            <option value="">Seleccione un tipo de contrato</option>
+                            @foreach ($contract_types as $id => $name)
+                                <option value="{{ $id }}" {{ isset($employees) && $employees->contract_id == $id ? 'selected' : '' }}>
+                                    {{ $name }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
             </div>
@@ -89,8 +101,8 @@
 
                 @php
                     $photoPath = 'storage/employees/default.png';
-                    if (isset($employee) && !empty($employee->photo)) {
-                        $photoPath = $employee->photo;
+                    if (isset($employees) && !empty($employees->photo)) {
+                        $photoPath = $employees->photo;
                     }
                 @endphp
 
