@@ -154,10 +154,9 @@
                 url: "{{ route('admin.employees.edit', 'id') }}".replace('id', id),
                 type: "GET",
                 success: function (response) {
-                    $('.modal-title').html("<i class='fas fa-edit'></i> Editar marca");
+                    $('.modal-title').html("<i class='fas fa-edit'></i> Editar empleado");
                     $('#ModalCenter .modal-body').html(response);
                     $('#ModalCenter').modal('show');
-
                     $('#ModalCenter form').on('submit', function (e) {
                         e.preventDefault();
                         var form = $(this);
