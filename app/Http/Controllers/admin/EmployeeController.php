@@ -8,6 +8,7 @@ use App\Models\EmployeeType;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class EmployeeController extends Controller
 {
@@ -42,9 +43,6 @@ class EmployeeController extends Controller
                     return '
                         <button class="btn btn-sm btn-warning btnEditar" id="' . $employee->id . '">
                             <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn btn-sm btn-secondary btnFoto" id="' . $employee->id . '">
-                            <i class="fas fa-image"></i>
                         </button>
                         <form action="' . route('admin.employees.destroy', $employee->id) . '" method="POST" class="d-inline frmDelete">
                             ' . csrf_field() . method_field('DELETE') . '
@@ -138,38 +136,81 @@ class EmployeeController extends Controller
      */
     public function show(string $id)
     {
-        $employee = Employee::with(['contractType', 'type'])->findOrFail($id);
-        return view('admin.employees.show', compact('employee'));
+        //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
-        $employee = Employee::findOrFail($id);
-        return view('admin.employees.edit', compact('employee'));
+        try {
+            // Cargar el empleado junto con posibles relaciones (si existieran)
+            $employee = Employee::findOrFail($id);
+            // Obtener los tipos de empleado para un select
+            $types = EmployeeType::pluck('name', 'id');
+            return view('admin.employees.edit', compact('employee', 'types'));
+        } catch (\Exception $e) {
+            return redirect()->route('admin.employees.index')->with('error', 'Ocurrió un error al intentar editar el empleado.');
+        }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
-        $employee = Employee::findOrFail($id);
+        try {
+            $employee = Employee::findOrFail($id);
 
-        $request->validate([
-            'dni' => 'required|unique:employees,dni,' . $employee->id,
-            'names' => 'required|string|max:100',
-            'lastnames' => 'required|string|max:100',
-            'email' => 'required|email|unique:employees,email,' . $employee->id,
-            'phone' => 'nullable|string|max:20',
-            'type_id' => 'required|exists:types,id',
-        ]);
+            $request->validate([
+                'dni' => [
+                    'required',
+                    'string',
+                    'size:8',
+                    Rule::unique('employees', 'dni')->ignore($employee->id),
+                ],
+                'names' => 'required|string|max:100',
+                'lastnames' => 'required|string|max:100',
+                'birthday' => 'required|date|before:today',
+                'license' => 'nullable|string|max:20',
+                'address' => 'required|string|max:255',
+                'email' => [
+                    'required',
+                    'email',
+                    'max:100',
+                    Rule::unique('employees', 'email')->ignore($employee->id),
+                ],
+                'phone' => 'required|string|max:15',
+                'status' => 'required|in:active,inactive',
+                'type_id' => 'required|integer|exists:employeetypes,id',
+            ]);
 
-        $employee->update($request->all());
+            // Actualizar datos del empleado
+            $employee->update([
+                'dni' => $request->dni,
+                'names' => $request->names,
+                'lastnames' => $request->lastnames,
+                'birthday' => $request->birthday,
+                'license' => $request->license,
+                'address' => $request->address,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'status' => $request->status,
+                'type_id' => $request->type_id,
+            ]);
 
-        return redirect()->route('admin.employees.index')->with('success', 'Empleado actualizado correctamente.');
+            // Si se sube una nueva foto, se almacena
+            if ($request->hasFile('photo')) {
+                $path = $request->file('photo')->store('employee_photos', 'public');
+                $employee->photo = 'storage/' . $path;
+                $employee->save();
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Empleado actualizado correctamente.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar el empleado: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
