@@ -41,10 +41,10 @@ class EmployeeController extends Controller
 
                 ->addColumn('options', function ($employee) {
                     return '
-                        <button class="btn btn-sm btn-warning btnEditar" data-id="' . $employee->id . '">
+                        <button class="btn btn-sm btn-warning btnEditar" id="' . $employee->id . '">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <form action="' . route('admin.employees.destroy', $employee->id) . '" method="POST" class="d-inline frmDelete">
+                        <form action="' . route('admin.types.destroy', $employee->id) . '" method="POST" class="d-inline frmDelete">
                             ' . csrf_field() . method_field('DELETE') . '
                             <button type="submit" class="btn btn-sm btn-danger">
                                 <i class="fas fa-trash"></i>

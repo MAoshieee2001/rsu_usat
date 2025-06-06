@@ -79,49 +79,39 @@
                     },
                     {
                         "data": "dni",
-                        "width": "10%",
                     },
                     {
                         "data": "type_name",
-                        "width": "20%",
                     },
                     {
                         "data": "full_name",
-                        "width": "15%",
                     },
                     {
                         "data": "birthday",
-                        "width": "15%",
                     },
                     {
                         "data": "license",
-                        "width": "15%",
                     },
                     {
                         "data": "address",
-                        "width": "15%",
                     },
                     {
                         "data": "email",
-                        "width": "15%",
                     },
                     {
                         "data": "phone",
-                        "width": "15%",
                     },
                     {
                         "data": "password",
-                        "width": "15%",
                     },
                     {
                         "data": "status",
-                        "width": "15%",
                     },
                     {
                         "data": "options",
                         "orderable": false,
                         "searchable": false,
-                        "width": "4%",
+                        "width": "10%",
                     },
                 ]
             });
