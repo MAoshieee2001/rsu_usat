@@ -15,11 +15,6 @@ class Employee extends Model
         return $this->names . ' ' . $this->lastnames;
     }
 
-    public function contractType()
-    {
-        return $this->belongsTo(ContractType::class, 'contract_id');
-    }
-
     public function type()
     {
         return $this->belongsTo(Type::class, 'type_id');

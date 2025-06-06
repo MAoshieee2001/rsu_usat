@@ -72,7 +72,6 @@ class EmployeeController extends Controller
             'lastnames' => 'required|string|max:100',
             'email' => 'required|email|unique:employees,email',
             'phone' => 'nullable|string|max:20',
-            'contract_id' => 'required|exists:contract_types,id',
             'type_id' => 'required|exists:types,id',
         ]);
 
@@ -112,7 +111,6 @@ class EmployeeController extends Controller
             'lastnames' => 'required|string|max:100',
             'email' => 'required|email|unique:employees,email,' . $employee->id,
             'phone' => 'nullable|string|max:20',
-            'contract_id' => 'required|exists:contract_types,id',
             'type_id' => 'required|exists:types,id',
         ]);
 
