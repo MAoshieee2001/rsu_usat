@@ -118,6 +118,8 @@ class EmployeeController extends Controller
                 $employee->save();
             }
 
+            DB::commit();
+
             return response()->json([
                 'success' => true,
                 'message' => 'Empleado registrado con éxito.',
@@ -216,10 +218,30 @@ class EmployeeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        $employee = Employee::findOrFail($id);
-        $employee->delete();
-        return redirect()->route('admin.employees.index')->with('success', 'Empleado eliminado.');
+        try {
+            $employee = Employee::findOrFail($id);
+
+            // Si el empleado tiene imágenes u otros archivos relacionados
+            foreach ($employee->images as $image) {
+                if ($image->image && Storage::exists('public/' . $image->image)) {
+                    Storage::delete('public/' . $image->image);
+                }
+
+                $image->delete(); // Elimina el registro de la tabla relacionada, como employee_images
+            }
+
+            // Finalmente, elimina el empleado
+            $employee->delete();
+
+            return response()->json(['success' => true, 'message' => 'Empleado eliminado correctamente.']);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al eliminar el empleado: ' . $e->getMessage()
+            ], 500);
+        }
     }
+
 }

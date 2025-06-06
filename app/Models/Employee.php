@@ -21,4 +21,8 @@ class Employee extends Model
             ->withTimestamps();
     }
 
+    public function images()
+    {
+        return $this->hasMany(EmployeeImage::class);
+    }
 }
