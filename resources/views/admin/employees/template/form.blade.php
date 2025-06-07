@@ -38,17 +38,30 @@
                         {!! Form::password('password', [
                             'class' => 'form-control',
                             'placeholder' => 'Ingrese la contraseña',
-                            'required',
-                            'autocomplete' => 'new-password'
+                            'required' => !isset($employees),
+                            'autocomplete' => 'new-password',
+                            'id' => 'password'
                         ]) !!}
                     </div>
 
-                    <!-- Estado -->
+                    <!-- Confirmación de Contraseña -->
+                    <div class="form-group col-md-6">
+                        {!! Form::label('password_confirmation', 'Confirmar Contraseña') !!}
+                        {!! Form::password('password_confirmation', [
+                            'class' => 'form-control',
+                            'placeholder' => 'Confirme la contraseña',
+                            'required' => !isset($employees),
+                            'autocomplete' => 'new-password',
+                            'id' => 'password_confirmation'
+                        ]) !!}
+                        <small id="passwordMatchError" class="text-danger d-none">Las contraseñas no coinciden</small>
+                    </div>
+
+                    <!-- Estado-->
                     <div class="form-group col-md-6">
                         {!! Form::label('status', 'Estado') !!}
-                        {!! Form::select('status', [1 => 'Activo', 0 => 'Inactivo'], null, [
-                            'class' => 'form-control',
-                            'required'
+                        {!! Form::select('status', [1 => 'Activo', 0 => 'Inactivo'], $employees->status ?? 1, [
+                            'class' => 'form-control'
                         ]) !!}
                     </div>
 
@@ -93,7 +106,7 @@
     </div>
 </div>
 
-<!-- Script para previsualizar la imagen seleccionada -->
+<!-- Script para previsualizar la imagen seleccionada y validar contraseña -->
 <script>
     function previewPhoto(event) {
         const input = event.target;
@@ -107,4 +120,23 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
+
+    // Validación de contraseña en tiempo real
+    document.addEventListener('DOMContentLoaded', function() {
+        const password = document.getElementById('password');
+        const passwordConfirmation = document.getElementById('password_confirmation');
+        const passwordMatchError = document.getElementById('passwordMatchError');
+
+        if (password && passwordConfirmation) {
+            [password, passwordConfirmation].forEach(field => {
+                field.addEventListener('input', function() {
+                    if (password.value !== passwordConfirmation.value) {
+                        passwordMatchError.classList.remove('d-none');
+                    } else {
+                        passwordMatchError.classList.add('d-none');
+                    }
+                });
+            });
+        }
+    });
 </script>
