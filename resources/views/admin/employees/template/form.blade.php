@@ -75,18 +75,6 @@
                             @endforeach
                         </select>
                     </div>
-                    <!-- Contrato -->
-                    <div class="form-group col-4">
-                        {!! Form::label('contract_id', 'Tipo de contrato') !!}
-                        <select name="contract_id" id="contractTypesSelect" class="form-control" required>
-                            <option value="">Seleccione un tipo de contrato</option>
-                            @foreach ($contract_types as $id => $name)
-                                <option value="{{ $id }}" {{ isset($employees) && $employees->contract_id == $id ? 'selected' : '' }}>
-                                    {{ $name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
                 </div>
             </div>
         </div>
