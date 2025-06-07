@@ -20,5 +20,4 @@ class Employee extends Model
         return $this->belongsToMany(ContractType::class, 'employee_contracts', 'employee_id', 'contract_id')
             ->withTimestamps();
     }
-
 }
