@@ -366,6 +366,48 @@ return [
                     'route' => 'admin.vacations.index',
                     'icon' => 'fas fa-calendar',
                 ],
+                [
+                    'text' => 'Asistencia',
+                    'route' => 'admin.vacations.index',
+                    'icon' => 'fas fa-clipboard',
+                ],
+            ],
+        ],
+
+        [
+            'text' => 'Gestión de zonas',
+            'icon' => 'fas fa-globe',
+            'submenu' => [
+                [
+                    'text' => 'Zonas',
+                    'url' => 'admin.employees.index',
+                    'icon' => 'fas fa-border-none',
+                ],
+                [
+                    'text' => 'Rutas',
+                    'url' => 'admin.contracts.index',
+                    'icon' => 'fas fa-road',
+                ],
+
+            ],
+        ],
+
+
+        [
+            'text' => 'Programación',
+            'icon' => 'fas fa-terminal',
+            'submenu' => [
+                [
+                    'text' => 'Zonas',
+                    'url' => 'admin.employees.index',
+                    'icon' => 'fas fa-border-none',
+                ],
+                [
+                    'text' => 'Rutas',
+                    'url' => 'admin.contracts.index',
+                    'icon' => 'fas fa-road',
+                ],
+
             ],
         ],
     ],
