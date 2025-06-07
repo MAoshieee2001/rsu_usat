@@ -25,7 +25,7 @@
                     <!-- Fecha nacimiento -->
                     <div class="form-group col-md-4">
                         {!! Form::label('birthday', 'Fecha de nacimiento del empleado') !!}
-                        {!! Form::date('birthday', null, ['class' => 'form-control', 'required']) !!}
+                        {!! Form::date('birthday', null, ['class' => 'form-control', 'required','min' => date('Y-m-d')]) !!}
                     </div>
 
                     <!-- Licencia -->

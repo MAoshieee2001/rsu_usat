@@ -117,14 +117,13 @@
                 ]
             });
         })
-
         $('#btnNuevo').click(function () {
             // Permite aperturar el modal y realizar peticion
             $.ajax({
                 url: "{{ route('admin.employees.create') }}",
                 type: "GET",
                 success: function (response) {
-                    $('.modal-title').html("<i class='fas fa-plus'></i> Nuevo empleado");
+                    $('.modal-title').html("<i class='fas fa-plus'></i> Nuevo Empleado");
                     $('#ModalCenter .modal-body').html(response);
                     $('#ModalCenter').modal('show');
 
@@ -145,7 +144,9 @@
                                     title: "Proceso exitoso",
                                     icon: "success",
                                     text: response.message,
-                                    draggable: true
+                                    draggable: true,
+                                    timer: 2000,
+                                    timerProgressBar: true,
                                 });
                             },
                             error: function (xhr) {
@@ -154,7 +155,9 @@
                                     title: "Error",
                                     icon: "error",
                                     text: response.message,
-                                    draggable: true
+                                    draggable: true,
+                                    timer: 2000,
+                                    timerProgressBar: true,
                                 });
                             }
                         })
@@ -162,7 +165,7 @@
                 }
             })
         })
-
+        
         $(document).on('click', '.btnEditar', function () {
             var id = $(this).attr("id");
             $.ajax({
