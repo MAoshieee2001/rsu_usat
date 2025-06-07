@@ -36,7 +36,7 @@ class EmployeeController extends Controller
             'employees.updated_at'
         )
             ->join('employeetypes as t', 'employees.type_id', '=', 't.id');
-        
+
         if ($request->ajax()) {
             return DataTables::of($employees)
                 ->addColumn('options', function ($employee) {
@@ -80,7 +80,7 @@ class EmployeeController extends Controller
     {
         // Iniciar transacción
         DB::beginTransaction();
-        
+
         try {
             // Validaciones
             $request->validate([
@@ -93,8 +93,7 @@ class EmployeeController extends Controller
                 'email' => 'required|email|max:100|unique:employees,email',
                 'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
                 'phone' => 'required|string|max:15',
-                'password' => 'required|string|min:6|confirmed', // Agregar confirmed
-                'status' => 'required|in:active,inactive', // Hacer required
+                'password' => 'required|string|min:6', // Agregar confirmed
                 'type_id' => 'required|integer|exists:employeetypes,id',
             ]);
 
@@ -109,7 +108,7 @@ class EmployeeController extends Controller
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'password' => Hash::make($request->password), // Encriptar contraseña
-                'status' => $request->status ?? 'active', // Valor por defecto
+                'status' => $request->status, // Valor por defecto
                 'type_id' => $request->type_id,
             ];
 
@@ -156,9 +155,9 @@ class EmployeeController extends Controller
     public function edit(string $id)
     {
         try {
-            $employee = Employee::findOrFail($id);
-            $types = EmployeeType::pluck('name', 'id');
-            return view('admin.employees.edit', compact('employee', 'types'));
+            $employees = Employee::findOrFail($id);
+            $employeetypes = EmployeeType::pluck('name', 'id');
+            return view('admin.employees.edit', compact('employees', 'employeetypes'));
         } catch (\Exception $e) {
             return redirect()->route('admin.employees.index')->with('error', 'Ocurrió un error al intentar editar el empleado.');
         }
@@ -167,7 +166,7 @@ class EmployeeController extends Controller
     public function update(Request $request, string $id)
     {
         DB::beginTransaction();
-        
+
         try {
             $employee = Employee::findOrFail($id);
 
@@ -190,7 +189,6 @@ class EmployeeController extends Controller
                     Rule::unique('employees', 'email')->ignore($employee->id),
                 ],
                 'phone' => 'required|string|max:15',
-                'status' => 'required|in:active,inactive',
                 'type_id' => 'required|integer|exists:employeetypes,id',
             ]);
 

@@ -10,6 +10,8 @@ class Employee extends Model
     use HasFactory;
     protected $table = 'employees';
 
+    protected $guarded = [];
+
     public function getFullnamesAttribute()
     {
         return $this->names . ' ' . $this->lastnames;

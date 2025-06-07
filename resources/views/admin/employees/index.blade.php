@@ -23,7 +23,6 @@
                         <th>Dirección</th>
                         <th>Correo</th>
                         <th>Celular</th>
-                        <th>Contraseña</th>
                         <th>Estado</th>
                         <th>Acciones</th>
                     </tr>
@@ -102,16 +101,13 @@
                         "data": "phone",
                     },
                     {
-                        "data": "password",
-                    },
-                    {
                         "data": "status",
                     },
                     {
                         "data": "options",
                         "orderable": false,
                         "searchable": false,
-                        "width": "10%",
+                        "width": "4%",
 
                     },
                 ]

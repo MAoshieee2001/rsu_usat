@@ -77,7 +77,7 @@
                 <input type="file" id="photoInput" name="photo" accept="image/*" class="d-none" onchange="previewPhoto(event)">
                 
                 @php
-                    $photoPath = 'storage/employees/default.png';
+                    $photoPath = 'storage/brands/empty.png';
                     if (isset($employees) && !empty($employees->photo)) {
                         $photoPath = $employees->photo;
                     }
