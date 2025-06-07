@@ -94,7 +94,7 @@ class EmployeeController extends Controller
                 'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
                 'phone' => 'required|string|max:15',
                 'password' => 'required|string|min:6|confirmed', // Agregar confirmed
-                'status' => 'required|in:active,inactive', // Hacer required
+                'status' => 'required|in:1,0', // Hacer required
                 'type_id' => 'required|integer|exists:employeetypes,id',
             ]);
 
