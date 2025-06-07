@@ -38,6 +38,14 @@ class EmployeeController extends Controller
 
         if ($request->ajax()) {
             return DataTables::of($employees)
+                ->editColumn('status', function ($vehicle) {
+                    switch ($vehicle->status) {
+                        case 0:
+                            return '<span class="badge bg-danger">Inactivo</span>';
+                        case 1:
+                            return '<span class="badge bg-success text-dark">Activo</span>';
+                    }
+                })
                 ->addColumn('options', function ($employee) {
                     return '
                         <button class="btn btn-sm btn-warning btnEditar" id="' . $employee->id . '">
@@ -55,7 +63,7 @@ class EmployeeController extends Controller
                     $logoPath = $employee->photo == '' ? 'storage/brands/empty.png' : $employee->photo;
                     return '<img src="' . asset($logoPath) . '" width="50px" height="50px">';
                 })
-                ->rawColumns(['photo', 'options'])
+                ->rawColumns(['status', 'photo', 'options'])
                 ->make(true);
         }
 
@@ -185,8 +193,8 @@ class EmployeeController extends Controller
                     'required',
                     'email',
                     'max:100',
-                    Rule::unique('employees', 'email')->ignore($employee->id),
                 ],
+                'password' => 'required|string|min:6',
                 'phone' => 'required|string|max:15',
                 'type_id' => 'required|integer|exists:employeetypes,id',
             ]);
@@ -201,6 +209,7 @@ class EmployeeController extends Controller
                 'address' => $request->address,
                 'email' => $request->email,
                 'phone' => $request->phone,
+                'password' => Hash::make($request->password),
                 'status' => $request->status,
                 'type_id' => $request->type_id,
             ]);
