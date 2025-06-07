@@ -8,6 +8,8 @@ use App\Models\EmployeeType;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class EmployeeController extends Controller
@@ -36,8 +38,6 @@ class EmployeeController extends Controller
             ->join('employeetypes as t', 'employees.type_id', '=', 't.id');
         
         if ($request->ajax()) {
-            // sin ->get()
-
             return DataTables::of($employees)
                 ->addColumn('options', function ($employee) {
                     return '
@@ -56,7 +56,6 @@ class EmployeeController extends Controller
                     $logoPath = $employee->photo == '' ? 'storage/brands/empty.png' : $employee->photo;
                     return '<img src="' . asset($logoPath) . '" width="50px" height="50px">';
                 })
-
                 ->rawColumns(['photo', 'options'])
                 ->make(true);
         }
@@ -73,12 +72,15 @@ class EmployeeController extends Controller
             return redirect()->route('admin.employees.index')->with('error', 'Ocurrió un error al intentar crear un nuevo empleado.');
         }
     }
+
     /**
      * Store a newly created resource in storage.
      */
-
     public function store(Request $request)
     {
+        // Iniciar transacción
+        DB::beginTransaction();
+        
         try {
             // Validaciones
             $request->validate([
@@ -91,12 +93,13 @@ class EmployeeController extends Controller
                 'email' => 'required|email|max:100|unique:employees,email',
                 'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
                 'phone' => 'required|string|max:15',
-                'password' => 'required|string|min:6',
+                'password' => 'required|string|min:6|confirmed', // Agregar confirmed
+                'status' => 'required|in:active,inactive', // Hacer required
                 'type_id' => 'required|integer|exists:employeetypes,id',
             ]);
 
-            // Crear empleado
-            $employee = Employee::create([
+            // Preparar datos para crear empleado
+            $employeeData = [
                 'dni' => $request->dni,
                 'names' => $request->names,
                 'lastnames' => $request->lastnames,
@@ -105,10 +108,13 @@ class EmployeeController extends Controller
                 'address' => $request->address,
                 'email' => $request->email,
                 'phone' => $request->phone,
-                'password' => $request->password,
-                'status' => $request->status,
+                'password' => Hash::make($request->password), // Encriptar contraseña
+                'status' => $request->status ?? 'active', // Valor por defecto
                 'type_id' => $request->type_id,
-            ]);
+            ];
+
+            // Crear empleado
+            $employee = Employee::create($employeeData);
 
             // Manejo de foto (opcional)
             if ($request->hasFile('photo')) {
@@ -123,6 +129,13 @@ class EmployeeController extends Controller
                 'success' => true,
                 'message' => 'Empleado registrado con éxito.',
             ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Error de validación: ' . implode(', ', $e->validator->errors()->all()),
+                'errors' => $e->validator->errors()
+            ], 422);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
@@ -143,9 +156,7 @@ class EmployeeController extends Controller
     public function edit(string $id)
     {
         try {
-            // Cargar el empleado junto con posibles relaciones (si existieran)
             $employee = Employee::findOrFail($id);
-            // Obtener los tipos de empleado para un select
             $types = EmployeeType::pluck('name', 'id');
             return view('admin.employees.edit', compact('employee', 'types'));
         } catch (\Exception $e) {
@@ -155,6 +166,8 @@ class EmployeeController extends Controller
 
     public function update(Request $request, string $id)
     {
+        DB::beginTransaction();
+        
         try {
             $employee = Employee::findOrFail($id);
 
@@ -202,11 +215,21 @@ class EmployeeController extends Controller
                 $employee->save();
             }
 
+            DB::commit();
+
             return response()->json([
                 'success' => true,
                 'message' => 'Empleado actualizado correctamente.',
             ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Error de validación: ' . implode(', ', $e->validator->errors()->all()),
+                'errors' => $e->validator->errors()
+            ], 422);
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json([
                 'success' => false,
                 'message' => 'Error al actualizar el empleado: ' . $e->getMessage(),
@@ -222,16 +245,12 @@ class EmployeeController extends Controller
         try {
             $employee = Employee::findOrFail($id);
 
-            // Si el empleado tiene imágenes u otros archivos relacionados
-            foreach ($employee->images as $image) {
-                if ($image->image && Storage::exists('public/' . $image->image)) {
-                    Storage::delete('public/' . $image->image);
-                }
-
-                $image->delete(); // Elimina el registro de la tabla relacionada, como employee_images
+            // Si el empleado tiene foto, eliminarla
+            if ($employee->photo && Storage::exists('public/' . str_replace('storage/', '', $employee->photo))) {
+                Storage::delete('public/' . str_replace('storage/', '', $employee->photo));
             }
 
-            // Finalmente, elimina el empleado
+            // Eliminar el empleado
             $employee->delete();
 
             return response()->json(['success' => true, 'message' => 'Empleado eliminado correctamente.']);
@@ -242,5 +261,4 @@ class EmployeeController extends Controller
             ], 500);
         }
     }
-
 }

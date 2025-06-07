@@ -1,5 +1,5 @@
 <div class="row">
-    <!-- Columna izquierda: datos del empleado -->
+    <!-- Columna izquierda: Datos del empleado -->
     <div class="col-lg-8 mb-4">
         <div class="card shadow border-0">
             <div class="card-header bg-primary text-white">
@@ -33,19 +33,27 @@
                     @endforeach
 
                     <!-- Contraseña -->
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-6">
                         {!! Form::label('password', 'Contraseña') !!}
-                        {!! Form::password('password', ['class' => 'form-control', 'placeholder' => 'Ingrese la contraseña', 'required']) !!}
+                        {!! Form::password('password', [
+                            'class' => 'form-control',
+                            'placeholder' => 'Ingrese la contraseña',
+                            'required',
+                            'autocomplete' => 'new-password'
+                        ]) !!}
                     </div>
 
                     <!-- Estado -->
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-6">
                         {!! Form::label('status', 'Estado') !!}
-                        {!! Form::select('status', [1 => 'Activo', 0 => 'Inactivo'], null, ['class' => 'form-control', 'required']) !!}
+                        {!! Form::select('status', [1 => 'Activo', 0 => 'Inactivo'], null, [
+                            'class' => 'form-control',
+                            'required'
+                        ]) !!}
                     </div>
 
                     <!-- Tipo de empleado -->
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-6">
                         {!! Form::label('type_id', 'Tipo de Empleado') !!}
                         <select name="type_id" id="employeeTypesSelect" class="form-control" required>
                             <option value="">Seleccione un tipo</option>
@@ -90,7 +98,7 @@
     function previewPhoto(event) {
         const input = event.target;
         const preview = document.getElementById('photoPreview');
-        
+
         if (input.files && input.files[0]) {
             const reader = new FileReader();
             reader.onload = function(e) {
