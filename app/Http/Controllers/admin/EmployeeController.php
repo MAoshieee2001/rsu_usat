@@ -91,8 +91,7 @@ class EmployeeController extends Controller
                 'email' => 'required|email|max:100|unique:employees,email',
                 'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
                 'phone' => 'required|string|max:15',
-                'password' => 'required|string|min:6|confirmed',
-                'status' => 'required|in:active,inactive',
+                'password' => 'required|string|min:6',
                 'type_id' => 'required|integer|exists:employeetypes,id',
             ]);
 
@@ -106,7 +105,7 @@ class EmployeeController extends Controller
                 'address' => $request->address,
                 'email' => $request->email,
                 'phone' => $request->phone,
-                'password' => bcrypt($request->password),
+                'password' => $request->password,
                 'status' => $request->status,
                 'type_id' => $request->type_id,
             ]);
