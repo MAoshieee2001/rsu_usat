@@ -3,7 +3,7 @@
         {!! Form::label('employee_id', 'Empleado') !!}
         {!! Form::select('employee_id', $employee, null, [
     'class' => 'form-control',
-    'placeholder' => 'Seleccione una empleado.',
+    'placeholder' => 'Seleccione un empleado.',
     'required'
 ]) !!}
     </div>

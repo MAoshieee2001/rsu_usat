@@ -17,36 +17,10 @@
                             <th>Descripción</th>
                             <th>Creación</th>
                             <th>Actualización</th>
-                            <th>actions</th>
+                            <th>Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {{--
-                        @foreach ($models as $model)
-                        <tr>
-                            <td>{{ $model->model_name }}</td>
-                            <td>{{ $model->code }}</td>
-                            <td>{{ $model->brand_name }}</td>
-                            <td>{{ $model->description }}</td>
-                            <td>{{ $model->created_at->format('d/m/Y') }}</td>
-                            <td>{{ $model->updated_at->format('d/m/Y') }}</td>
-                            <td>
-                                <a href="{{ route('admin.models.edit', $model->id) }}" class="btn btn-sm btn-warning">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <button class="btn btn-sm btn-danger" onclick="confirmDelete({{ $model->id }})">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                                <form id="delete-form-{{ $model->id }}"
-                                    action="{{ route('admin.models.destroy', $model->id) }}" method="POST"
-                                    style="display: none;">
-                                    @csrf
-                                    @method('DELETE')
-                                </form>
-                            </td>
-                        </tr>
-                        @endforeach
-                        --}}
                     </tbody>
                 </table>
             </div>

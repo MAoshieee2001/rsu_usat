@@ -75,7 +75,12 @@ class VacationController extends Controller
     public function create()
     {
         try {
-            $employee = Employee::all()->pluck('fullnames', 'id');
+$employee = Employee::with('contracts.contractType')->get()->filter(function ($e) {
+    return $e->contracts->contains(function ($c) {
+        return $c->status === 'Activo' &&
+               in_array($c->contractType->name, ['Nombrado', 'Permanente']);
+    });
+})->pluck('fullnames', 'id');
             return view('admin.vacations.create', compact('employee'));
         } catch (\Exception $e) {
             return redirect()->route('admin.vacations.index')->with('error', 'Ocurrió un error al intentar crear un nueva vacación.');

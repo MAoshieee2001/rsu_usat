@@ -22,7 +22,7 @@
                         <th>Descripción</th>
                         <th>Creación</th>
                         <th>Actualización</th>
-                        <th>Options</th>
+                        <th>Opciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -79,7 +79,6 @@
                     },
                     {
                         "data": "description",
-                        "width": "20%",
                     },
                     {
                         "data": "created_at",

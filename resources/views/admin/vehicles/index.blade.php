@@ -19,54 +19,20 @@
                     <tr>
                         <th>Image</th>
                         <th>Code</th>
-                        <th>Marca</th>
                         <th>Modelo</th>
                         <th>Tipo</th>
                         <th>Nombre</th>
                         <th>Color</th>
                         <th>Placa</th>
-                        <th>Año</th>
                         <th>Capacidad</th>
                         <th>Carga</th>
                         <th>Combustible</th>
                         <th>Compatación</th>
-                        {{-- <th>Descripción</th> --}}
                         <th>Estado</th>
-                        {{-- <th>Creación</th> --}}
-                        {{-- <th>Actualización</th> --}}
-                        <th>Options</th>
+                        <th>Opciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {{--
-                    @foreach ($brands as $brand)
-                    <tr>
-                        <td>
-                            <img src="{{ $brand->logo == '' ? asset('storage/brand_logo/no_image.png') : asset($brand->logo) }}"
-                                alt="" width="80px" height="50px">
-                        </td>
-                        <td>{{ $brand->name }}</td>
-                        <td>{{ $brand->description }}</td>
-                        <td>{{ $brand->created_at }}</td>
-                        <td>{{ $brand->updated_at }}</td>
-                        <td>
-                            <button class="btn btn-success btn-sm btnEditar" id="{{ $brand->id }}">
-                                <i class="fas fa-pen"></i>
-                            </button>
-                            <form action="{{ route('admin.brands.destroy', $brand->id) }}" method="POST"
-                                class="frmDelete">
-                                @csrf
-                                @method('delete')
-                                <button type="submit" class="btn btn-danger btn-sm">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </form>
-                        </td>
-                        <td></td>
-                    </tr>
-                    @endforeach
-                    --}}
-
                 </tbody>
             </table>
         </div>
@@ -161,38 +127,44 @@
                         "searchable": false
                     },
                     {
-                        "data": "brand_name",
-                    },
-                    {
                         "data": "model_name",
+                        "width": "10%",
                     },
 
                     {
                         "data": "type_name",
+                        "width": "10%",
                     },
                     {
                         "data": "name",
+                        "width": "10%",
                     },
                     {
                         "data": "color_name",
+                        "width": "10%",
                     },
                     {
                         "data": "plate",
-                    },
-                    {
-                        "data": "year",
+                        "width": "7%",
                     },
                     {
                         "data": "capacity",
+                        "width": "6%",
+
                     },
                     {
                         "data": "load_capacity",
+                        "width": "6%",
+
                     },
                     {
                         "data": "fuel_capacity",
+                        "width": "6%",
+
                     },
                     {
                         "data": "compaction_capacity",
+                        "width": "6%",
                     },
                     // {
                     //     "data": "description",
@@ -374,11 +346,11 @@
                     if (data.length > 0) {
                         data.forEach(img => {
                             html += `
-                                                    <div class="me-3 mb-3 d-inline-block text-center">
-                                                        <img src="${img.image}" alt="Foto" style="width: 150px; height: 70px; object-fit: contain;" class="img-thumbnail" />
-                                                        <p class="text-center mt-1">${img.profile === 1 ? 'Foto de perfil' : 'Foto secundaria'}</p>
-                                                    </div>
-                                                `;
+                                                                <div class="me-3 mb-3 d-inline-block text-center">
+                                                                    <img src="${img.image}" alt="Foto" style="width: 150px; height: 70px; object-fit: contain;" class="img-thumbnail" />
+                                                                    <p class="text-center mt-1">${img.profile === 1 ? 'Foto de perfil' : 'Foto secundaria'}</p>
+                                                                </div>
+                                                            `;
                         });
                     } else {
                         html = '<p class="text-center w-100">No hay imágenes para este vehículo.</p>';
@@ -413,44 +385,44 @@
                                 '<span class="badge badge-warning position-absolute" style="top: 5px; left: 5px;"><i class="fas fa-star"></i> Perfil</span>' : '';
 
                             html += `
-                                                        <div class="col-lg-4 col-md-6 col-12 mb-4">
-                                                            <div class="card shadow-sm">
-                                                                <div class="position-relative">
-                                                                    ${profileBadge}
-                                                                    <img src="${img.image}" alt="Foto ${img.id}" 
-                                                                        style="width: 100%; height: 250px; object-fit: cover;" 
-                                                                        class="card-img-top" />
-                                                                </div>
-                                                                <div class="card-body p-2">
-                                                                    <h6 class="card-title text-center mb-2">${img.profile || 'Sin descripción'}</h6>
-                                                                    <div class="text-center">
-                                                                        <div class="btn-group" role="group">
-                                                                            <button type="button" class="btn btn-warning btn-sm btnSetProfile" 
-                                                                                    data-image-id="${img.id}" data-vehicle-id="${vehicleId}"
-                                                                                    ${isProfile ? 'disabled' : ''}>
-                                                                                <i class="fas fa-star"></i> 
-                                                                                ${isProfile ? 'Es Perfil' : 'Hacer Perfil'}
-                                                                            </button>
-                                                                            <button type="button" class="btn btn-danger btn-sm btnDeleteImage" 
-                                                                                    data-image-id="${img.id}" data-vehicle-id="${vehicleId}">
-                                                                                <i class="fas fa-trash"></i> Eliminar
-                                                                            </button>
+                                                                    <div class="col-lg-4 col-md-6 col-12 mb-4">
+                                                                        <div class="card shadow-sm">
+                                                                            <div class="position-relative">
+                                                                                ${profileBadge}
+                                                                                <img src="${img.image}" alt="Foto ${img.id}" 
+                                                                                    style="width: 100%; height: 250px; object-fit: cover;" 
+                                                                                    class="card-img-top" />
+                                                                            </div>
+                                                                            <div class="card-body p-2">
+                                                                                <h6 class="card-title text-center mb-2">${img.profile || 'Sin descripción'}</h6>
+                                                                                <div class="text-center">
+                                                                                    <div class="btn-group" role="group">
+                                                                                        <button type="button" class="btn btn-warning btn-sm btnSetProfile" 
+                                                                                                data-image-id="${img.id}" data-vehicle-id="${vehicleId}"
+                                                                                                ${isProfile ? 'disabled' : ''}>
+                                                                                            <i class="fas fa-star"></i> 
+                                                                                            ${isProfile ? 'Es Perfil' : 'Hacer Perfil'}
+                                                                                        </button>
+                                                                                        <button type="button" class="btn btn-danger btn-sm btnDeleteImage" 
+                                                                                                data-image-id="${img.id}" data-vehicle-id="${vehicleId}">
+                                                                                            <i class="fas fa-trash"></i> Eliminar
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    `;
+                                                                `;
                         });
                     } else {
                         html = `
-                                                    <div class="col-12">
-                                                        <div class="text-center py-5">
-                                                            <i class="fas fa-images fa-3x text-muted mb-3"></i>
-                                                            <p class="text-muted">No hay imágenes para este vehículo.</p>
-                                                        </div>
-                                                    </div>
-                                                `;
+                                                                <div class="col-12">
+                                                                    <div class="text-center py-5">
+                                                                        <i class="fas fa-images fa-3x text-muted mb-3"></i>
+                                                                        <p class="text-muted">No hay imágenes para este vehículo.</p>
+                                                                    </div>
+                                                                </div>
+                                                            `;
                     }
 
                     $('#contenedorImagenes').html(html);

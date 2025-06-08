@@ -18,13 +18,13 @@
                         <th>DNI</th>
                         <th>Función</th>
                         <th>Nombres Completos</th>
-                        <th>Fecha Nacimiento</th>
+                        <th>F. Nacimiento</th>
                         <th>Licencia</th>
                         <th>Dirección</th>
                         <th>Correo</th>
                         <th>Celular</th>
                         <th>Estado</th>
-                        <th>Acciones</th>
+                        <th>Opciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -87,15 +87,19 @@
                     },
                     {
                         "data": "birthday",
+                        "width": "9%",
                     },
                     {
                         "data": "license",
                     },
                     {
                         "data": "address",
+                        "width": "15%",
                     },
                     {
                         "data": "email",
+                        "width": "10%",
+
                     },
                     {
                         "data": "phone",
