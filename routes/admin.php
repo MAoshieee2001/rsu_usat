@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\admin\AdminController;
+use App\Http\Controllers\admin\AttendanceController;
 use App\Http\Controllers\admin\BrandController;
 use App\Http\Controllers\admin\BrandModelController;
 use App\Http\Controllers\admin\EmployeeContractController;
@@ -23,6 +24,7 @@ Route::resource('employees', EmployeeController::class)->names('admin.employees'
 Route::resource('contracts', EmployeeContractController::class)->names('admin.contracts');
 Route::resource('vacations', VacationController::class)->names('admin.vacations');
 Route::resource('colors', ColorController::class)->names('admin.colors');
+Route::resource('attendances', AttendanceController::class)->names('admin.attendances');
 
 // Rutas para gestión de imágenes de vehículos
 Route::get('models-by-brand/{brand_id}', [VehicleController::class, 'getModelsByBrand'])->name('admin.models.byBrand');

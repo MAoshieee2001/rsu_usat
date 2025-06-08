@@ -10,19 +10,17 @@
 <div class="card">
     <div class="card-header">
 
-        <h3 class="card-title"><i class="fas fa-search"></i> Listado de Marcas</h3>
+        <h3 class="card-title"><i class="fas fa-search"></i> Listado de asistencias</h3>
     </div>
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-sm table-bordered text-center" id="tbtEntity">
                 <thead class="thead-dark">
                     <tr>
-                        <th>Logo</th>
-                        <th>Nombre</th>
-                        <th>Descripción</th>
-                        <th>Creación</th>
-                        <th>Actualización</th>
-                        <th>Options</th>
+                        <th>DNI</th>
+                        <th>Empleado</th>
+                        <th>Fecha de ingreso</th>
+                        <th>Fecha de salida</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -33,9 +31,9 @@
 
     <div class="card-footer">
         <button type="button" class="btn btn-primary" id="btnNuevo"><i class="fas fa-plus"></i>
-            Nuevo Registro
+            Marcar asistencia
         </button>
-        <a href="{{ route('admin.brands.index') }}" class="btn btn-success"><i class="fas fa-sync"></i>
+        <a href="{{ route('admin.vacations.index') }}" class="btn btn-success"><i class="fas fa-sync"></i>
             Actualizar
         </a>
     </div>
@@ -65,36 +63,23 @@
         $(document).ready(function () {
             $('#tbtEntity').DataTable({
 
-                "ajax": "{{ route('admin.brands.index') }}",
+                "ajax": "{{ route('admin.attendances.index') }}",
                 "columns": [
                     {
-                        "data": "logo",
-                        "width": "4%",
-                        "orderable": false,
-                        "searchable": false
-                    },
-                    {
-                        "data": "name",
+                        "data": "dni",
                         "width": "10%",
                     },
                     {
-                        "data": "description",
+                        "data": "full_names",
                         "width": "20%",
                     },
                     {
-                        "data": "created_at",
+                        "data": "date_joined",
                         "width": "15%",
                     },
                     {
-                        "data": "updated_at",
+                        "data": "date_end",
                         "width": "15%",
-                    },
-                    {
-                        "data": "options",
-                        "orderable": false,
-                        "searchable": false,
-                        "width": "4%",
-
                     },
                 ]
             });

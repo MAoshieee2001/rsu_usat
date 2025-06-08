@@ -368,7 +368,7 @@ return [
                 ],
                 [
                     'text' => 'Asistencia',
-                    'route' => 'admin.vacations.index',
+                    'route' => 'admin.attendances.index',
                     'icon' => 'fas fa-clipboard',
                 ],
             ],
