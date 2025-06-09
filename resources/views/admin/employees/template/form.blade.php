@@ -96,22 +96,22 @@
                     'B-IIb' => 'B-IIb: Motocicletas y motocicletas con sidecar',
                     'B-IIc' => 'B-IIc: Mototaxis y trimotos'
                 ], null, ['class' => 'form-control', 'placeholder' => 'Seleccione una licencia']) !!}
+                <div id="licenseInfo" class="text-muted small d-none">
+                    Este campo solo se habilita si el tipo de empleado es "Conductor".
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Columna derecha: Foto del empleado -->
     <div class="col-lg-4 mb-4">
-
         <input type="file" id="photoInput" name="photo" accept="image/*" class="d-none" onchange="previewPhoto(event)">
-
         @php
             $photoPath = 'storage/brands/empty.png';
             if (isset($employees) && !empty($employees->photo)) {
                 $photoPath = $employees->photo;
             }
         @endphp
-
         <div class="border rounded p-2" style="cursor: pointer;"
             onclick="document.getElementById('photoInput').click();">
             <img id="photoPreview" src="{{ asset($photoPath) }}" alt="Foto del Empleado"
@@ -141,7 +141,9 @@
         const password = document.getElementById('password');
         const passwordConfirmation = document.getElementById('password_confirmation');
         const passwordMatchError = document.getElementById('passwordMatchError');
-
+        const employeeTypeSelect = document.getElementById('employeeTypesSelect');
+        const licenseSelect = document.getElementById('license');
+        const licenseInfo = document.getElementById('licenseInfo');
         if (password && passwordConfirmation) {
             [password, passwordConfirmation].forEach(field => {
                 field.addEventListener('input', function () {
@@ -152,6 +154,22 @@
                     }
                 });
             });
+        }
+        // Habilita o bloquea el campo de licencia según el tipo de empleado
+        function handleEmployeeTypeChange() {
+            if (!employeeTypeSelect || !licenseSelect || !licenseInfo) return;
+            const selectedText = employeeTypeSelect.options[employeeTypeSelect.selectedIndex]?.text.toLowerCase() || '';
+            const isDriver = selectedText.includes('conductor');
+            licenseSelect.disabled = !isDriver; // Bloquea si no es conductor
+            licenseInfo.classList.toggle('d-none', isDriver);
+            if (!isDriver) {
+                licenseSelect.value = ''; // Opcional: limpiar si se desactiva
+            }
+        }
+        // Ejecutar al cargar y al cambiar el tipo de empleado
+        handleEmployeeTypeChange();
+        if (employeeTypeSelect) {
+            employeeTypeSelect.addEventListener('change', handleEmployeeTypeChange);
         }
     });
 </script>
