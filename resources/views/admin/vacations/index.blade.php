@@ -24,6 +24,7 @@
                         <th>Estado</th>
                         <th>Fecha Vac.</th>
                         <th>Fin. Vac.</th>
+                        <th>Días Usados</th> 
                         <th>Creación</th>
                         <th>Actualización</th>
                         <th>Options</th>
@@ -92,6 +93,7 @@
                     {
                         "data": "date_end",
                     },
+                    { "data": "days_taken" },
                     {
                         "data": "created_at",
                     },

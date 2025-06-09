@@ -8,7 +8,19 @@
 ]) !!}
     </div>
 </div>
-
+<div class="row">
+    <div class="form-group col-12">
+        {!! Form::label('mode', 'Modalidad de Vacaciones') !!}
+        {!! Form::select('mode', [
+            'MENSUAL' => 'Mensual (30 días)',
+            'QUINCENAL' => 'Quincenal (15 días)',
+        ], null, [
+            'class' => 'form-control',
+            'placeholder' => 'Seleccione modalidad',
+            'required'
+        ]) !!}
+    </div>
+</div>
 <div class="row">
     <div class="form-group col-5">
         {!! Form::label('date_start', 'Fecha de inicio') !!}
@@ -74,7 +86,11 @@
             }
 
             let startDate = new Date(date_start);
-            startDate.setDate(startDate.getDate() + 31);
+            // Detectar modalidad seleccionada
+            let mode = $('#mode').val();
+            let diasVacaciones = mode === 'QUINCENAL' ? 15 : 30;
+
+            startDate.setDate(startDate.getDate() + diasVacaciones - 1);
 
             // Convertimos a 'YYYY-MM-DD' para el input date
             let year = startDate.getFullYear();

@@ -24,6 +24,7 @@ class VacationController extends Controller
             'vacations.status',
             'vacations.date_start',
             'vacations.date_end',
+            \DB::raw('DATEDIFF(vacations.date_end, vacations.date_start) + 1 as days_taken'),
             'vacations.created_at',
             'vacations.updated_at'
         )
@@ -75,16 +76,16 @@ class VacationController extends Controller
     public function create()
     {
         try {
-$employee = Employee::with('contracts.contractType')->get()->filter(function ($e) {
-    return $e->contracts->contains(function ($c) {
-        return $c->status === 'Activo' &&
-               in_array($c->contractType->name, ['Nombrado', 'Permanente']);
-    });
-})->pluck('fullnames', 'id');
-            return view('admin.vacations.create', compact('employee'));
-        } catch (\Exception $e) {
-            return redirect()->route('admin.vacations.index')->with('error', 'Ocurrió un error al intentar crear un nueva vacación.');
-        }
+            $employee = Employee::with('contracts.contractType')->get()->filter(function ($e) {
+                return $e->contracts->contains(function ($c) {
+                    return $c->status === 'Activo' &&
+                        in_array($c->contractType->name, ['Nombrado', 'Permanente']);
+                });
+            })->pluck('fullnames', 'id');
+                        return view('admin.vacations.create', compact('employee'));
+                    } catch (\Exception $e) {
+                        return redirect()->route('admin.vacations.index')->with('error', 'Ocurrió un error al intentar crear un nueva vacación.');
+                    }
     }
 
     /**
@@ -92,84 +93,93 @@ $employee = Employee::with('contracts.contractType')->get()->filter(function ($e
      */
     public function store(Request $request)
     {
-        /*
-         * ESTADO ACTIVO : ESTA EN VACACIONES
-         *        INACTIVO : PENDIENTE  
-         *        PROGRAMADO
-         */
-
         try {
             $request->validate([
                 'employee_id' => 'required|exists:employees,id',
                 'date_start' => 'required|date',
                 'date_end' => 'required|date',
+                'mode' => 'required|in:MENSUAL,QUINCENAL', // AÑADIDO
             ]);
 
             $employeeId = $request->employee_id;
 
+            // Validar contrato válido
             $employee = Employee::with('contractTypes')->findOrFail($employeeId);
-
-            // Tipos de contrato válidos
             $contratosValidos = ['Nombrado', 'Permanente'];
-
-            // ¿Tiene al menos uno válido?
             $tieneContratoValido = $employee->contractTypes->contains(function ($contract) use ($contratosValidos) {
                 return in_array($contract->name, $contratosValidos);
             });
 
             if (!$tieneContratoValido) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'El empleado no tiene un contrato válido para registrar vacaciones (solo "Nombrado" o "Permanente").',
-                ], 422);
+                return response()->json(['success' => false, 'message' => 'El empleado no tiene un contrato válido.'], 422);
             }
 
-            //  Validar si ya tiene vacaciones
-            $exists = Vacation::where('employee_id', $employeeId)->exists();
-            if ($exists) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Este empleado ya tiene vacaciones registradas.',
-                ], 422);
-            }
-
-            // 📅 Validaciones de fecha
+            // Calcular días solicitados
             $dateStart = Carbon::parse($request->date_start);
             $dateEnd = Carbon::parse($request->date_end);
+            $daysRequested = $dateEnd->diffInDays($dateStart) + 1;
 
             if ($dateEnd->lt($dateStart)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'La fecha de fin no puede ser menor a la fecha de inicio.',
-                ], 422);
+                return response()->json(['success' => false, 'message' => 'La fecha de fin no puede ser menor que la de inicio.'], 422);
             }
 
-            if ($dateEnd->diffInDays($dateStart) < 30) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'La fecha de fin debe ser al menos 30 días después de la fecha de inicio.',
-                ], 422);
+            if (!in_array($daysRequested, [15, 30])) {
+                return response()->json(['success' => false, 'message' => 'Solo se permiten vacaciones de 15 o 30 días.'], 422);
             }
 
-            // ✅ Crear registro
+            // Obtener vacaciones anteriores del empleado
+            $ultimasVacaciones = Vacation::where('employee_id', $employeeId)
+                ->orderByDesc('date_end')
+                ->get();
+
+            $totalDiasAnioActual = 0;
+            $fechaUltimaVacacion = null;
+
+            foreach ($ultimasVacaciones as $vac) {
+                $dias = Carbon::parse($vac->date_end)->diffInDays(Carbon::parse($vac->date_start)) + 1;
+
+                // Comparar por año natural desde última vacación
+                if ($vac->date_end >= now()->subYear()) {
+                    $totalDiasAnioActual += $dias;
+                    $fechaUltimaVacacion = Carbon::parse($vac->date_end);
+                }
+            }
+
+            // Validar días disponibles según modalidad
+            if ($request->mode === 'MENSUAL') {
+                if ($totalDiasAnioActual >= 30) {
+                    return response()->json(['success' => false, 'message' => 'Ya se ha registrado 30 días de vacaciones este año.'], 422);
+                }
+                if ($daysRequested !== 30) {
+                    return response()->json(['success' => false, 'message' => 'La modalidad mensual solo permite 30 días.'], 422);
+                }
+            } else if ($request->mode === 'QUINCENAL') {
+                if ($daysRequested !== 15) {
+                    return response()->json(['success' => false, 'message' => 'La modalidad quincenal solo permite 15 días por periodo.'], 422);
+                }
+                if ($totalDiasAnioActual >= 30) {
+                    return response()->json(['success' => false, 'message' => 'Ya se han registrado 30 días de vacaciones en modalidad quincenal.'], 422);
+                }
+            }
+
+            // Validar mínimo 1 año desde la última vacación
+            if ($fechaUltimaVacacion && now()->diffInDays($fechaUltimaVacacion) < 365 && $totalDiasAnioActual >= 30) {
+                return response()->json(['success' => false, 'message' => 'Debe esperar un año desde la última vacación completa.'], 422);
+            }
+
+            // Crear la vacación
             Vacation::create([
                 'employee_id' => $employeeId,
                 'date_start' => $request->date_start,
                 'date_end' => $request->date_end,
-                'status' => 'INACTIVO'
+                'status' => 'INACTIVO',
             ]);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Vacaciones registrada con éxito.',
-            ], 200);
-
+            return response()->json(['success' => true, 'message' => 'Vacaciones registradas con éxito.'], 200);
         } catch (\Exception $e) {
-            return redirect()->route('admin.vacations.index')
-                ->with('error', 'Error al crear el vacaciones: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Error: ' . $e->getMessage()], 500);
         }
     }
-
     /**
      * Display the specified resource.
      */
