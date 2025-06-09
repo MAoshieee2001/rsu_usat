@@ -13,6 +13,7 @@
                     ['phone', 'Teléfono', 'text', 'Ingrese el teléfono'],
                 ];
             @endphp
+
             @foreach ($fields as [$name, $label, $type, $placeholder])
                 <div class="form-group col-md-6">
                     {!! Form::label($name, $label) !!}
@@ -36,40 +37,39 @@
                     @endif
                 </div>
             @endforeach
+
             <!-- Estado-->
             <div class="form-group col-md-6">
                 {!! Form::label('status', 'Estado') !!}
                 {!! Form::select('status', [1 => 'Activo', 0 => 'Inactivo'], $employees->status ?? 1, [
-    'class' => 'form-control'
-]) !!}
+                    'class' => 'form-control'
+                ]) !!}
             </div>
 
             <!-- Contraseña -->
             <div class="form-group col-md-6">
                 {!! Form::label('password', 'Contraseña') !!}
                 {!! Form::password('password', [
-    'class' => 'form-control',
-    'placeholder' => 'Ingrese la contraseña',
-    'required' => !isset($employees),
-    'autocomplete' => 'new-password',
-    'id' => 'password'
-]) !!}
+                    'class' => 'form-control',
+                    'placeholder' => 'Ingrese la contraseña',
+                    'required' => !isset($employees),
+                    'autocomplete' => 'new-password',
+                    'id' => 'password'
+                ]) !!}
             </div>
 
             <!-- Confirmación de Contraseña -->
             <div class="form-group col-md-6">
                 {!! Form::label('password_confirmation', 'Confirmar Contraseña') !!}
                 {!! Form::password('password_confirmation', [
-    'class' => 'form-control',
-    'placeholder' => 'Confirme la contraseña',
-    'required' => !isset($employees),
-    'autocomplete' => 'new-password',
-    'id' => 'password_confirmation'
-]) !!}
+                    'class' => 'form-control',
+                    'placeholder' => 'Confirme la contraseña',
+                    'required' => !isset($employees),
+                    'autocomplete' => 'new-password',
+                    'id' => 'password_confirmation'
+                ]) !!}
                 <small id="passwordMatchError" class="text-danger d-none">Las contraseñas no coinciden</small>
             </div>
-
-
             <!-- Tipo de empleado -->
             <div class="form-group col-md-6">
                 {!! Form::label('type_id', 'Tipo de Empleado') !!}
@@ -82,37 +82,34 @@
                     @endforeach
                 </select>
             </div>
+            <!-- Licencia -->
             <div class="form-group col-md-6">
                 {!! Form::label('license', 'Licencia') !!}
                 {!! Form::select('license', [
-    'A-I' => 'A-I: Vehículos particulares (sedanes, SUVs, furgonetas)',
-    'A-IIa' => 'A-IIa: Taxis, ambulancias, transporte público ligero',
-    'A-IIb' => 'A-IIb: Microbuses y minibuses',
-    'A-IIIa' => 'A-IIIa: Ómnibus interurbanos',
-    'A-IIIb' => 'A-IIIb: Camiones pesados, volquetes',
-    'A-IIIc' => 'A-IIIc: Todo tipo de vehículos pesados',
+                    'A-I' => 'A-I: Vehículos particulares (sedanes, SUVs, furgonetas)',
+                    'A-IIa' => 'A-IIa: Taxis, ambulancias, transporte público ligero',
+                    'A-IIb' => 'A-IIb: Microbuses y minibuses',
+                    'A-IIIa' => 'A-IIIa: Ómnibus interurbanos',
+                    'A-IIIb' => 'A-IIIb: Camiones pesados, volquetes',
+                    'A-IIIc' => 'A-IIIc: Todo tipo de vehículos pesados',
 
-    'B-I' => 'B-I: Triciclos no motorizados (transporte especial)',
-    'B-IIa' => 'B-IIa: Bicimotos',
-    'B-IIb' => 'B-IIb: Motocicletas y motocicletas con sidecar',
-    'B-IIc' => 'B-IIc: Mototaxis y trimotos'
-], null, ['class' => 'form-control', 'placeholder' => 'Seleccione una licencia']) !!}
+                    'B-I' => 'B-I: Triciclos no motorizados (transporte especial)',
+                    'B-IIa' => 'B-IIa: Bicimotos',
+                    'B-IIb' => 'B-IIb: Motocicletas y motocicletas con sidecar',
+                    'B-IIc' => 'B-IIc: Mototaxis y trimotos'
+                ], null, ['class' => 'form-control', 'placeholder' => 'Seleccione una licencia']) !!}
             </div>
         </div>
     </div>
-
     <!-- Columna derecha: Foto del empleado -->
     <div class="col-lg-4 mb-4">
-
         <input type="file" id="photoInput" name="photo" accept="image/*" class="d-none" onchange="previewPhoto(event)">
-
         @php
             $photoPath = 'storage/brands/empty.png';
             if (isset($employees) && !empty($employees->photo)) {
                 $photoPath = $employees->photo;
             }
         @endphp
-
         <div class="border rounded p-2" style="cursor: pointer;"
             onclick="document.getElementById('photoInput').click();">
             <img id="photoPreview" src="{{ asset($photoPath) }}" alt="Foto del Empleado"
@@ -127,7 +124,6 @@
     function previewPhoto(event) {
         const input = event.target;
         const preview = document.getElementById('photoPreview');
-
         if (input.files && input.files[0]) {
             const reader = new FileReader();
             reader.onload = function (e) {
@@ -136,13 +132,11 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
-
     // Validación de contraseña en tiempo real
     document.addEventListener('DOMContentLoaded', function () {
         const password = document.getElementById('password');
         const passwordConfirmation = document.getElementById('password_confirmation');
         const passwordMatchError = document.getElementById('passwordMatchError');
-
         if (password && passwordConfirmation) {
             [password, passwordConfirmation].forEach(field => {
                 field.addEventListener('input', function () {
