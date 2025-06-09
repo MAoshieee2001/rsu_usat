@@ -154,12 +154,10 @@
         // Mostrar u ocultar campo licencia
         function handleLicenseVisibility() {
             if (typeSelect.value === '1') { // conductor
-                licenseFieldContainer.style.display = '';
-                licenseSelect.required = true;
+                licenseFieldContainer.style.display = 'block';
             } else {
                 licenseFieldContainer.style.display = 'none';
-                licenseSelect.required = false;
-                licenseSelect.value = '';
+                licenseSelect.value = 'No tiene licencia';
             }
         }
         handleLicenseVisibility();
