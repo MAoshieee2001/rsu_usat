@@ -58,7 +58,7 @@
                 endDate.setDate(startDate.getDate() + 60);
                 const formattedEndDate = endDate.toISOString().split('T')[0];
                 endDate = new Date(formattedEndDate);
-                select_date_end.val(endDate);
+                select_date_end.val(formattedEndDate);
             }
         }
         // Función para actualizar el estado de los campos según el contrato
