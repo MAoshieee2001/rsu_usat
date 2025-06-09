@@ -18,16 +18,16 @@
                 <div class="form-group col-md-6">
                     {!! Form::label($name, $label) !!}
                     @if($name === 'birthday')
-                    {!! Form::$type($name, null, [
-                        'class' => 'form-control',
-                        'placeholder' => $placeholder,
-                        'required',
-                        'autocomplete' => 'off',
-                        'max' => date('Y-m-d', strtotime('-18 years')),
-                        'id' => 'birthday'
+                        {!! Form::$type($name, null, [
+                            'class' => 'form-control',
+                            'placeholder' => $placeholder,
+                            'required',
+                            'autocomplete' => 'off',
+                            'max' => date('Y-m-d', strtotime('-18 years')),
+                            'id' => 'birthday'
                         ]) !!}
                         <small class="text-muted">Debe ser mayor de 18 años</small>
-                        @else
+                    @else
                         {!! Form::$type($name, null, [
                             'class' => 'form-control',
                             'placeholder' => $placeholder,
@@ -37,7 +37,8 @@
                     @endif
                 </div>
             @endforeach
-            <!-- Estado-->
+
+            <!-- Estado -->
             <div class="form-group col-md-6">
                 {!! Form::label('status', 'Estado') !!}
                 {!! Form::select('status', [1 => 'Activo', 0 => 'Inactivo'], $employees->status ?? 1, [
@@ -82,7 +83,9 @@
                     @endforeach
                 </select>
             </div>
-            <div class="form-group col-md-6">
+
+            <!-- Licencia (solo si es conductor) -->
+            <div class="form-group col-md-6" id="licenseFieldContainer" style="display: none;">
                 {!! Form::label('license', 'Licencia') !!}
                 {!! Form::select('license', [
                     'A-I' => 'A-I: Vehículos particulares (sedanes, SUVs, furgonetas)',
@@ -95,10 +98,11 @@
                     'B-IIa' => 'B-IIa: Bicimotos',
                     'B-IIb' => 'B-IIb: Motocicletas y motocicletas con sidecar',
                     'B-IIc' => 'B-IIc: Mototaxis y trimotos'
-                ], null, ['class' => 'form-control', 'placeholder' => 'Seleccione una licencia']) !!}
-                <div id="licenseInfo" class="text-muted small d-none">
-                    Este campo solo se habilita si el tipo de empleado es "Conductor".
-                </div>
+                ], $employees->license ?? null, [
+                    'class' => 'form-control',
+                    'placeholder' => 'Seleccione una licencia',
+                    'id' => 'licenseSelect'
+                ]) !!}
             </div>
         </div>
     </div>
@@ -112,8 +116,7 @@
                 $photoPath = $employees->photo;
             }
         @endphp
-        <div class="border rounded p-2" style="cursor: pointer;"
-            onclick="document.getElementById('photoInput').click();">
+        <div class="border rounded p-2" style="cursor: pointer;" onclick="document.getElementById('photoInput').click();">
             <img id="photoPreview" src="{{ asset($photoPath) }}" alt="Foto del Empleado"
                 class="img-fluid rounded shadow-sm" style="height: 200px; object-fit: cover;">
             <p class="text-muted mt-2 mb-0">Haz clic para cambiar la imagen</p>
@@ -121,12 +124,10 @@
     </div>
 </div>
 
-<!-- Script para previsualizar la imagen seleccionada y validar contraseña -->
 <script>
     function previewPhoto(event) {
         const input = event.target;
         const preview = document.getElementById('photoPreview');
-
         if (input.files && input.files[0]) {
             const reader = new FileReader();
             reader.onload = function (e) {
@@ -135,41 +136,33 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
-
-    // Validación de contraseña en tiempo real
     document.addEventListener('DOMContentLoaded', function () {
         const password = document.getElementById('password');
         const passwordConfirmation = document.getElementById('password_confirmation');
         const passwordMatchError = document.getElementById('passwordMatchError');
-        const employeeTypeSelect = document.getElementById('employeeTypesSelect');
-        const licenseSelect = document.getElementById('license');
-        const licenseInfo = document.getElementById('licenseInfo');
+        const typeSelect = document.getElementById('employeeTypesSelect');
+        const licenseFieldContainer = document.getElementById('licenseFieldContainer');
+        const licenseSelect = document.getElementById('licenseSelect');
+        // Validación de contraseñas
         if (password && passwordConfirmation) {
             [password, passwordConfirmation].forEach(field => {
                 field.addEventListener('input', function () {
-                    if (password.value !== passwordConfirmation.value) {
-                        passwordMatchError.classList.remove('d-none');
-                    } else {
-                        passwordMatchError.classList.add('d-none');
-                    }
+                    passwordMatchError.classList.toggle(password.value !== passwordConfirmation.value);
                 });
             });
         }
-        // Habilita o bloquea el campo de licencia según el tipo de empleado
-        function handleEmployeeTypeChange() {
-            if (!employeeTypeSelect || !licenseSelect || !licenseInfo) return;
-            const selectedText = employeeTypeSelect.options[employeeTypeSelect.selectedIndex]?.text.toLowerCase() || '';
-            const isDriver = selectedText.includes('conductor');
-            licenseSelect.disabled = !isDriver; // Bloquea si no es conductor
-            licenseInfo.classList.toggle('d-none', isDriver);
-            if (!isDriver) {
-                licenseSelect.value = ''; // Opcional: limpiar si se desactiva
+        // Mostrar u ocultar campo licencia
+        function handleLicenseVisibility() {
+            if (typeSelect.value === '1') { // conductor
+                licenseFieldContainer.style.display = '';
+                licenseSelect.required = true;
+            } else {
+                licenseFieldContainer.style.display = 'none';
+                licenseSelect.required = false;
+                licenseSelect.value = '';
             }
         }
-        // Ejecutar al cargar y al cambiar el tipo de empleado
-        handleEmployeeTypeChange();
-        if (employeeTypeSelect) {
-            employeeTypeSelect.addEventListener('change', handleEmployeeTypeChange);
-        }
+        handleLicenseVisibility();
+        typeSelect.addEventListener('change', handleLicenseVisibility);
     });
 </script>
