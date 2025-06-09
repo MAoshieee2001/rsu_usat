@@ -57,18 +57,17 @@
                 const endDate = new Date(startDate);
                 endDate.setDate(startDate.getDate() + 60);
                 const formattedEndDate = endDate.toISOString().split('T')[0];
-                endDate = new Date(formattedEndDate);
                 select_date_end.val(formattedEndDate);
             }
         }
         // Función para actualizar el estado de los campos según el contrato
         function updateContractFields() {
             if (isTemporalContract()) {
-                select_date_end.prop('disabled', true);
+                select_date_end.prop('readonly', true);
                 temporal_info.removeClass('d-none');
                 calculateEndDate();
             } else {
-                select_date_end.prop('disabled', false).val('');
+                select_date_end.prop('readonly', false).val('');
                 temporal_info.addClass('d-none');
             }
         }
