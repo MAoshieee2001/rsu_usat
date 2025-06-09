@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'title' => 'AdminLTE 3',
+    'title' => 'RSU USAT',
     'title_prefix' => '',
     'title_postfix' => '',
 
@@ -114,7 +114,7 @@ return [
         'mode' => 'fullscreen',
         'img' => [
             'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
-            'alt' => 'AdminLTE Preloader Image',
+            'alt' => 'RSU USAT',
             'effect' => 'animation__shake',
             'width' => 60,
             'height' => 60,

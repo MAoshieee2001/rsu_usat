@@ -23,7 +23,7 @@
                                     'placeholder' => $placeholder,
                                     'required',
                                     'autocomplete' => 'off',
-                                    'min' => date('Y-m-d', strtotime('-18 years')),
+                                    'max' => date('Y-m-d', strtotime('-18 years')),
                                     'id' => 'birthday'
                                 ]) !!}
                                 <small class="text-muted">Debe ser mayor de 18 años</small>

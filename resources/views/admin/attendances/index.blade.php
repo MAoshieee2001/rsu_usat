@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Marcas')
+@section('title', 'Asistencia')
 
 <!--@section('content_header')
 @stop-->
@@ -9,10 +9,32 @@
 <div class="p-2"></div>
 <div class="card">
     <div class="card-header">
-
         <h3 class="card-title"><i class="fas fa-search"></i> Listado de asistencias</h3>
     </div>
     <div class="card-body">
+
+        <div class="row align-items-end">
+            <div class="form-group mr-2">
+                <label for="txtFechaInicio"> Fecha Inicio: </label>
+                <input id="txtFechaInicio" type="date" class="form-control">
+            </div>
+            <div class="form-group mr-2">
+                <label for="txtFechaFin"> Fecha Final: </label>
+                <input id="txtFechaFin" type="date" class="form-control">
+            </div>
+
+            <div class="form-group mr-2">
+                <label for="txtDniEmpleado"> DNI empleado: </label>
+                <input id="txtDniEmpleado" type="text" placeholder="Ingrese DNI." class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label class="d-block invisible">Buscar</label>
+                <button class="btn btn-secondary btn-sm form-control" id="btnBuscar"> <i class="fas fa-search"></i> Buscar</button>
+            </div>
+        </div>
+
+
         <div class="table-responsive">
             <table class="table table-sm table-bordered text-center" id="tbtEntity">
                 <thead class="thead-dark">
@@ -33,7 +55,7 @@
         <button type="button" class="btn btn-primary" id="btnNuevo"><i class="fas fa-plus"></i>
             Marcar asistencia
         </button>
-        <a href="{{ route('admin.vacations.index') }}" class="btn btn-success"><i class="fas fa-sync"></i>
+        <a href="{{ route('admin.attendances.index') }}" class="btn btn-success"><i class="fas fa-sync"></i>
             Actualizar
         </a>
     </div>
@@ -60,6 +82,10 @@
 
 @section('js')
     <script>
+        let select_inicio = $("#txtFechaInicio");
+        let select_final = $("#txtFechaInicio");
+        let txtDni = $("#txtDniEmpleado");
+
         $(document).ready(function () {
             $('#tbtEntity').DataTable({
 
@@ -235,7 +261,15 @@
             var table = $('#tbtEntity').DataTable();
             table.ajax.reload(null, false);
         }
-    </script>
+ 
+        $(document).on('click', function(){
+            if(select_inicio.val() == null) {
+                alert("")
+            }
+        });
+ 
+ 
+ </script>
 
 
     @if (session('success'))
