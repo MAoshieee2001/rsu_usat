@@ -56,6 +56,8 @@
                 const startDate = new Date(start_date);
                 const endDate = new Date(startDate);
                 endDate.setDate(startDate.getDate() + 60);
+                const formattedEndDate = endDate.toISOString().split('T')[0];
+                endDate = new Date(formattedEndDate);
                 select_date_end.val(endDate);
             }
         }
