@@ -30,7 +30,8 @@
 
             <div class="form-group">
                 <label class="d-block invisible">Buscar</label>
-                <button class="btn btn-secondary btn-sm form-control" id="btnBuscar"> <i class="fas fa-search"></i> Buscar</button>
+                <button class="btn btn-secondary btn-sm form-control" id="btnBuscar"> <i class="fas fa-search"></i>
+                    Buscar</button>
             </div>
         </div>
 
@@ -83,31 +84,31 @@
 @section('js')
     <script>
         let select_inicio = $("#txtFechaInicio");
-        let select_final = $("#txtFechaInicio");
+        let select_final = $("#txtFechaFin");
         let txtDni = $("#txtDniEmpleado");
+        let table;
 
         $(document).ready(function () {
-            $('#tbtEntity').DataTable({
-
-                "ajax": "{{ route('admin.attendances.index') }}",
-                "columns": [
-                    {
-                        "data": "dni",
-                        "width": "10%",
-                    },
-                    {
-                        "data": "full_names",
-                        "width": "20%",
-                    },
-                    {
-                        "data": "date_joined",
-                        "width": "15%",
-                    },
-                    {
-                        "data": "date_end",
-                        "width": "15%",
-                    },
-                ]
+            table = $('#tbtEntity').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('admin.attendances.index') }}",
+                    data: function (d) {
+                        d.fecha_inicio = $('#txtFechaInicio').val();
+                        d.fecha_fin = $('#txtFechaFin').val();
+                        d.dni = $('#txtDniEmpleado').val();
+                    }
+                },
+                columns: [
+                    { data: "dni", width: "10%" },
+                    { data: "full_names", width: "20%" },
+                    { data: "date_joined", width: "15%" },
+                    { data: "date_end", width: "15%" },
+                ],
+                searching: false,
+                lengthChange: false,
+                deferLoading: 0 // Indica que no cargue nada al inicio
             });
         })
 
@@ -261,15 +262,50 @@
             var table = $('#tbtEntity').DataTable();
             table.ajax.reload(null, false);
         }
- 
-        $(document).on('click', function(){
-            if(select_inicio.val() == null) {
-                alert("")
+
+        $(document).on('click', "#btnBuscar", function () {
+            if (select_inicio.val() === "" && select_final.val() === "" && txtDni.val() === "") {
+                Swal.fire({
+                    title: "Ocurrio un error!",
+                    icon: "error",
+                    timer: 2000,
+                    timerProgressBar: true,
+                    text: "Debe de seleccionar rango de fechas o buscar por DNI.",
+                    confirmButtonText: 'Continuar.',
+                });
+                return;
             }
+
+            if (select_inicio.val() !== "" && select_final.val() === "") {
+                Swal.fire({
+                    title: "Ocurrio un error!",
+                    icon: "error",
+                    timer: 2000,
+                    timerProgressBar: true,
+                    text: "Debe de seleccionar una fecha fin.",
+                    confirmButtonText: 'Continuar.',
+                });
+                return;
+            }
+
+
+            if (select_inicio.val() === "" && select_final.val() !== "") {
+                Swal.fire({
+                    title: "Ocurrio un error!",
+                    icon: "error",
+                    timer: 2000,
+                    timerProgressBar: true,
+                    text: "Debe de seleccionar una fecha inicio.",
+                    confirmButtonText: 'Continuar.',
+                });
+                return;
+            }
+
+            // Recargamos la tabla con esos filtros
+            table.ajax.reload();
         });
- 
- 
- </script>
+
+    </script>
 
 
     @if (session('success'))

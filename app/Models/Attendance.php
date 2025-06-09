@@ -11,4 +11,10 @@ class Attendance extends Model
     protected $table = 'attendances';
 
     protected $guarded = [];
+
+    protected $dates = ['date_joined', 'date_end'];
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class);
+    }
 }

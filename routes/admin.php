@@ -26,6 +26,11 @@ Route::resource('vacations', VacationController::class)->names('admin.vacations'
 Route::resource('colors', ColorController::class)->names('admin.colors');
 Route::resource('attendances', AttendanceController::class)->names('admin.attendances');
 
+
+// Rutas para filtrar asistencias
+Route::get('/attendances/buscar', [AttendanceController::class, 'buscar'])->name('admin.attendances.buscar');
+
+
 // Rutas para gestión de imágenes de vehículos
 Route::get('models-by-brand/{brand_id}', [VehicleController::class, 'getModelsByBrand'])->name('admin.models.byBrand');
 // Ruta para obtener las iamgenes de los vehiculos
