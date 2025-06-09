@@ -18,16 +18,16 @@
                 <div class="form-group col-md-6">
                     {!! Form::label($name, $label) !!}
                     @if($name === 'birthday')
-                    {!! Form::$type($name, null, [
-                        'class' => 'form-control',
-                        'placeholder' => $placeholder,
-                        'required',
-                        'autocomplete' => 'off',
-                        'max' => date('Y-m-d', strtotime('-18 years')),
-                        'id' => 'birthday'
+                        {!! Form::$type($name, null, [
+                            'class' => 'form-control',
+                            'placeholder' => $placeholder,
+                            'required',
+                            'autocomplete' => 'off',
+                            'max' => date('Y-m-d', strtotime('-18 years')),
+                            'id' => 'birthday'
                         ]) !!}
                         <small class="text-muted">Debe ser mayor de 18 años</small>
-                        @else
+                    @else
                         {!! Form::$type($name, null, [
                             'class' => 'form-control',
                             'placeholder' => $placeholder,
@@ -37,6 +37,7 @@
                     @endif
                 </div>
             @endforeach
+
             <!-- Estado-->
             <div class="form-group col-md-6">
                 {!! Form::label('status', 'Estado') !!}
@@ -69,10 +70,9 @@
                 ]) !!}
                 <small id="passwordMatchError" class="text-danger d-none">Las contraseñas no coinciden</small>
             </div>
-
             <!-- Tipo de empleado -->
             <div class="form-group col-md-6">
-                {!! Form::label('type_id', 'Función') !!}
+                {!! Form::label('type_id', 'Tipo de Empleado') !!}
                 <select name="type_id" id="employeeTypesSelect" class="form-control" required>
                     <option value="">Seleccione un tipo</option>
                     @foreach ($employeetypes as $id => $name)
@@ -82,6 +82,7 @@
                     @endforeach
                 </select>
             </div>
+            <!-- Licencia -->
             <div class="form-group col-md-6">
                 {!! Form::label('license', 'Licencia') !!}
                 {!! Form::select('license', [
@@ -91,18 +92,15 @@
                     'A-IIIa' => 'A-IIIa: Ómnibus interurbanos',
                     'A-IIIb' => 'A-IIIb: Camiones pesados, volquetes',
                     'A-IIIc' => 'A-IIIc: Todo tipo de vehículos pesados',
+
                     'B-I' => 'B-I: Triciclos no motorizados (transporte especial)',
                     'B-IIa' => 'B-IIa: Bicimotos',
                     'B-IIb' => 'B-IIb: Motocicletas y motocicletas con sidecar',
                     'B-IIc' => 'B-IIc: Mototaxis y trimotos'
                 ], null, ['class' => 'form-control', 'placeholder' => 'Seleccione una licencia']) !!}
-                <div id="licenseInfo" class="text-muted small d-none">
-                    Este campo solo se habilita si el tipo de empleado es "Conductor".
-                </div>
             </div>
         </div>
     </div>
-
     <!-- Columna derecha: Foto del empleado -->
     <div class="col-lg-4 mb-4">
         <input type="file" id="photoInput" name="photo" accept="image/*" class="d-none" onchange="previewPhoto(event)">
@@ -126,7 +124,6 @@
     function previewPhoto(event) {
         const input = event.target;
         const preview = document.getElementById('photoPreview');
-
         if (input.files && input.files[0]) {
             const reader = new FileReader();
             reader.onload = function (e) {
@@ -135,15 +132,11 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
-
     // Validación de contraseña en tiempo real
     document.addEventListener('DOMContentLoaded', function () {
         const password = document.getElementById('password');
         const passwordConfirmation = document.getElementById('password_confirmation');
         const passwordMatchError = document.getElementById('passwordMatchError');
-        const employeeTypeSelect = document.getElementById('employeeTypesSelect');
-        const licenseSelect = document.getElementById('license');
-        const licenseInfo = document.getElementById('licenseInfo');
         if (password && passwordConfirmation) {
             [password, passwordConfirmation].forEach(field => {
                 field.addEventListener('input', function () {
@@ -154,22 +147,6 @@
                     }
                 });
             });
-        }
-        // Habilita o bloquea el campo de licencia según el tipo de empleado
-        function handleEmployeeTypeChange() {
-            if (!employeeTypeSelect || !licenseSelect || !licenseInfo) return;
-            const selectedText = employeeTypeSelect.options[employeeTypeSelect.selectedIndex]?.text.toLowerCase() || '';
-            const isDriver = selectedText.includes('conductor');
-            licenseSelect.disabled = !isDriver; // Bloquea si no es conductor
-            licenseInfo.classList.toggle('d-none', isDriver);
-            if (!isDriver) {
-                licenseSelect.value = ''; // Opcional: limpiar si se desactiva
-            }
-        }
-        // Ejecutar al cargar y al cambiar el tipo de empleado
-        handleEmployeeTypeChange();
-        if (employeeTypeSelect) {
-            employeeTypeSelect.addEventListener('change', handleEmployeeTypeChange);
         }
     });
 </script>
