@@ -15,15 +15,27 @@
             @endphp
 
             @foreach ($fields as [$name, $label, $type, $placeholder])
-                        <div class="form-group col-md-6">
+                <div class="form-group col-md-6">
                             {!! Form::label($name, $label) !!}
-                            {!! Form::$type($name, null, [
-                    'class' => 'form-control',
-                    'placeholder' => $placeholder,
-                    'required',
-                    'autocomplete' => 'off'
-                ]) !!}
-                        </div>
+                            @if($name === 'birthday')
+                                {!! Form::$type($name, null, [
+                                    'class' => 'form-control',
+                                    'placeholder' => $placeholder,
+                                    'required',
+                                    'autocomplete' => 'off',
+                                    'min' => date('Y-m-d', strtotime('-18 years')),
+                                    'id' => 'birthday'
+                                ]) !!}
+                                <small class="text-muted">Debe ser mayor de 18 años</small>
+                            @else
+                                {!! Form::$type($name, null, [
+                                    'class' => 'form-control',
+                                    'placeholder' => $placeholder,
+                                    'required',
+                                    'autocomplete' => 'off'
+                                ]) !!}
+                            @endif
+                </div>
             @endforeach
             <!-- Estado-->
             <div class="form-group col-md-6">
