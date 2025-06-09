@@ -8,7 +8,6 @@
                     ['birthday', 'Fecha de Nacimiento', 'date', ''],
                     ['names', 'Nombres', 'text', 'Ingrese nombres'],
                     ['lastnames', 'Apellidos', 'text', 'Ingrese apellidos'],
-                    // ['license', 'Licencia', 'text', 'Ingrese la licencia'],
                     ['address', 'Dirección', 'text', 'Ingrese la dirección'],
                     ['email', 'Correo Electrónico', 'email', 'Ingrese el correo'],
                     ['phone', 'Teléfono', 'text', 'Ingrese el teléfono'],
