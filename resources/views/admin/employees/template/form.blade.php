@@ -61,7 +61,7 @@
 
             <!-- Tipo de empleado -->
             <div class="form-group col-md-6">
-                {!! Form::label('type_id', 'Tipo de Empleado') !!}
+                {!! Form::label('type_id', 'Función') !!}
                 <select name="type_id" id="employeeTypesSelect" class="form-control" required>
                     <option value="">Seleccione un tipo</option>
                     @foreach ($employeetypes as $id => $name)
