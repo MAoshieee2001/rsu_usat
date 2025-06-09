@@ -13,19 +13,19 @@
     <div class="form-group col-5">
         {!! Form::label('date_start', 'Fecha de inicio') !!}
         {!! Form::date('date_start', null, [
-    'class' => 'form-control',
-    'required',
-    'min' => date('Y-m-d'),
-]) !!}
+            'class' => 'form-control',
+            'required',
+            'min' => date('Y-m-d'),
+        ]) !!}
     </div>
 
     <div class="form-group col-5">
         {!! Form::label('date_end', 'Fecha de fin') !!}
         {!! Form::date('date_end', null, [
-    'class' => 'form-control',
-    'required',
-    'min' => date('Y-m-d'),
-]) !!}
+            'class' => 'form-control',
+            'required',
+            'min' => date('Y-m-d'),
+        ]) !!}
     </div>
 
     <div class="form-group col-2 d-flex align-items-end">
