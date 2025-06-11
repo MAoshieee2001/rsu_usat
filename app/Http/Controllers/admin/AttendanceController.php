@@ -4,6 +4,7 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Attendance;
+use App\Models\Employee;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
@@ -46,40 +47,15 @@ class AttendanceController extends Controller
 
         return view('admin.attendances.index');
     }
-    public function buscar(Request $request)
-    {
-        $query = Attendance::with('employee');
-
-        if ($request->filled('dni')) {
-            $query->whereHas('employee', function ($q) use ($request) {
-                $q->where('dni', $request->dni);
-            });
-        }
-
-        if ($request->filled('fecha_inicio') && $request->filled('fecha_fin')) {
-            $query->whereBetween('date_joined', [$request->fecha_inicio, $request->fecha_fin]);
-        }
-
-        return datatables()->of($query)
-            ->addColumn('dni', function ($row) {
-                return optional($row->employee)->dni ?? '—';
-            })
-            ->addColumn('full_names', function ($row) {
-                return optional($row->employee)->fullnames ?? '—'; // Usamos el accessor
-            })
-            ->editColumn('date_joined', function ($row) {
-                return optional($row->date_joined)->format('d/m/Y');
-            })
-            ->editColumn('date_end', function ($row) {
-                return $row->date_end ? $row->date_end->format('d/m/Y') : '—';
-            })
-            ->make(true);
-    }
-
 
     public function create()
     {
-        //
+        try {
+            $employee = Employee::all()->pluck('fullnames', 'id');
+            return view('admin.attendances.create', compact('employee'));
+        } catch (\Exception $e) {
+            return redirect()->route('admin.attendances.index')->with('error', 'Ocurrió un error al intentar crear una nueva asistencia.');
+        }
     }
 
     /**
@@ -87,7 +63,62 @@ class AttendanceController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'dni' => 'required|string',
+            'password' => 'required|string',
+        ]);
+
+        try {
+            $employee = Employee::where('dni', $request->dni)
+                ->first();
+
+            if (!$employee) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Empleado no encontrado o contraseña incorrecta.',
+                ], 404);
+            }
+
+            $today = Carbon::today();
+
+            $attendance = Attendance::where('employee_id', $employee->id)
+                ->whereDate('date_joined', $today)
+                ->first();
+
+            if (!$attendance) {
+                Attendance::create([
+                    'employee_id' => $employee->id,
+                    'date_joined' => now(),
+                ]);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Entrada registrada con éxito.',
+                ], 200);
+            }
+
+            if (!$attendance->date_end) {
+                $attendance->update([
+                    'date_end' => now(),
+                ]);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Salida registrada con éxito.',
+                ], 200);
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Ya se ha registrado entrada y salida para hoy.',
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ocurrió un error al intentar registrar la marca. ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
