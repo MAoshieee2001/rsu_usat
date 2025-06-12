@@ -65,7 +65,7 @@
 <!-- Modal -->
 <div class="modal fade" id="ModalCenter" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle"
     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="ModalLongTitle"></h5>
@@ -115,10 +115,10 @@
         $('#btnNuevo').click(function () {
             // Permite aperturar el modal y realizar peticion
             $.ajax({
-                url: "{{ route('admin.brands.create') }}",
+                url: "{{ route('admin.attendances.create') }}",
                 type: "GET",
                 success: function (response) {
-                    $('.modal-title').html("<i class='fas fa-plus'></i> Nueva marca");
+                    $('.modal-title').html("<i class='fas fa-plus'></i> Nueva asistencia");
                     $('#ModalCenter .modal-body').html(response);
                     $('#ModalCenter').modal('show');
 
