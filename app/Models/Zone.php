@@ -9,6 +9,11 @@ class Zone extends Model
 {
     use HasFactory;
     
-    protected $table = 'vehicles';
+    protected $table = 'zones';
     protected $guarded = [];
+
+    public function district()
+{
+    return $this->belongsTo(District::class);
+}
 }

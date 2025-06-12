@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Asistencia')
+@section('title', 'Zonas')
 
 <!--@section('content_header')
 @stop-->
@@ -9,41 +9,21 @@
 <div class="p-2"></div>
 <div class="card">
     <div class="card-header">
-        <h3 class="card-title"><i class="fas fa-search"></i> Listado de asistencias</h3>
+
+        <h3 class="card-title"><i class="fas fa-search"></i> Listado de zonas</h3>
     </div>
     <div class="card-body">
-
-        <div class="row align-items-end">
-            <div class="form-group mr-2">
-                <label for="txtFechaInicio"> Fecha Inicio: </label>
-                <input id="txtFechaInicio" type="date" class="form-control">
-            </div>
-            <div class="form-group mr-2">
-                <label for="txtFechaFin"> Fecha Final: </label>
-                <input id="txtFechaFin" type="date" class="form-control">
-            </div>
-
-            <div class="form-group mr-2">
-                <label for="txtDniEmpleado"> DNI empleado: </label>
-                <input id="txtDniEmpleado" type="text" placeholder="Ingrese DNI." class="form-control">
-            </div>
-
-            <div class="form-group">
-                <label class="d-block invisible">Buscar</label>
-                <button class="btn btn-secondary btn-sm form-control" id="btnBuscar"> <i class="fas fa-search"></i>
-                    Buscar</button>
-            </div>
-        </div>
-
-
         <div class="table-responsive">
             <table class="table table-sm table-bordered text-center" id="tbtEntity">
                 <thead class="thead-dark">
                     <tr>
-                        <th>DNI</th>
-                        <th>Empleado</th>
-                        <th>Fecha de ingreso</th>
-                        <th>Fecha de salida</th>
+                        <th>Distrito</th>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Área</th>
+                        <th>Creación</th>
+                        <th>Actualización</th>
+                        <th>Opciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -54,9 +34,9 @@
 
     <div class="card-footer">
         <button type="button" class="btn btn-primary" id="btnNuevo"><i class="fas fa-plus"></i>
-            Marcar asistencia
+            Nuevo Registro
         </button>
-        <a href="{{ route('admin.attendances.index') }}" class="btn btn-success"><i class="fas fa-sync"></i>
+        <a href="{{ route('admin.zones.index') }}" class="btn btn-success"><i class="fas fa-sync"></i>
             Actualizar
         </a>
     </div>
@@ -65,7 +45,7 @@
 <!-- Modal -->
 <div class="modal fade" id="ModalCenter" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle"
     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="ModalLongTitle"></h5>
@@ -83,47 +63,53 @@
 
 @section('js')
     <script>
-        let select_inicio = $("#txtFechaInicio");
-        let select_final = $("#txtFechaFin");
-        let txtDni = $("#txtDniEmpleado");
-        let table;
-
         $(document).ready(function () {
-            table = $('#tbtEntity').DataTable({
-                processing: true,
-                serverSide: true,
-                language: {
-                    url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
-                },
-                responsive: true,
-                autoWidth: false, // evita que se calcule automáticamente el ancho de columnas
-                ajax: {
-                    url: "{{ route('admin.attendances.index') }}",
-                    data: function (d) {
-                        d.fecha_inicio = $('#txtFechaInicio').val();
-                        d.fecha_fin = $('#txtFechaFin').val();
-                        d.dni = $('#txtDniEmpleado').val();
-                    }
-                },
-                columns: [
-                    { data: "dni", width: "10%" },
-                    { data: "full_names", width: "20%" },
-                    { data: "date_joined", width: "15%" },
-                    { data: "date_end", width: "15%" },
-                ],
-                searching: false,
-                lengthChange: false,
-                deferLoading: 0 // Indica que no cargue nada al inicio
+            $('#tbtEntity').DataTable({
+
+                "ajax": "{{ route('admin.zones.index') }}",
+                "columns": [
+                    {
+                        "data": "district_name",
+                        "width": "15%",
+                        "orderable": false,
+                        "searchable": false
+                    },
+                    {
+                        "data": "name",
+                        "width": "10%",
+                    },
+                    {
+                        "data": "description",
+                    },
+                     {
+                        "data": "area",
+                    },
+                    {
+                        "data": "created_at",
+                        "width": "15%",
+                    },
+                    {
+                        "data": "updated_at",
+                        "width": "15%",
+                    },
+                    {
+                        "data": "options",
+                        "orderable": false,
+                        "searchable": false,
+                        "width": "10%",
+
+                    },
+                ]
             });
         })
 
         $('#btnNuevo').click(function () {
             // Permite aperturar el modal y realizar peticion
             $.ajax({
-                url: "{{ route('admin.attendances.create') }}",
+                url: "{{ route('admin.zones.create') }}",
                 type: "GET",
                 success: function (response) {
-                    $('.modal-title').html("<i class='fas fa-plus'></i> Nueva asistencia");
+                    $('.modal-title').html("<i class='fas fa-plus'></i> Nueva zona");
                     $('#ModalCenter .modal-body').html(response);
                     $('#ModalCenter').modal('show');
 
@@ -169,10 +155,10 @@
         $(document).on('click', '.btnEditar', function () {
             var id = $(this).attr("id");
             $.ajax({
-                url: "{{ route('admin.brands.edit', 'id') }}".replace('id', id),
+                url: "{{ route('admin.zones.edit', 'id') }}".replace('id', id),
                 type: "GET",
                 success: function (response) {
-                    $('.modal-title').html("<i class='fas fa-edit'></i> Editar marca");
+                    $('.modal-title').html("<i class='fas fa-edit'></i> Editar zona");
                     $('#ModalCenter .modal-body').html(response);
                     $('#ModalCenter').modal('show');
 
@@ -267,49 +253,6 @@
             var table = $('#tbtEntity').DataTable();
             table.ajax.reload(null, false);
         }
-
-        $(document).on('click', "#btnBuscar", function () {
-            if (select_inicio.val() === "" && select_final.val() === "" && txtDni.val() === "") {
-                Swal.fire({
-                    title: "Ocurrio un error!",
-                    icon: "error",
-                    timer: 2000,
-                    timerProgressBar: true,
-                    text: "Debe de seleccionar rango de fechas o buscar por DNI.",
-                    confirmButtonText: 'Continuar.',
-                });
-                return;
-            }
-
-            if (select_inicio.val() !== "" && select_final.val() === "") {
-                Swal.fire({
-                    title: "Ocurrio un error!",
-                    icon: "error",
-                    timer: 2000,
-                    timerProgressBar: true,
-                    text: "Debe de seleccionar una fecha fin.",
-                    confirmButtonText: 'Continuar.',
-                });
-                return;
-            }
-
-
-            if (select_inicio.val() === "" && select_final.val() !== "") {
-                Swal.fire({
-                    title: "Ocurrio un error!",
-                    icon: "error",
-                    timer: 2000,
-                    timerProgressBar: true,
-                    text: "Debe de seleccionar una fecha inicio.",
-                    confirmButtonText: 'Continuar.',
-                });
-                return;
-            }
-
-            // Recargamos la tabla con esos filtros
-            table.ajax.reload();
-        });
-
     </script>
 
 

@@ -380,7 +380,7 @@ return [
             'submenu' => [
                 [
                     'text' => 'Zonas',
-                    'url' => 'admin.employees.index',
+                    'route' => 'admin.zones.index',
                     'icon' => 'fas fa-border-none',
                 ],
                 [
