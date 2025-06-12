@@ -18,10 +18,42 @@
                 <div class="card">
                     <div class="card-header">Datos de la zona</div>
                     <div class="card-body">
-                        <b>Distrito: {{$zone->district->name}}</b>
-                        <b>Nombre: {{$zone->name}}</b>
-                        <b>Área: {{$zone->area}}</b>
+                        <b>Distrito: {{$zone->district->name}}</b> <br>
+                        <b>Nombre: {{$zone->name}}</b><br>
+                        <b>Área: {{$zone->area}}</b><br>
                         <b>Descripción: {{$zone->description}}</b>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="card">
+                    <div class="card-header">
+                        Coordenadas
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-bordered" id="tbtEntity">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Latitud</th>
+                                        <th scope="col">Longitud</th>
+                                        <th scope="col">Eliminar</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button type="button" class="btn btn-xs btn-secondary"><i class="fas fa-plus"></i> Agregar
+                            coordenada</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header">Perimetro</div>
+                    <div class="card-body">
+     
                     </div>
                 </div>
             </div>
@@ -32,7 +64,7 @@
         <button type="button" class="btn btn-primary" id="btnNuevo"><i class="fas fa-save"></i>
             Registrar
         </button>
-        <a href="{{ route('admin.zones.index') }}" class="btn btn-success"><i class="fas fa-sync"></i>
+        <a href="{{ route('admin.zones.show', $zone->id) }}" class="btn btn-success"><i class="fas fa-sync"></i>
             Actualizar
         </a>
     </div>
@@ -61,39 +93,19 @@
     <script>
         $(document).ready(function () {
             $('#tbtEntity').DataTable({
-
+                'responsive': true,
+                "autoWidth": false,
                 "ajax": "{{ route('admin.zones.index') }}",
                 "columns": [
                     {
-                        "data": "district_name",
-                        "width": "15%",
-                        "orderable": false,
-                        "searchable": false
+                        "data": "",
                     },
                     {
-                        "data": "name",
-                        "width": "10%",
-                    },
-                    {
-                        "data": "description",
-                    },
-                     {
                         "data": "area",
                     },
                     {
-                        "data": "created_at",
-                        "width": "15%",
-                    },
-                    {
-                        "data": "updated_at",
-                        "width": "15%",
-                    },
-                    {
-                        "data": "options",
-                        "orderable": false,
-                        "searchable": false,
-                        "width": "10%",
-
+                        "data": "option",
+                        "width":"4%",
                     },
                 ]
             });
@@ -249,7 +261,9 @@
             var table = $('#tbtEntity').DataTable();
             table.ajax.reload(null, false);
         }
-    </script>
+  
+  
+  </script>
 
 
     @if (session('success'))
@@ -282,4 +296,5 @@
 {{-- Add here extra stylesheets --}}
 {{--
 <link rel="stylesheet" href="/css/admin_custom.css"> --}}
+
 @stop
