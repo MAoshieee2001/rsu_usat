@@ -61,6 +61,11 @@
 
     <script>
         $('#entity').DataTable({
+            responsive: true,
+            autoWidth: false,
+            language: {
+                url: '/js/es-ES.json'
+            },
             "ajax": "{{ route('admin.models.index') }}",
             columns: [{
                 data: 'code',
@@ -267,31 +272,31 @@
         }
 
 
-    </script>
-
-    @if (session('success'))
-        <script>
-            Swal.fire({
-                icon: 'success',
-                title: '¡Éxito!',
-                text: '{{ session('success') }}',
-                showConfirmButton: false,
-                timer: 2000,
-                timerProgressBar: true,
-            });
         </script>
-    @endif
+
+        @if (session('success'))
+                    <script>
+                        Swal.fire({
+                            icon: 'success',
+                        title: '¡Éxito!',
+                        text: '{{ session('success') }}',
+                        showConfirmButton: false,
+                        timer: 2000,
+                        timerProgressBar: true,
+                        });
+            </script>
+        @endif
 
     @if (session('error'))
         <script>
-            Swal.fire({
-                icon: 'error',
-                title: '¡Error!',
-                text: '{{ session('error') }}',
-                showConfirmButton: false,
-                timer: 2000,
-                timerProgressBar: true,
-            });
+                    Swal.fire({
+                        icon: 'error',
+                    title: '¡Error!',
+                    text: '{{ session('error') }}',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    timerProgressBar: true,
+                    });
         </script>
     @endif
 

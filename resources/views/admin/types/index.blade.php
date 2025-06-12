@@ -59,6 +59,11 @@
 
     <script>
         $('#entity').DataTable({
+            responsive: true,
+            autoWidth: false,
+            language: {
+                url: '/js/es-ES.json'
+            },
             "ajax": "{{ route('admin.types.index') }}",
             columns: [
                 {

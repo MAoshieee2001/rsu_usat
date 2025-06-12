@@ -24,7 +24,7 @@
                         <th>Estado</th>
                         <th>Fecha Vac.</th>
                         <th>Fin. Vac.</th>
-                        <th>Días Usados</th> 
+                        <th>Días Usados</th>
                         <th>Creación</th>
                         <th>Actualización</th>
                         <th>Options</th>
@@ -69,7 +69,11 @@
     <script>
         $(document).ready(function () {
             $('#tbtEntity').DataTable({
-
+                responsive: true,
+                autoWidth: false,
+                language: {
+                    url: '/js/es-ES.json'
+                },
                 "ajax": "{{ route('admin.vacations.index') }}",
                 "columns": [
                     {

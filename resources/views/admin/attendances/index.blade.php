@@ -93,10 +93,10 @@
                 processing: true,
                 serverSide: true,
                 language: {
-                    url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+                    url: '/js/es-ES.json'
                 },
                 responsive: true,
-                autoWidth: false, // evita que se calcule automáticamente el ancho de columnas
+                autoWidth: false, 
                 ajax: {
                     url: "{{ route('admin.attendances.index') }}",
                     data: function (d) {

@@ -67,7 +67,11 @@
     <script>
         $(document).ready(function () {
             $('#tbtEntity').DataTable({
-
+                responsive: true,
+                autoWidth: false,
+                language: {
+                    url: '/js/es-ES.json'
+                },
                 "ajax": "{{ route('admin.employees.index') }}",
                 "columns": [
                     {
@@ -165,7 +169,7 @@
                 }
             })
         })
-        
+
         $(document).on('click', '.btnEditar', function () {
             var id = $(this).attr("id");
             $.ajax({

@@ -66,7 +66,11 @@
     <script>
         $(document).ready(function () {
             $('#tbtEntity').DataTable({
-
+                responsive: true,
+                autoWidth: false,
+                language: {
+                    url: '/js/es-ES.json'
+                },
                 "ajax": "{{ route('admin.contracts.index') }}",
                 "columns": [
                     {

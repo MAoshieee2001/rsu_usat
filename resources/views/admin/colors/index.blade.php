@@ -53,6 +53,11 @@
     <script>
         $(document).ready(function () {
             $('#tbtEntity').DataTable({
+                responsive: true,
+                autoWidth: false,
+                language: {
+                    url: '/js/es-ES.json'
+                },
                 "ajax": "{{ route('admin.colors.index') }}",
                 "columns": [
                     {
@@ -64,7 +69,7 @@
                         "render": function (data) {
                             return '<span class="badge" style="background-color:' + data + '; color: #fff;">' + data + '</span>';
                         },
-                        "width": "15%"
+                        "width": "10%"
                     },
                     {
                         "data": "created_at",

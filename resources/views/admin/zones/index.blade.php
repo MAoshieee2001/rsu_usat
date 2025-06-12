@@ -65,7 +65,11 @@
     <script>
         $(document).ready(function () {
             $('#tbtEntity').DataTable({
-
+                responsive: true,
+                autoWidth: false,
+                language: {
+                    url: '/js/es-ES.json'
+                },
                 "ajax": "{{ route('admin.zones.index') }}",
                 "columns": [
                     {
@@ -81,8 +85,11 @@
                     {
                         "data": "description",
                     },
-                     {
+                    {
                         "data": "area",
+                        "render": function (data, type, row) {
+                            return data + ' m²';
+                        }
                     },
                     {
                         "data": "created_at",
@@ -99,7 +106,8 @@
                         "width": "10%",
 
                     },
-                ]
+                ],
+
             });
         })
 
