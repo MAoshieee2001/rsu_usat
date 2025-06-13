@@ -37,7 +37,7 @@
                                     <tr>
                                         <th scope="col">Latitud</th>
                                         <th scope="col">Longitud</th>
-                                        <th scope="col">Eliminar</th>
+                                        <th scope="col">Opción</th>
                                     </tr>
                                 </thead>
                             </table>
@@ -53,7 +53,7 @@
                 <div class="card">
                     <div class="card-header">Perimetro</div>
                     <div class="card-body">
-     
+
                     </div>
                 </div>
             </div>
@@ -93,19 +93,26 @@
     <script>
         $(document).ready(function () {
             $('#tbtEntity').DataTable({
-                'responsive': true,
-                "autoWidth": false,
+                responsive: true,
+                autoWidth: false,
+                language: {
+                    url: '/js/es-ES.json'
+                },
                 "ajax": "{{ route('admin.zones.index') }}",
                 "columns": [
                     {
-                        "data": "",
+                        "data": "area",
                     },
                     {
                         "data": "area",
                     },
                     {
                         "data": "option",
-                        "width":"4%",
+                        "width": "4%",
+                        "class":"text-center",
+                        "render": function (data, type, row) {
+                            return '<a class="btn btn-xs btn-danger"><i class="fas fa-trash"></i></a>';
+                        }
                     },
                 ]
             });
@@ -261,9 +268,9 @@
             var table = $('#tbtEntity').DataTable();
             table.ajax.reload(null, false);
         }
-  
-  
-  </script>
+
+
+    </script>
 
 
     @if (session('success'))

@@ -43,7 +43,9 @@
                         <th>DNI</th>
                         <th>Empleado</th>
                         <th>Fecha de ingreso</th>
+                        <th>Hora de ingreso</th>
                         <th>Fecha de salida</th>
+                        <th>Hora de salida</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -109,7 +111,9 @@
                     { data: "dni", width: "10%" },
                     { data: "full_names", width: "20%" },
                     { data: "date_joined", width: "15%" },
-                    { data: "date_end", width: "15%" },
+                    { data: "hour_joined", width: "15%" },
+                    { data: "date_joined", width: "15%" },
+                    { data: "hour_end", width: "15%" },
                 ],
                 searching: false,
                 lengthChange: false,

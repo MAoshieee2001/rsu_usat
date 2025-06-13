@@ -41,7 +41,9 @@ class AttendanceController extends Controller
                 ->addColumn('full_names', fn($row) => optional($row->employee)->fullnames ?? '—')
                 ->editColumn('date_joined', fn($row) => $row->date_joined ? Carbon::parse($row->date_joined)->format('d/m/Y') : '—')
                 ->editColumn('date_end', fn($row) => $row->date_end ? Carbon::parse($row->date_end)->format('d/m/Y') : '—')
-
+                // 👇 Aquí sacamos la hora de los mismos campos datetime
+                ->addColumn('hour_joined', fn($row) => $row->date_joined ? Carbon::parse($row->date_joined)->format('H:i:s') : '—')
+                ->addColumn('hour_end', fn($row) => $row->date_end ? Carbon::parse($row->date_end)->format('H:i:s') : '—')
                 ->make(true);
         }
 
