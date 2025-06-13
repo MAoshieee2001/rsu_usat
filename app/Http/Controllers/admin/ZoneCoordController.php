@@ -11,6 +11,7 @@ class ZoneCoordController extends Controller
     public function edit(string $id)
     {
         $vertice = ZoneCoord::select('latitude as lat', 'longitude as lng')->where('zone_id', $id)->get();
-        return View('admin.zonescoords.create', compact('vertice'));
+        $lastcoord = ZoneCoord::select('latitude as lat', 'longitude as lng')->where('zone_id', $id)->latest()->first();
+        return View('admin.zonescoords.create', compact('vertice','lastcoord'));
     }
 }
