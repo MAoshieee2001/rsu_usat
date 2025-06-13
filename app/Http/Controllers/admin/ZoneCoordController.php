@@ -7,5 +7,8 @@ use Illuminate\Http\Request;
 
 class ZoneCoordController extends Controller
 {
-    //
+    public function edit(string $id)
+    {
+        
+    }
 }

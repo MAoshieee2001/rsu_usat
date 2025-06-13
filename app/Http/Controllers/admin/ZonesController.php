@@ -91,7 +91,7 @@ class ZonesController extends Controller
             return view('admin.zones.show', compact('zone'));
         } catch (\Exception $e) {
             return redirect()->route('admin.zones.index')
-                ->with('error', 'Ocurrió un error al intentar registar permietros en  la zona.');
+                ->with('error', 'Ocurrió un error al intentar registar perimetros en  la zona.');
         }
     }
 
@@ -100,7 +100,14 @@ class ZonesController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        try {
+            $districts = District::pluck('name', 'id');
+            $zones = Zone::findOrFail($id); // Tiene el campo 'brand' que es el ID
+            return view('admin.zones.edit', compact('zones', 'districts'));
+        } catch (\Exception $e) {
+            return redirect()->route('admin.zones.index')
+                ->with('error', 'Ocurrió un error al intentar editar la zona.');
+        }
     }
 
     /**
@@ -108,7 +115,18 @@ class ZonesController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        try {
+            // Buscar la zona por ID
+            $zone = Zone::findOrFail($id);
+            // Actualizar con los datos del request
+            $zone->update($request->all());
+            return response()->json([
+                'success' => true,
+                'message' => 'Zona registrado con éxito.',
+            ], 200);
+        } catch (\Exception $e) {
+            return redirect()->route('admin.zones.index')->with('error', 'Error al crear la zona: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -116,6 +134,12 @@ class ZonesController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $zone = Zone::findOrFail($id);
+            $zone->delete();
+            return redirect()->route('admin.zones.index')->with('success', 'Zona eliminada con éxito.');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.zones.index')->with('error', 'Ocurrió un error al intentar eliminar la zona.' . $e->getMessage());
+        }
     }
 }

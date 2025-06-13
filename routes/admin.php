@@ -11,6 +11,7 @@ use App\Http\Controllers\admin\VacationChangeController;
 use App\Http\Controllers\admin\VacationController;
 use App\Http\Controllers\admin\VehicleController;
 use App\Http\Controllers\admin\ColorController;
+use App\Http\Controllers\admin\ZoneCoordController;
 use App\Http\Controllers\admin\ZonesController;
 use Illuminate\Support\Facades\Route;
 
@@ -27,6 +28,7 @@ Route::resource('vacations', VacationController::class)->names('admin.vacations'
 Route::resource('colors', ColorController::class)->names('admin.colors');
 Route::resource('attendances', AttendanceController::class)->names('admin.attendances');
 Route::resource('zones', ZonesController::class)->names('admin.zones');
+Route::resource('zonescoords', ZoneCoordController::class)->names('admin.zonescoords');
 
 
 // Rutas para filtrar asistencias
