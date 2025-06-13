@@ -44,7 +44,8 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <button type="button" class="btn btn-xs btn-secondary"><i class="fas fa-plus"></i> Agregar
+                        <button type="button" class="btn btn-xs btn-secondary" data-id="{{$zone->id}}" id="btnNuevo"><i
+                                class="fas fa-plus"></i> Agregar
                             coordenada</button>
                     </div>
                 </div>
@@ -109,9 +110,9 @@
                     {
                         "data": "option",
                         "width": "4%",
-                        "class":"text-center",
+                        "class": "text-center",
                         "render": function (data, type, row) {
-                            return '<a class="btn btn-xs btn-danger"><i class="fas fa-trash"></i></a>';
+                            return '<a class="btn btn-xs btn-danger btn-nuevo"><i class="fas fa-trash"></i></a>';
                         }
                     },
                 ]
@@ -119,12 +120,13 @@
         })
 
         $('#btnNuevo').click(function () {
+            let zone_id = $(this).attr("data-id");
             // Permite aperturar el modal y realizar peticion
             $.ajax({
-                url: "{{ route('admin.zones.create') }}",
+                url: "{{ route('admin.zonescoords.edit', '_id') }}".replace("_id", zone_id),
                 type: "GET",
                 success: function (response) {
-                    $('.modal-title').html("<i class='fas fa-plus'></i> Nueva zona");
+                    $('.modal-title').html("<i class='fas fa-plus'></i> Nuevo perimetro");
                     $('#ModalCenter .modal-body').html(response);
                     $('#ModalCenter').modal('show');
 
@@ -166,103 +168,6 @@
                 }
             })
         })
-
-        $(document).on('click', '.btnEditar', function () {
-            var id = $(this).attr("id");
-            $.ajax({
-                url: "{{ route('admin.zones.edit', 'id') }}".replace('id', id),
-                type: "GET",
-                success: function (response) {
-                    $('.modal-title').html("<i class='fas fa-edit'></i> Editar zona");
-                    $('#ModalCenter .modal-body').html(response);
-                    $('#ModalCenter').modal('show');
-
-                    $('#ModalCenter form').on('submit', function (e) {
-                        e.preventDefault();
-                        var form = $(this);
-                        var formdata = new FormData(this);
-                        $.ajax({
-                            url: form.attr('action'),
-                            type: form.attr('method'),
-                            data: formdata,
-                            processData: false,
-                            contentType: false,
-                            success: function (response) {
-                                $('#ModalCenter').modal('hide');
-                                refreshTable();
-                                Swal.fire({
-                                    title: "Proceso exitoso",
-                                    icon: "success",
-                                    timer: 2000,
-                                    timerProgressBar: true,
-                                    text: response.message,
-                                    confirmButtonText: 'Continuar.',
-                                    draggable: true
-                                });
-                            },
-                            error: function (xhr) {
-                                var response = xhr.responseJSON;
-                                Swal.fire({
-                                    title: "Error",
-                                    icon: "error",
-                                    timer: 2000,
-                                    timerProgressBar: true,
-                                    text: response.message,
-                                    draggable: true
-                                });
-                            }
-                        })
-                    })
-                }
-            })
-        });
-
-        $(document).on('submit', '.frmDelete', function (e) {
-            e.preventDefault();
-            var form = $(this);
-            Swal.fire({
-                title: "Está seguro de eliminar?",
-                text: "Este proceso no es reversible!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Si, eliminar!",
-                cancelButtonText: "No, Cancelar!"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    //this.submit();
-                    $.ajax({
-                        url: form.attr('action'),
-                        type: form.attr('method'),
-                        data: form.serialize(),
-                        success: function (response) {
-                            refreshTable();
-                            Swal.fire({
-                                title: "Proceso exitoso",
-                                icon: "success",
-                                timer: 2000,
-                                timerProgressBar: true,
-                                text: response.message,
-                                confirmButtonText: 'Continuar.',
-                                draggable: true
-                            });
-                        },
-                        error: function (xhr) {
-                            var response = xhr.responseJSON;
-                            Swal.fire({
-                                title: "Error",
-                                icon: "error",
-                                timer: 2000,
-                                timerProgressBar: true,
-                                text: response.message,
-                                draggable: true
-                            });
-                        }
-                    });
-                }
-            });
-        });
 
         function refreshTable() {
             var table = $('#tbtEntity').DataTable();
