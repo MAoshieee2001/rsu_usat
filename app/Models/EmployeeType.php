@@ -10,4 +10,7 @@ class EmployeeType extends Model
     use HasFactory;
 
     protected $table = 'employeetypes';
+
+    protected $guarded = [];
+
 }

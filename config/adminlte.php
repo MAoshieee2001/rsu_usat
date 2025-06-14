@@ -356,6 +356,11 @@ return [
                     'route' => 'admin.employees.index',
                     'icon' => 'fas fa-user',
                 ],
+                                [
+                    'text' => 'Empleado',
+                    'route' => 'admin.employees.index',
+                    'icon' => 'fas fa-user',
+                ],
                 [
                     'text' => 'Contrato',
                     'route' => 'admin.contracts.index',
