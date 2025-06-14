@@ -219,9 +219,15 @@ public function store(Request $request)
         try {
             $employeeContract = EmployeeContract::findOrFail($id);
             $employeeContract->delete();
-            return redirect()->route('admin.contracts.index')->with('success', 'Contrato eliminada con éxito.');
+                       return response()->json([
+                'success' => true,
+                'message' => 'Contrato eliminado con éxito.',
+            ], 200);
         } catch (\Exception $e) {
-            return redirect()->route('admin.contracts.index')->with('error', 'Ocurrió un error al intentar eliminar el contrato.' . $e->getMessage());
+                        return response()->json([
+                'success' => false,
+                'message' => 'Error al eliminar el contrato: ' . $e->getMessage(),
+            ], 500);
         }
     }
 }

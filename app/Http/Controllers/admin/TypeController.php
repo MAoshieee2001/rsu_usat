@@ -118,9 +118,15 @@ class TypeController extends Controller
         try {
             $type = VehicleType::findOrFail($id);
             $type->delete();
-            return redirect()->route('admin.types.index')->with('success', 'Tipo vehiculo eliminada con éxito.');
+                       return response()->json([
+                'success' => true,
+                'message' => 'Tipo vehiculo eliminado con éxito.',
+            ], 200);
         } catch (\Exception $e) {
-            return redirect()->route('admin.types.index')->with('error', 'Ocurrió un error al intentar eliminar el tipo vehiculo.' . $e->getMessage());
+                        return response()->json([
+                'success' => false,
+                'message' => 'Error al eliminar el Tipo vehiculo: ' . $e->getMessage(),
+            ], 500);
         }
     }
 }

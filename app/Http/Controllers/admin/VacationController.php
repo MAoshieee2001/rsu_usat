@@ -82,10 +82,10 @@ class VacationController extends Controller
                         in_array($c->contractType->name, ['Nombrado', 'Permanente']);
                 });
             })->pluck('fullnames', 'id');
-                        return view('admin.vacations.create', compact('employee'));
-                    } catch (\Exception $e) {
-                        return redirect()->route('admin.vacations.index')->with('error', 'Ocurrió un error al intentar crear un nueva vacación.');
-                    }
+            return view('admin.vacations.create', compact('employee'));
+        } catch (\Exception $e) {
+            return redirect()->route('admin.vacations.index')->with('error', 'Ocurrió un error al intentar crear un nueva vacación.');
+        }
     }
 
     /**
@@ -279,8 +279,10 @@ class VacationController extends Controller
                 'message' => 'Vacaciones actualizada con éxito.',
             ], 200);
         } catch (\Exception $e) {
-            return redirect()->route('admin.vacations.index')
-                ->with('error', 'Error al actualizar las vacaciones: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Ocurrio un error al actualizar vacaciones.',
+            ], 500);
         }
     }
 
@@ -289,9 +291,15 @@ class VacationController extends Controller
         try {
             $vacation = Vacation::findOrFail($id);
             $vacation->delete();
-            return redirect()->route('admin.vacations.index')->with('success', 'Vacaciones eliminada con éxito.');
+            return response()->json([
+                'success' => true,
+                'message' => 'Vacaciones eliminado con éxito.',
+            ], 200);
         } catch (\Exception $e) {
-            return redirect()->route('admin.vacations.index')->with('error', 'Ocurrió un error al intentar eliminar las vacaciones.' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Ocurrio un error al eliminar vacaciones.',
+            ], 500);
         }
     }
 }

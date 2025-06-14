@@ -156,7 +156,6 @@ class BrandController extends Controller
                 'success' => true,
                 'message' => 'Marca actualizada con éxito.',
             ], 200);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -175,9 +174,15 @@ class BrandController extends Controller
         try {
             $brand = Brand::findOrFail($id);
             $brand->delete();
-            return redirect()->route('admin.brands.index')->with('success', 'Marca eliminada con éxito.');
+            return response()->json([
+                'success' => true,
+                'message' => 'Marca eliminada con éxito.',
+            ], 200);
         } catch (\Exception $e) {
-            return redirect()->route('admin.brands.index')->with('error', 'Ocurrió un error al intentar eliminar la marca.' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Ocurrió un error al intentar eliminar la marca. ' . $e->getMessage(),
+            ], 500);
         }
 
     }

@@ -110,7 +110,7 @@ class ZonesController extends Controller
                     ->rawColumns(['delete'])
                     ->make(true);
             } else {
-                return view('admin.zones.show', compact('zone','vertice','lastcoord'));
+                return view('admin.zones.show', compact('zone', 'vertice', 'lastcoord'));
             }
 
 
@@ -162,9 +162,15 @@ class ZonesController extends Controller
         try {
             $zone = Zone::findOrFail($id);
             $zone->delete();
-            return redirect()->route('admin.zones.index')->with('success', 'Zona eliminada con éxito.');
+            return response()->json([
+                'success' => true,
+                'message' => 'Zona registrado con éxito.',
+            ], 200);
         } catch (\Exception $e) {
-            return redirect()->route('admin.zones.index')->with('error', 'Ocurrió un error al intentar eliminar la zona.' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Ocurrio un error al eliminar zona.',
+            ], 500);
         }
     }
 }
