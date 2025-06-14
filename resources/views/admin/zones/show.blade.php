@@ -54,7 +54,7 @@
                 <div class="card">
                     <div class="card-header">Perimetro</div>
                     <div class="card-body">
-
+                        <div id="map_1" style="width: 100%; height: 400px;"></div>
                     </div>
                 </div>
             </div>
@@ -65,6 +65,9 @@
         <button type="button" class="btn btn-primary" id="btnNuevo"><i class="fas fa-save"></i>
             Registrar
         </button>
+        <a href="{{ route('admin.zones.index') }}" class="btn btn-warning"><i class="fas fa-minus"></i>
+            Retornar
+        </a>
         <a href="{{ route('admin.zones.show', $zone->id) }}" class="btn btn-success"><i class="fas fa-sync"></i>
             Actualizar
         </a>
@@ -167,6 +170,53 @@
             })
         })
 
+        $(document).on('submit', '.frmDelete', function (e) {
+            e.preventDefault();
+            var form = $(this);
+            Swal.fire({
+                title: "Está seguro de eliminar?",
+                text: "Este proceso no es reversible!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Si, eliminar!",
+                cancelButtonText: "No, Cancelar!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    //this.submit();
+                    $.ajax({
+                        url: form.attr('action'),
+                        type: form.attr('method'),
+                        data: form.serialize(),
+                        success: function (response) {
+                            refreshTable();
+                            Swal.fire({
+                                title: "Proceso exitoso",
+                                icon: "success",
+                                timer: 2000,
+                                timerProgressBar: true,
+                                text: response.message,
+                                confirmButtonText: 'Continuar.',
+                                draggable: true
+                            });
+                        },
+                        error: function (xhr) {
+                            var response = xhr.responseJSON;
+                            Swal.fire({
+                                title: "Error",
+                                icon: "error",
+                                timer: 2000,
+                                timerProgressBar: true,
+                                text: response.message,
+                                draggable: true
+                            });
+                        }
+                    });
+                }
+            });
+        });
+
         function refreshTable() {
             var table = $('#tbtEntity').DataTable();
             table.ajax.reload(null, false);
@@ -174,6 +224,49 @@
 
 
     </script>
+<script>
+    function initMap() {
+        var perimeterCoords = @json($vertice);
+
+        if (Object.keys(perimeterCoords).length === 0) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                var lat = position.coords.latitude;
+                var lng = position.coords.longitude;
+
+                var mapOptions = {
+                    center: { lat: lat, lng: lng },
+                    zoom: 18
+                };
+                var map = new google.maps.Map(document.getElementById('map_1'), mapOptions);
+            });
+        } else {
+            var mapOptions = {
+                zoom: 18
+            };
+            var map = new google.maps.Map(document.getElementById('map_1'), mapOptions);
+
+            var perimeterPolygon = new google.maps.Polygon({
+                paths: perimeterCoords,
+                strokeColor: '#FF0000',
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: '#FF0000',
+                fillOpacity: 0.35
+            });
+
+            perimeterPolygon.setMap(map);
+
+            var bounds = new google.maps.LatLngBounds();
+            perimeterPolygon.getPath().forEach(function (coord) {
+                bounds.extend(coord);
+            });
+
+            map.panTo(bounds.getCenter());
+        }
+    }
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}&callback=initMap" async defer></script>
 
 
     @if (session('success'))
@@ -188,6 +281,7 @@
             });
         </script>
     @endif
+
     @if (session('error'))
         <script>
             Swal.fire({

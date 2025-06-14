@@ -90,7 +90,9 @@ class ZonesController extends Controller
             $zone = Zone::find($id);
             $zone = Zone::with('district')->find($id);
             $coords = ZoneCoord::where('zone_id', $id)->get();
-           // return view('admin.zones.show', compact('zone'));
+            $vertice = ZoneCoord::select('latitude as lat', 'longitude as lng')->where('zone_id', $id)->get();
+            $lastcoord = ZoneCoord::select('latitude as lat', 'longitude as lng')->where('zone_id', $id)->latest()->first();
+            // return view('admin.zones.show', compact('zone'));
 
             if ($request->ajax()) {
                 return DataTables::of($coords)
@@ -108,7 +110,7 @@ class ZonesController extends Controller
                     ->rawColumns(['delete'])
                     ->make(true);
             } else {
-                return view('admin.zones.show', compact('zone'));
+                return view('admin.zones.show', compact('zone','vertice','lastcoord'));
             }
 
 

@@ -3,7 +3,7 @@
 <div class="row">
     <div class="form-group col-6">
         {!! Form::label('latitude', 'Latitud') !!}
-        {!! Form::text('latitude', null, [
+        {!! Form::text('latitude', optional($lastcoord)->lat, [
     'class' => 'form-control',
     'id' => 'latitude', // 👈 ID correcto para JavaScript
     'placeholder' => 'Ingrese la latitud del perimetro.',
@@ -14,7 +14,7 @@
 
     <div class="form-group col-6">
         {!! Form::label('longitude', 'Longitud') !!}
-        {!! Form::text('longitude', null, [
+        {!! Form::text('longitude', optional($lastcoord)->lng, [
     'class' => 'form-control',
     'id' => 'longitude', // 👈 ID correcto para JavaScript
     'placeholder' => 'Ingrese la longitud del perimetro.',
@@ -94,6 +94,8 @@
             });
         }
     </script>
+
+    
     <script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}&callback=initMap" async
         defer>
         </script>

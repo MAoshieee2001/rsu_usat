@@ -17,7 +17,6 @@ class ZoneCoordController extends Controller
         return View('admin.zonescoords.create', compact('vertice', 'lastcoord', 'zone'));
     }
 
-
     public function store(Request $request)
     {
         try {
@@ -31,6 +30,21 @@ class ZoneCoordController extends Controller
                 'message' => 'Hubo un error en el registro.' . $e->getMessage(),
             ], 500);
         }
+    }
 
+    public function destroy(string $id)
+    {
+        try {
+            $coord = ZoneCoord::findOrFail($id);
+            $coord->delete();
+            return response()->json([
+                'success' => true,
+                'message' => 'Coordenada eliminada con éxito.',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Hubo un error en al eliminar coordenada.' . $e->getMessage(),
+            ], 500);
+        }
     }
 }
