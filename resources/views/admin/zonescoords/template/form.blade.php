@@ -1,3 +1,5 @@
+ <input type="text" hidden name="zone_id" value="{{ $zone->id }}">
+
 <div class="row">
     <div class="form-group col-6">
         {!! Form::label('latitude', 'Latitud') !!}

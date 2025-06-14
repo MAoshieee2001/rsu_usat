@@ -99,21 +99,19 @@
                 language: {
                     url: '/js/es-ES.json'
                 },
-                "ajax": "{{ route('admin.zones.index') }}",
+                "ajax": "{{ route('admin.zones.show', $zone->id) }}",
                 "columns": [
                     {
-                        "data": "area",
+                        "data": "latitude",
                     },
                     {
-                        "data": "area",
+                        "data": "longitude",
                     },
                     {
-                        "data": "option",
+                        "data": "delete",
                         "width": "4%",
                         "class": "text-center",
-                        "render": function (data, type, row) {
-                            return '<a class="btn btn-xs btn-danger btn-nuevo"><i class="fas fa-trash"></i></a>';
-                        }
+
                     },
                 ]
             });
