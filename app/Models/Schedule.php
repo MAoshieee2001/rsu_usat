@@ -9,10 +9,6 @@ class Schedule extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'date',
-        'status_id',
-        'shift_id',
-        'route_id',
-    ];
+    protected $table = 'schedules';
+    protected $guarded = [];
 }

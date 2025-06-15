@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace App\Http\Controllers\admin\vehicles;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;

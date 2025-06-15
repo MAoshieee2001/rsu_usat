@@ -1,43 +1,46 @@
 <?php
 
+use App\Http\Controllers\admin\admin\zones\ZoneCoordController;
+use App\Http\Controllers\admin\admin\zones\ZonesController;
 use App\Http\Controllers\admin\AdminController;
-use App\Http\Controllers\admin\AttendanceController;
-use App\Http\Controllers\admin\BrandController;
-use App\Http\Controllers\admin\BrandModelController;
-use App\Http\Controllers\admin\EmployeeContractController;
-use App\Http\Controllers\admin\EmployeeController;
-use App\Http\Controllers\admin\EmployeeTypeController;
-use App\Http\Controllers\admin\TypeController;
-use App\Http\Controllers\admin\VacationChangeController;
-use App\Http\Controllers\admin\VacationController;
-use App\Http\Controllers\admin\VehicleController;
-use App\Http\Controllers\admin\ColorController;
-use App\Http\Controllers\admin\ZoneCoordController;
-use App\Http\Controllers\admin\ZonesController;
+use App\Http\Controllers\admin\employees\AttendanceController;
+use App\Http\Controllers\admin\vehicles\BrandController;
+use App\Http\Controllers\admin\vehicles\BrandModelController;
+use App\Http\Controllers\admin\employees\EmployeeContractController;
+use App\Http\Controllers\admin\employees\EmployeeController;
+use App\Http\Controllers\admin\employees\EmployeeTypeController;
+use App\Http\Controllers\admin\vehicles\TypeController;
+use App\Http\Controllers\admin\employees\VacationController;
+use App\Http\Controllers\admin\vehicles\VehicleController;
+use App\Http\Controllers\admin\vehicles\ColorController;
 use Illuminate\Support\Facades\Route;
 
 Route::resource('/', AdminController::class)->names('admin');
-// Registrar todas las rutas del recurso BrandController
+# RUTAS DE GESTION VEHICULOS
 Route::resource('brands', BrandController::class)->names('admin.brands');
-Route::resource('models', BrandmodelController::class)->names('admin.models');
-
+Route::resource('models', BrandModelController::class)->names('admin.models');
 Route::resource('types', TypeController::class)->names('admin.types');
 Route::resource('vehicles', VehicleController::class)->names('admin.vehicles');
+# RUTA DE GESTION DE EMPLEADOS
 Route::resource('employees', EmployeeController::class)->names('admin.employees');
 Route::resource('contracts', EmployeeContractController::class)->names('admin.contracts');
 Route::resource('vacations', VacationController::class)->names('admin.vacations');
 Route::resource('colors', ColorController::class)->names('admin.colors');
 Route::resource('attendances', AttendanceController::class)->names('admin.attendances');
+# RUTA DE GESTION DE ZONAS
 Route::resource('zones', ZonesController::class)->names('admin.zones');
 Route::resource('zonescoords', ZoneCoordController::class)->names('admin.zonescoords');
 Route::resource('employeetypes', EmployeeTypeController::class)->names('admin.employeetypes');
 
 
-// Rutas para filtrar asistencias
+# RUTAS PARAMETRIZADAS PARA ASISTENCIAS 
 Route::get('/attendances/buscar', [AttendanceController::class, 'buscar'])->name('admin.attendances.buscar');
 
+#* RUTAS PARAMETRIZADAS PARA ZONAS
 Route::get('maps', [ZonesController::class, 'getAllZones'])->name('admin.zones.all');
 Route::get('coords/{id}', [ZonesController::class, 'getCoords'])->name('admin.zones.getCoords');
+
+# RUTAS PARAMETRIZADAS PARA VEHICLES
 // Rutas para gestión de imágenes de vehículos
 Route::get('models-by-brand/{brand_id}', [VehicleController::class, 'getModelsByBrand'])->name('admin.models.byBrand');
 // Ruta para obtener las iamgenes de los vehiculos

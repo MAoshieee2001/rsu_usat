@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace App\Http\Controllers\admin\employees;
 
 use App\Http\Controllers\Controller;
 use App\Models\ContractType;
@@ -83,55 +83,55 @@ class EmployeeContractController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-public function store(Request $request)
-{
-    try {
-        $contract = ContractType::find($request->contract_id);
+    public function store(Request $request)
+    {
+        try {
+            $contract = ContractType::find($request->contract_id);
 
-        // Verifica si ya existe un contrato activo tipo Nombrado o Permanente
-        $existingContract = EmployeeContract::where('employee_id', $request->employee_id)
-            ->whereHas('contractType', function ($query) {
-                $query->whereIn('name', ['Nombrado', 'Permanente']);
-            })
-            ->where('status', 'Activo')
-            ->first();
+            // Verifica si ya existe un contrato activo tipo Nombrado o Permanente
+            $existingContract = EmployeeContract::where('employee_id', $request->employee_id)
+                ->whereHas('contractType', function ($query) {
+                    $query->whereIn('name', ['Nombrado', 'Permanente']);
+                })
+                ->where('status', 'Activo')
+                ->first();
 
-        if ($existingContract) {
+            if ($existingContract) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'El empleado ya tiene un contrato Nombrado o Permanente activo, no se puede agregar otro.',
+                ], 422);
+            }
+
+            // Valida que contratos temporales tengan fecha de fin
+            if (strtolower($contract->name) === 'temporal' && empty($request->date_end)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'La fecha de finalización es obligatoria para contratos temporales.',
+                ], 422);
+            }
+
+            // Crea el contrato guardando fecha y hora actual en date_start
+            EmployeeContract::create([
+                'employee_id' => $request->employee_id,
+                'contract_id' => $request->contract_id,
+                'date_start' => now(), // 👈 Aquí guardamos con fecha y hora exacta
+                'date_end' => $request->date_end, // puede ser null o venir del request
+                'status' => $request->status ?? 'Activo',
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Contrato registrado con éxito.',
+            ], 200);
+
+        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'El empleado ya tiene un contrato Nombrado o Permanente activo, no se puede agregar otro.',
-            ], 422);
+                'message' => 'Error al crear el contrato: ' . $e->getMessage(),
+            ], 500);
         }
-
-        // Valida que contratos temporales tengan fecha de fin
-        if (strtolower($contract->name) === 'temporal' && empty($request->date_end)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'La fecha de finalización es obligatoria para contratos temporales.',
-            ], 422);
-        }
-
-        // Crea el contrato guardando fecha y hora actual en date_start
-        EmployeeContract::create([
-            'employee_id' => $request->employee_id,
-            'contract_id' => $request->contract_id,
-            'date_start' => now(), // 👈 Aquí guardamos con fecha y hora exacta
-            'date_end' => $request->date_end, // puede ser null o venir del request
-            'status' => $request->status ?? 'Activo',
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Contrato registrado con éxito.',
-        ], 200);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error al crear el contrato: ' . $e->getMessage(),
-        ], 500);
     }
-}
     /**
      * Display the specified resource.
      */
@@ -219,12 +219,12 @@ public function store(Request $request)
         try {
             $employeeContract = EmployeeContract::findOrFail($id);
             $employeeContract->delete();
-                       return response()->json([
+            return response()->json([
                 'success' => true,
                 'message' => 'Contrato eliminado con éxito.',
             ], 200);
         } catch (\Exception $e) {
-                        return response()->json([
+            return response()->json([
                 'success' => false,
                 'message' => 'Error al eliminar el contrato: ' . $e->getMessage(),
             ], 500);

@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace App\Http\Controllers\admin\vehicles;
+
 
 use App\Http\Controllers\Controller;
 use App\Models\Brand;
