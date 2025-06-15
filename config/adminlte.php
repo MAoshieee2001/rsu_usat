@@ -403,6 +403,11 @@ return [
             'icon' => 'fas fa-terminal',
             'submenu' => [
                 [
+                    'text' => 'Horarios',
+                    'route' => 'admin.schedules.index',
+                    'icon' => 'fas fa-calendar',
+                ],
+                [
                     'text' => 'Zonas',
                     'url' => 'admin.employees.index',
                     'icon' => 'fas fa-border-none',
