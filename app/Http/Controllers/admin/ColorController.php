@@ -145,9 +145,15 @@ class ColorController extends Controller
             $color = Color::findOrFail($id);
             $color->delete();
 
-            return redirect()->route('admin.colors.index')->with('success', 'Color eliminado con éxito.');
+            return response()->json([
+                'success' => true,
+                'message' => 'Color eliminado con éxito.',
+            ], 200);
         } catch (\Exception $e) {
-            return redirect()->route('admin.colors.index')->with('error', 'Ocurrió un error al intentar eliminar el color. ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Ocurrió un error al intentar eliminar el color. ' . $e->getMessage(),
+            ], 500);
         }
     }
 }

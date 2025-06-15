@@ -357,6 +357,11 @@ return [
                     'icon' => 'fas fa-user',
                 ],
                 [
+                    'text' => 'Función',
+                    'route' => 'admin.employeetypes.index',
+                    'icon' => 'fas fa-address-card',
+                ],
+                [
                     'text' => 'Contrato',
                     'route' => 'admin.contracts.index',
                     'icon' => 'fas fa-file-contract',

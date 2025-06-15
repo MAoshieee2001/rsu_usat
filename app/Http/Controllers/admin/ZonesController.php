@@ -5,6 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use App\Models\District;
 use App\Models\Zone;
+use App\Models\ZoneCoord;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -83,15 +84,39 @@ class ZonesController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request, string $id)
     {
         try {
             $zone = Zone::find($id);
             $zone = Zone::with('district')->find($id);
-            return view('admin.zones.show', compact('zone'));
+            $coords = ZoneCoord::where('zone_id', $id)->get();
+            $vertice = ZoneCoord::select('latitude as lat', 'longitude as lng')->where('zone_id', $id)->get();
+            $lastcoord = ZoneCoord::select('latitude as lat', 'longitude as lng')->where('zone_id', $id)->latest()->first();
+            // return view('admin.zones.show', compact('zone'));
+
+            if ($request->ajax()) {
+                return DataTables::of($coords)
+                    ->addColumn('delete', function ($coords) {
+                        return '
+   
+                        <form action="' . route('admin.zonescoords.destroy', $coords->id) . '" method="POST" class="d-inline frmDelete">
+                            ' . csrf_field() . method_field('DELETE') . '
+                            <button type="submit" class="btn btn-sm btn-danger">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    ';
+                    })
+                    ->rawColumns(['delete'])
+                    ->make(true);
+            } else {
+                return view('admin.zones.show', compact('zone', 'vertice', 'lastcoord'));
+            }
+
+
         } catch (\Exception $e) {
             return redirect()->route('admin.zones.index')
-                ->with('error', 'Ocurrió un error al intentar registar perimetros en  la zona.');
+                ->with('error', 'Ocurrió un error al intentar registar perimetros en  la zona.' . $e->getMessage());
         }
     }
 
@@ -137,9 +162,15 @@ class ZonesController extends Controller
         try {
             $zone = Zone::findOrFail($id);
             $zone->delete();
-            return redirect()->route('admin.zones.index')->with('success', 'Zona eliminada con éxito.');
+            return response()->json([
+                'success' => true,
+                'message' => 'Zona registrado con éxito.',
+            ], 200);
         } catch (\Exception $e) {
-            return redirect()->route('admin.zones.index')->with('error', 'Ocurrió un error al intentar eliminar la zona.' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Ocurrio un error al eliminar zona.',
+            ], 500);
         }
     }
 }

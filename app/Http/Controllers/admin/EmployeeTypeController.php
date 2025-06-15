@@ -3,18 +3,18 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\VehicleType;
+use App\Models\EmployeeType;
 use Illuminate\Http\Request;
-use Yajra\DataTables\Facades\DataTables;
+use Yajra\DataTables\DataTables;
 
-class TypeController extends Controller
+class EmployeeTypeController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $types = VehicleType::all();
+        $types = EmployeeType::all();
         if ($request->ajax()) {
             return DataTables::of($types)
                 ->addColumn('options', function ($type) {
@@ -22,7 +22,7 @@ class TypeController extends Controller
                         <button class="btn btn-sm btn-warning btnEditar" id="' . $type->id . '">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <form action="' . route('admin.types.destroy', $type->id) . '" method="POST" class="d-inline frmDelete">
+                        <form action="' . route('admin.employeetypes.destroy', $type->id) . '" method="POST" class="d-inline frmDelete">
                             ' . csrf_field() . method_field('DELETE') . '
                             <button type="submit" class="btn btn-sm btn-danger">
                                 <i class="fas fa-trash"></i>
@@ -33,7 +33,7 @@ class TypeController extends Controller
                 ->rawColumns(['options'])
                 ->make(true);
         } else {
-            return view('admin.types.index', compact('types'));
+            return view('admin.employeetypes.index', compact('types'));
         }
     }
 
@@ -43,9 +43,9 @@ class TypeController extends Controller
     public function create()
     {
         try {
-            return view('admin.types.create');
+            return view('admin.employeetypes.create');
         } catch (\Exception $e) {
-            return redirect()->route('admin.models.index')->with('error', 'Ocurrió un error al intentar crear un nuevo tipo.');
+            return redirect()->route('admin.employeetypes.index')->with('error', 'Ocurrió un error al intentar crear una nueva función.');
         }
     }
 
@@ -55,13 +55,16 @@ class TypeController extends Controller
     public function store(Request $request)
     {
         try {
-            VehicleType::create($request->all());
+            EmployeeType::create($request->all());
             return response()->json([
                 'success' => true,
-                'message' => 'Tipo vehiculo registrado con éxito.',
+                'message' => 'Función registrado con éxito.',
             ], 200);
         } catch (\Exception $e) {
-            return redirect()->route('admin.types.index')->with('error', 'Error al crear el tipo vehiculo: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al crear la función: ' . $e->getMessage(),
+            ], 500);
         }
     }
 
@@ -79,12 +82,14 @@ class TypeController extends Controller
     public function edit(string $id)
     {
         try {
-            $type = VehicleType::findOrFail($id); // Tiene el campo 'brand' que es el ID
+            $type = EmployeeType::findOrFail($id); // Tiene el campo 'brand' que es el ID
 
-            return view('admin.types.edit', compact('type'));
+            return view('admin.employeetypes.edit', compact('type'));
         } catch (\Exception $e) {
-            return redirect()->route('admin.types.index')
-                ->with('error', 'Ocurrió un error al intentar editar el tipo vehiculo.');
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar la función: ' . $e->getMessage(),
+            ], 500);
         }
     }
 
@@ -94,18 +99,18 @@ class TypeController extends Controller
     public function update(Request $request, string $id)
     {
         try {
-            $type = VehicleType::findOrFail($id);
+            $type = EmployeeType::findOrFail($id);
             $type->update($request->only(['name', 'description']));
 
             return response()->json([
                 'success' => true,
-                'message' => 'Tipo vehiculo actualizado con éxito.',
+                'message' => 'Función actualizado con éxito.',
             ], 200);
 
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al actualizar el Tipo vehiculo: ' . $e->getMessage(),
+                'message' => 'Error al actualizar la función: ' . $e->getMessage(),
             ], 500);
         }
     }
@@ -116,16 +121,16 @@ class TypeController extends Controller
     public function destroy(string $id)
     {
         try {
-            $type = VehicleType::findOrFail($id);
+            $type = EmployeeType::findOrFail($id);
             $type->delete();
-                       return response()->json([
+            return response()->json([
                 'success' => true,
-                'message' => 'Tipo vehiculo eliminado con éxito.',
+                'message' => 'Función eliminado con éxito.',
             ], 200);
         } catch (\Exception $e) {
-                        return response()->json([
+            return response()->json([
                 'success' => false,
-                'message' => 'Error al eliminar el Tipo vehiculo: ' . $e->getMessage(),
+                'message' => 'Error al eliminar la función: ' . $e->getMessage(),
             ], 500);
         }
     }

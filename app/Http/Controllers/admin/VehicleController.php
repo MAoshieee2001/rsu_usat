@@ -279,7 +279,7 @@ class VehicleController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Vehículo actualizado correctamente.',
-            ]);
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -308,7 +308,10 @@ class VehicleController extends Controller
             // Finalmente, elimina el vehículo
             $vehicle->delete();
 
-            return response()->json(['success' => true, 'message' => 'Vehículo eliminado correctamente.']);
+            return response()->json([
+                'success' => true,
+                'message' => 'Vehículo eliminado correctamente.',
+            ], 200);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Error al eliminar el vehiculo: ' . $e->getMessage()], 500);
         }
@@ -324,15 +327,15 @@ class VehicleController extends Controller
             // Remover el perfil de todas las imágenes del vehículo
             // Establecer is_profile a false para todas las imágenes del vehículo
             VehicleImage::where('vehicle_id', $vehicleId)
-                    ->update(['profile' => false]);
-            
+                ->update(['profile' => false]);
+
             // Establecer la nueva imagen como perfil
             $image->update(['profile' => true]);
             return response()->json([
                 'success' => true,
                 'message' => 'Foto de perfil actualizada correctamente.'
             ]);
-            
+
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -345,20 +348,20 @@ class VehicleController extends Controller
     public function deleteImage($imageId)
     {
         try {
-            $image = VehicleImage::findOrFail($imageId);        
+            $image = VehicleImage::findOrFail($imageId);
             // Verificar que no sea la única imagen del vehículo
-            $totalImages = VehicleImage::where('vehicle_id', $image->vehicle_id)->count();      
+            $totalImages = VehicleImage::where('vehicle_id', $image->vehicle_id)->count();
             if ($totalImages <= 1) {
                 return response()->json([
                     'success' => false,
                     'message' => 'No se puede eliminar la única imagen del vehículo.'
                 ], 400);
-            }     
+            }
             // Si es la imagen de perfil, asignar otra como perfil
             if ($image->is_profile) {
                 $newProfileImage = VehicleImage::where('vehicle_id', $image->vehicle_id)
-                                            ->where('id', '!=', $image->id)
-                                            ->first();      
+                    ->where('id', '!=', $image->id)
+                    ->first();
                 if ($newProfileImage) {
                     $newProfileImage->update(['is_profile' => true]);
                 }

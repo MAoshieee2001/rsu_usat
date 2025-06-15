@@ -147,9 +147,16 @@ class BrandModelController extends Controller
         try {
             $brandmodel = Brandmodel::findOrFail($id);
             $brandmodel->delete();
-            return redirect()->route('admin.models.index')->with('success', 'Modelo eliminada con éxito.');
+            return response()->json([
+                'success' => true,
+                'message' => 'Modelo eliminado con éxito.',
+            ], 200);
+
         } catch (\Exception $e) {
-            return redirect()->route('admin.models.index')->with('error', 'Ocurrió un error al intentar eliminar el modelo.' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al eliminar el modelo: ' . $e->getMessage(),
+            ], 500);
         }
     }
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\admin\BrandController;
 use App\Http\Controllers\admin\BrandModelController;
 use App\Http\Controllers\admin\EmployeeContractController;
 use App\Http\Controllers\admin\EmployeeController;
+use App\Http\Controllers\admin\EmployeeTypeController;
 use App\Http\Controllers\admin\TypeController;
 use App\Http\Controllers\admin\VacationChangeController;
 use App\Http\Controllers\admin\VacationController;
@@ -29,6 +30,7 @@ Route::resource('colors', ColorController::class)->names('admin.colors');
 Route::resource('attendances', AttendanceController::class)->names('admin.attendances');
 Route::resource('zones', ZonesController::class)->names('admin.zones');
 Route::resource('zonescoords', ZoneCoordController::class)->names('admin.zonescoords');
+Route::resource('employeetypes', EmployeeTypeController::class)->names('admin.employeetypes');
 
 
 // Rutas para filtrar asistencias
