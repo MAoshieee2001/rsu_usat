@@ -52,6 +52,20 @@ class ZonesController extends Controller
         }
     }
 
+    public function getCoords($id)
+    {
+        $zone = Zone::with('coordinates')->findOrFail($id);
+
+        // Asegúrate de tener la relación definida como 'coordinates' o cámbiala según corresponda
+        $coords = $zone->coordinates->map(function ($coord) {
+            return [
+                'lat' => (float) $coord->latitude,
+                'lng' => (float) $coord->longitude,
+            ];
+        });
+
+        return response()->json($coords);
+    }
     /**
      * Show the form for creating a new resource.
      */

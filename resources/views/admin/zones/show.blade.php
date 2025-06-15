@@ -95,6 +95,44 @@
 
 @section('js')
     <script>
+        function refreshTable() {
+            var table = $('#tbtEntity').DataTable();
+            table.ajax.reload(null, false);
+        }
+
+        // Función para actualizar el mapa
+        function updateMap() {
+            $.ajax({
+                url: "{{ route('admin.zones.getCoords', $zone->id) }}",
+                type: "GET",
+                success: function (perimeterCoords) {
+                    const map = new google.maps.Map(document.getElementById('map_1'), {
+                        zoom: 18
+                    });
+
+                    const polygon = new google.maps.Polygon({
+                        paths: perimeterCoords,
+                        strokeColor: '#FF0000',
+                        strokeOpacity: 0.8,
+                        strokeWeight: 2,
+                        fillColor: '#FF0000',
+                        fillOpacity: 0.35
+                    });
+
+                    polygon.setMap(map);
+
+                    const bounds = new google.maps.LatLngBounds();
+                    polygon.getPath().forEach(function (coord) {
+                        bounds.extend(coord);
+                    });
+
+                    map.panTo(bounds.getCenter());
+                }
+            });
+        }
+
+        //###########################################################################
+
         $(document).ready(function () {
             $('#tbtEntity').DataTable({
                 responsive: true,
@@ -102,182 +140,164 @@
                 language: {
                     url: '/js/es-ES.json'
                 },
+                "order": [[0, 'asc']],
                 "ajax": "{{ route('admin.zones.show', $zone->id) }}",
                 "columns": [
-                    {
-                        "data": "latitude",
-                    },
-                    {
-                        "data": "longitude",
-                    },
+                    { "data": "latitude" },
+                    { "data": "longitude" },
                     {
                         "data": "delete",
                         "width": "4%",
-                        "class": "text-center",
-
+                        "class": "text-center"
                     },
                 ]
             });
-        })
 
-        $('#btnNuevo').click(function () {
-            let zone_id = $(this).attr("data-id");
-            // Permite aperturar el modal y realizar peticion
-            $.ajax({
-                url: "{{ route('admin.zonescoords.edit', '_id') }}".replace("_id", zone_id),
-                type: "GET",
-                success: function (response) {
-                    $('.modal-title').html("<i class='fas fa-plus'></i> Nuevo perimetro");
-                    $('#ModalCenter .modal-body').html(response);
-                    $('#ModalCenter').modal('show');
+            $('#btnNuevo').click(function () {
+                let zone_id = $(this).attr("data-id");
+                $.ajax({
+                    url: "{{ route('admin.zonescoords.edit', '_id') }}".replace("_id", zone_id),
+                    type: "GET",
+                    success: function (response) {
+                        $('.modal-title').html("<i class='fas fa-plus'></i> Nuevo perímetro");
+                        $('#ModalCenter .modal-body').html(response);
+                        $('#ModalCenter').modal('show');
 
-                    $('#ModalCenter form').on('submit', function (e) {
-                        e.preventDefault();
-                        var form = $(this);
-                        var formdata = new FormData(this);
+                        $('#ModalCenter form').on('submit', function (e) {
+                            e.preventDefault();
+                            var form = $(this);
+                            var formdata = new FormData(this);
+
+                            $.ajax({
+                                url: form.attr('action'),
+                                type: form.attr('method'),
+                                data: formdata,
+                                processData: false,
+                                contentType: false,
+                                success: function (response) {
+                                    $('#ModalCenter').modal('hide');
+                                    refreshTable();
+                                    updateMap(); // 🔥 Aquí se actualiza el mapa
+                                    Swal.fire({
+                                        title: "Proceso exitoso",
+                                        icon: "success",
+                                        text: response.message,
+                                        timer: 2000,
+                                        timerProgressBar: true
+                                    });
+                                },
+                                error: function (xhr) {
+                                    Swal.fire({
+                                        title: "Error",
+                                        icon: "error",
+                                        text: xhr.responseJSON.message,
+                                        timer: 2000,
+                                        timerProgressBar: true
+                                    });
+                                }
+                            });
+                        });
+                    }
+                });
+            });
+
+            $(document).on('submit', '.frmDelete', function (e) {
+                e.preventDefault();
+                var form = $(this);
+                Swal.fire({
+                    title: "¿Está seguro de eliminar?",
+                    text: "Este proceso no es reversible.",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Sí, eliminar",
+                    cancelButtonText: "Cancelar"
+                }).then((result) => {
+                    if (result.isConfirmed) {
                         $.ajax({
                             url: form.attr('action'),
                             type: form.attr('method'),
-                            data: formdata,
-                            processData: false,
-                            contentType: false,
+                            data: form.serialize(),
                             success: function (response) {
-                                $('#ModalCenter').modal('hide');
                                 refreshTable();
+                                updateMap(); // 🔥 También al eliminar se actualiza el mapa
                                 Swal.fire({
-                                    title: "Proceso exitoso",
+                                    title: "Eliminado",
                                     icon: "success",
                                     text: response.message,
                                     timer: 2000,
-                                    timerProgressBar: true,
-                                    draggable: true
+                                    timerProgressBar: true
                                 });
                             },
                             error: function (xhr) {
-                                var response = xhr.responseJSON;
                                 Swal.fire({
                                     title: "Error",
                                     icon: "error",
-                                    text: response.message,
+                                    text: xhr.responseJSON.message,
                                     timer: 2000,
-                                    timerProgressBar: true,
-                                    draggable: true
+                                    timerProgressBar: true
                                 });
                             }
-                        })
-                    })
-                }
-            })
-        })
-
-        $(document).on('submit', '.frmDelete', function (e) {
-            e.preventDefault();
-            var form = $(this);
-            Swal.fire({
-                title: "Está seguro de eliminar?",
-                text: "Este proceso no es reversible!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Si, eliminar!",
-                cancelButtonText: "No, Cancelar!"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    //this.submit();
-                    $.ajax({
-                        url: form.attr('action'),
-                        type: form.attr('method'),
-                        data: form.serialize(),
-                        success: function (response) {
-                            refreshTable();
-                            Swal.fire({
-                                title: "Proceso exitoso",
-                                icon: "success",
-                                timer: 2000,
-                                timerProgressBar: true,
-                                text: response.message,
-                                confirmButtonText: 'Continuar.',
-                                draggable: true
-                            });
-                        },
-                        error: function (xhr) {
-                            var response = xhr.responseJSON;
-                            Swal.fire({
-                                title: "Error",
-                                icon: "error",
-                                timer: 2000,
-                                timerProgressBar: true,
-                                text: response.message,
-                                draggable: true
-                            });
-                        }
-                    });
-                }
+                        });
+                    }
+                });
             });
+
         });
 
-        function refreshTable() {
-            var table = $('#tbtEntity').DataTable();
-            table.ajax.reload(null, false);
-        }
 
+        // Carga el mapa por primera vez
+        window.initMap = function () {
+            const perimeterCoords = @json($vertice);
 
-    </script>
-<script>
-    function initMap() {
-        var perimeterCoords = @json($vertice);
+            if (Object.keys(perimeterCoords).length === 0) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
 
-        if (Object.keys(perimeterCoords).length === 0) {
-            navigator.geolocation.getCurrentPosition(function (position) {
-                var lat = position.coords.latitude;
-                var lng = position.coords.longitude;
-
-                var mapOptions = {
-                    center: { lat: lat, lng: lng },
+                    const map = new google.maps.Map(document.getElementById('map_1'), {
+                        center: { lat: lat, lng: lng },
+                        zoom: 18
+                    });
+                });
+            } else {
+                const map = new google.maps.Map(document.getElementById('map_1'), {
                     zoom: 18
-                };
-                var map = new google.maps.Map(document.getElementById('map_1'), mapOptions);
-            });
-        } else {
-            var mapOptions = {
-                zoom: 18
-            };
-            var map = new google.maps.Map(document.getElementById('map_1'), mapOptions);
+                });
 
-            var perimeterPolygon = new google.maps.Polygon({
-                paths: perimeterCoords,
-                strokeColor: '#FF0000',
-                strokeOpacity: 0.8,
-                strokeWeight: 2,
-                fillColor: '#FF0000',
-                fillOpacity: 0.35
-            });
+                const polygon = new google.maps.Polygon({
+                    paths: perimeterCoords,
+                    strokeColor: '#FF0000',
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: '#FF0000',
+                    fillOpacity: 0.35
+                });
 
-            perimeterPolygon.setMap(map);
+                polygon.setMap(map);
 
-            var bounds = new google.maps.LatLngBounds();
-            perimeterPolygon.getPath().forEach(function (coord) {
-                bounds.extend(coord);
-            });
+                const bounds = new google.maps.LatLngBounds();
+                polygon.getPath().forEach(function (coord) {
+                    bounds.extend(coord);
+                });
 
-            map.panTo(bounds.getCenter());
+                map.panTo(bounds.getCenter());
+            }
         }
-    }
-</script>
+    </script>
 
-<script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}&callback=initMap" async defer></script>
-
+    <!-- ✅ Google Maps API con loading=async y callback bien definido -->
+    <script async
+        src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}&callback=initMap&loading=async">
+        </script>
 
     @if (session('success'))
         <script>
             Swal.fire({
                 title: "Proceso exitoso",
                 icon: "success",
-                timer: 2000,
-                timerProgressBar: true,
                 text: "{{ session('success') }}",
-                draggable: true
+                timer: 2000,
+                timerProgressBar: true
             });
         </script>
     @endif
@@ -287,18 +307,10 @@
             Swal.fire({
                 title: "Error",
                 icon: "error",
-                timer: 2000,
-                timerProgressBar: true,
                 text: "{{ session('error') }}",
-                draggable: true
+                timer: 2000,
+                timerProgressBar: true
             });
         </script>
     @endif
 @endsection
-
-@section('css')
-{{-- Add here extra stylesheets --}}
-{{--
-<link rel="stylesheet" href="/css/admin_custom.css"> --}}
-
-@stop

@@ -36,7 +36,7 @@ Route::resource('employeetypes', EmployeeTypeController::class)->names('admin.em
 // Rutas para filtrar asistencias
 Route::get('/attendances/buscar', [AttendanceController::class, 'buscar'])->name('admin.attendances.buscar');
 
-
+Route::get('coords/{id}', [ZonesController::class, 'getCoords'])->name('admin.zones.getCoords');
 // Rutas para gestión de imágenes de vehículos
 Route::get('models-by-brand/{brand_id}', [VehicleController::class, 'getModelsByBrand'])->name('admin.models.byBrand');
 // Ruta para obtener las iamgenes de los vehiculos

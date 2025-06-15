@@ -16,4 +16,9 @@ class Zone extends Model
 {
     return $this->belongsTo(District::class);
 }
+
+public function coordinates()
+{
+    return $this->hasMany(ZoneCoord::class); // o el nombre de tu modelo de coordenadas
+}
 }
