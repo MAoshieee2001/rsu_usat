@@ -11,9 +11,7 @@ use Yajra\DataTables\DataTables;
 
 class ZonesController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index(Request $request)
     {
         $zones = Zone::select(
@@ -66,6 +64,7 @@ class ZonesController extends Controller
 
         return response()->json($coords);
     }
+
     public function getAllZones()
     {
         $zones = Zone::with(['coordinates'])->get();
@@ -98,9 +97,7 @@ class ZonesController extends Controller
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+
     public function store(Request $request)
     {
         try {
@@ -114,9 +111,7 @@ class ZonesController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
+
     public function show(Request $request, string $id)
     {
         try {
@@ -153,9 +148,7 @@ class ZonesController extends Controller
         }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+
     public function edit(string $id)
     {
         try {
@@ -168,9 +161,7 @@ class ZonesController extends Controller
         }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+
     public function update(Request $request, string $id)
     {
         try {
@@ -187,9 +178,7 @@ class ZonesController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+
     public function destroy(string $id)
     {
         try {
