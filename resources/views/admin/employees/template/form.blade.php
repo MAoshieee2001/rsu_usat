@@ -83,7 +83,7 @@
                 </select>
             </div>
             <!-- Licencia -->
-            <div class="form-group col-md-6">
+            <div class="form-group col-md-6" id="licenseContainer" style="display: none;">
                 {!! Form::label('license', 'Licencia') !!}
                 {!! Form::select('license', [
                     'A-I' => 'A-I: Vehículos particulares (sedanes, SUVs, furgonetas)',
@@ -92,7 +92,6 @@
                     'A-IIIa' => 'A-IIIa: Ómnibus interurbanos',
                     'A-IIIb' => 'A-IIIb: Camiones pesados, volquetes',
                     'A-IIIc' => 'A-IIIc: Todo tipo de vehículos pesados',
-
                     'B-I' => 'B-I: Triciclos no motorizados (transporte especial)',
                     'B-IIa' => 'B-IIa: Bicimotos',
                     'B-IIb' => 'B-IIb: Motocicletas y motocicletas con sidecar',
@@ -119,7 +118,7 @@
     </div>
 </div>
 
-<!-- Script para previsualizar la imagen seleccionada y validar contraseña -->
+<!-- Script para previsualizar la imagen seleccionada, validar contraseña y mostrar o ocultar campo licencia según tipo de empleado-->
 <script>
     function previewPhoto(event) {
         const input = event.target;
@@ -132,11 +131,13 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
-    // Validación de contraseña en tiempo real
+    
     document.addEventListener('DOMContentLoaded', function () {
+        // Validación de contraseña en tiempo real
         const password = document.getElementById('password');
         const passwordConfirmation = document.getElementById('password_confirmation');
         const passwordMatchError = document.getElementById('passwordMatchError');
+        
         if (password && passwordConfirmation) {
             [password, passwordConfirmation].forEach(field => {
                 field.addEventListener('input', function () {
@@ -147,6 +148,40 @@
                     }
                 });
             });
+        }
+        // Versión mejorada para mostrar licencia solo cuando type_id = 1 (Conductor)
+        const employeeTypeSelect = document.getElementById('employeeTypesSelect');
+        const licenseContainer = document.getElementById('licenseContainer');
+        function toggleLicenseField() {
+            if (!employeeTypeSelect || !licenseContainer) {
+                console.error('No se encontraron los elementos necesarios');
+                return;
+            }
+            // Versión 1: Comparación por ID (1 para Conductor)
+            const isDriver = employeeTypeSelect.value === '1';
+            // Versión 2: Comparación por texto (alternativa)
+            // const selectedText = employeeTypeSelect.options[employeeTypeSelect.selectedIndex].text.toLowerCase();
+            // const isDriver = selectedText.includes('conductor');
+            if (isDriver) {
+                licenseContainer.style.display = 'block';
+                licenseContainer.querySelector('select').required = true;
+                console.log('Mostrando campo de licencia (Conductor seleccionado)');
+            } else {
+                licenseContainer.style.display = 'none';
+                licenseContainer.querySelector('select').required = false;
+                console.log('Ocultando campo de licencia');
+            }
+        }
+        if (employeeTypeSelect) {
+            // Configurar eventos
+            employeeTypeSelect.addEventListener('change', toggleLicenseField);
+            // Verificar inmediatamente al cargar la página
+            toggleLicenseField();
+            // Depuración
+            console.log('Event listeners configurados para employeeTypeSelect');
+            console.log('Valor inicial:', employeeTypeSelect.value);
+        } else {
+            console.error('No se encontró el elemento employeeTypesSelect');
         }
     });
 </script>
