@@ -132,6 +132,28 @@
         }
     }
     
+    window.onload = function () {
+        const employeeTypeSelect = document.getElementById('employeeTypesSelect');
+        const licenseContainer = document.getElementById('licenseContainer');
+        function toggleLicenseField() {
+            if (!employeeTypeSelect || !licenseContainer) {
+                console.error('No se encontraron los elementos necesarios');
+                return;
+            }
+            const isDriver = employeeTypeSelect.value === '1'; // Asegúrate que este es el ID de "Conductor"
+            if (isDriver) {
+                licenseContainer.style.display = 'block';
+                licenseContainer.querySelector('select').required = true;
+            } else {
+                licenseContainer.style.display = 'none';
+                licenseContainer.querySelector('select').required = false;
+            }
+        }
+        employeeTypeSelect.addEventListener('change', toggleLicenseField);
+        toggleLicenseField(); // Ejecutar al cargar
+    };
+
+
     document.addEventListener('DOMContentLoaded', function () {
         // Validación de contraseña en tiempo real
         const password = document.getElementById('password');
@@ -148,40 +170,6 @@
                     }
                 });
             });
-        }
-        // Versión mejorada para mostrar licencia solo cuando type_id = 1 (Conductor)
-        const employeeTypeSelect = document.getElementById('employeeTypesSelect');
-        const licenseContainer = document.getElementById('licenseContainer');
-        function toggleLicenseField() {
-            if (!employeeTypeSelect || !licenseContainer) {
-                console.error('No se encontraron los elementos necesarios');
-                return;
-            }
-            // Versión 1: Comparación por ID (1 para Conductor)
-            const isDriver = employeeTypeSelect.value === '1';
-            // Versión 2: Comparación por texto (alternativa)
-            // const selectedText = employeeTypeSelect.options[employeeTypeSelect.selectedIndex].text.toLowerCase();
-            // const isDriver = selectedText.includes('conductor');
-            if (isDriver) {
-                licenseContainer.style.display = 'block';
-                licenseContainer.querySelector('select').required = true;
-                console.log('Mostrando campo de licencia (Conductor seleccionado)');
-            } else {
-                licenseContainer.style.display = 'none';
-                licenseContainer.querySelector('select').required = false;
-                console.log('Ocultando campo de licencia');
-            }
-        }
-        if (employeeTypeSelect) {
-            // Configurar eventos
-            employeeTypeSelect.addEventListener('change', toggleLicenseField);
-            // Verificar inmediatamente al cargar la página
-            toggleLicenseField();
-            // Depuración
-            console.log('Event listeners configurados para employeeTypeSelect');
-            console.log('Valor inicial:', employeeTypeSelect.value);
-        } else {
-            console.error('No se encontró el elemento employeeTypesSelect');
         }
     });
 </script>
