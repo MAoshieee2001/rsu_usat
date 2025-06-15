@@ -59,53 +59,65 @@
         });
     }
 
-    $(function () {
+    // Función segura para sumar días (corrige timezone bugs)
+    function addDaysToDate(dateString, days) {
+        const parts = dateString.split('-'); // YYYY-MM-DD
+        const year = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1; // JS usa 0-index en meses
+        const day = parseInt(parts[2], 10);
 
+        const date = new Date(year, month, day);
+        date.setDate(date.getDate() + (days - 1));
+
+        const yyyy = date.getFullYear();
+        const mm = String(date.getMonth() + 1).padStart(2, '0');
+        const dd = String(date.getDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}`;
+    }
+
+    $(function () {
         $('#btnGenerarFechaVacaciones').on('click', function () {
-            let date_start = $('#date_start').val();
-            let today = new Date().toISOString().split('T')[0];  // 'YYYY-MM-DD'
+            const date_start = $('#date_start').val();
+            const today = new Date().toISOString().split('T')[0];
 
             if (!date_start) {
                 get_alerts({
-                    title: 'error!',
+                    title: 'Error!',
                     icon: 'warning',
-                    text: 'Debe seleccionar una fecha inicio, para programar las vacaciones'
+                    text: 'Debe seleccionar una fecha de inicio.'
                 });
-                e.preventDefault(); // * evitar que haga otra cosa
                 return;
             }
 
             if (date_start < today) {
                 get_alerts({
-                    title: 'error!',
+                    title: 'Error!',
                     icon: 'warning',
                     text: 'La fecha de inicio no puede ser menor a hoy.'
                 });
-                e.preventDefault();
                 return;
             }
 
-            let startDate = new Date(date_start);
-            // Detectar modalidad seleccionada
-            let mode = $('#mode').val();
-            let diasVacaciones = mode === 'QUINCENAL' ? 15 : 30;
+            const mode = $('#mode').val();
+            if (!mode) {
+                get_alerts({
+                    title: 'Error!',
+                    icon: 'warning',
+                    text: 'Debe seleccionar la modalidad de vacaciones.'
+                });
+                return;
+            }
 
-            startDate.setDate(startDate.getDate() + diasVacaciones - 1);
+            const diasVacaciones = mode === 'QUINCENAL' ? 15 : 30;
+            const date_end = addDaysToDate(date_start, diasVacaciones);
 
-            // Convertimos a 'YYYY-MM-DD' para el input date
-            let year = startDate.getFullYear();
-            let month = (startDate.getMonth() + 1).toString().padStart(2, '0');
-            let day = startDate.getDate().toString().padStart(2, '0');
-            let date_end = `${year}-${month}-${day}`;
+            $('#date_end').val(date_end);
 
             get_alerts({
                 title: 'Perfecto!',
                 icon: 'success',
-                text: 'Se genero la programación de la vacaciones.'
+                text: `Se generó correctamente la fecha fin: ${date_end}`
             });
-            // Seteamos el valor en el input date_end
-            $('#date_end').val(date_end);
-
         });
     });
 </script>

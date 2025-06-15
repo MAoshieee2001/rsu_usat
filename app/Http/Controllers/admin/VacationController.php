@@ -237,7 +237,7 @@ class VacationController extends Controller
                 ], 422);
             }
 
-            if ($dateEnd->diffInDays($dateStart) < 30) {
+            if ($dateEnd->diffInDays($dateStart) < 31) {
                 return response()->json([
                     'success' => false,
                     'message' => 'La fecha de fin debe ser al menos 30 días después de la fecha de inicio.',
