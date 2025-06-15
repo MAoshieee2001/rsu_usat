@@ -285,7 +285,6 @@
         }
     </script>
 
-    <!-- ✅ Google Maps API con loading=async y callback bien definido -->
     <script async
         src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}&callback=initMap&loading=async">
         </script>

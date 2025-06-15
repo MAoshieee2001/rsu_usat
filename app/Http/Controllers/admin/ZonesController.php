@@ -66,9 +66,28 @@ class ZonesController extends Controller
 
         return response()->json($coords);
     }
-    /**
-     * Show the form for creating a new resource.
-     */
+    public function getAllZones()
+    {
+        $zones = Zone::with(['coordinates'])->get();
+
+        $data = $zones->map(function ($zone) {
+            return [
+                'id' => $zone->id,
+                'name' => $zone->name,
+                'color' => '#' . substr(md5($zone->id), 0, 6), // color distinto por zona (al azar)
+                'coordinates' => $zone->coordinates->map(function ($coord) {
+                    return [
+                        'lat' => (float) $coord->latitude,
+                        'lng' => (float) $coord->longitude,
+                    ];
+                }),
+            ];
+        });
+
+        return response()->json($data);
+    }
+
+
     public function create()
     {
         try {

@@ -1,4 +1,14 @@
 <div class="row">
+
+    <div class="form-group col-12">
+        {!! Form::label('district_id', 'Distrito') !!}
+        {!! Form::select('district_id', $districts, null, [
+    'class' => 'form-control',
+    'placeholder' => 'Seleccione un distrito.',
+    'required'
+]) !!}
+    </div>
+
     <div class="form-group col-12">
         {!! Form::label('name', 'Nombre') !!}
         {!! Form::text('name', null, [
@@ -8,14 +18,7 @@
     'autocomplete' => 'off'
 ]) !!}
     </div>
-    <div class="form-group col-12">
-        {!! Form::label('district_id', 'Distrito') !!}
-        {!! Form::select('district_id', $districts, null, [
-    'class' => 'form-control',
-    'placeholder' => 'Seleccione un distrito.',
-    'required'
-]) !!}
-    </div>
+
     <div class="form-group col-12">
         {!! Form::label('area', 'Área') !!}
         {!! Form::text('area', null, [

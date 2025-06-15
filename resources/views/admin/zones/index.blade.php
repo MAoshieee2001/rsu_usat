@@ -36,6 +36,9 @@
         <button type="button" class="btn btn-primary" id="btnNuevo"><i class="fas fa-plus"></i>
             Nuevo Registro
         </button>
+        <button type="button" class="btn btn-secondary" id="btnMapaGeneral"><i class="fas fa-map"></i>
+            Ver zonas
+        </button>
         <a href="{{ route('admin.zones.index') }}" class="btn btn-success"><i class="fas fa-sync"></i>
             Actualizar
         </a>
@@ -109,7 +112,7 @@
                 ],
 
             });
-        })
+        });
 
         $('#btnNuevo').click(function () {
             // Permite aperturar el modal y realizar peticion
@@ -158,7 +161,7 @@
                     })
                 }
             })
-        })
+        });
 
         $(document).on('click', '.btnEditar', function () {
             var id = $(this).attr("id");
@@ -255,6 +258,100 @@
                     });
                 }
             });
+        });
+
+        $('#btnMapaGeneral').click(function () {
+            // Crea contenedor para el mapa
+            const mapaHTML = '<div id="map_all" style="width:100%; height:500px;"></div>';
+
+            //  Muestra el modal con el mapa vacío
+            $('.modal-title').html('<i class="fas fa-map-marked-alt"></i> Mapa general de zonas');
+            $('#ModalCenter .modal-body').html(mapaHTML);
+            $('#ModalCenter').modal('show');
+
+            // Espera a que el modal esté visible para cargar Google Maps
+            $('#ModalCenter').on('shown.bs.modal', function () {
+                if (typeof google === 'undefined') {
+                    let script = document.createElement('script');
+                    script.src = "https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}&callback=initMapFromJSON&loading=async";
+                    script.async = true;
+                    window.initMapFromJSON = drawMapFromJson;
+                    document.head.appendChild(script);
+                } else {
+                    drawMapFromJson(); // Ya está cargado
+                }
+            });
+        });
+
+        // Función para pintar el mapa con zonas desde JSON
+        function drawMapFromJson() {
+            const map = new google.maps.Map(document.getElementById('map_all'), {
+                zoom: 14,
+                center: { lat: -6.7719, lng: -79.8409 } // Centro por defecto
+            });
+
+            fetch("{{ route('admin.zones.all') }}")
+                .then(response => response.json())
+                .then(zones => {
+                    if (!zones.length) {
+                        // No hay zonas: mostrar mensaje o centro default
+                        Swal.fire({
+                            title: "Sin zonas",
+                            icon: "info",
+                            text: "No hay zonas registradas para mostrar.",
+                            timer: 2000
+                        });
+                        map.setCenter({ lat: -6.7719, lng: -79.8409 });
+                        map.setZoom(14);
+                        return;
+                    }
+
+                    zones.forEach(zone => {
+                        if (!zone.coordinates.length) return; // Evita zonas sin coordenadas
+
+                        const polygon = new google.maps.Polygon({
+                            paths: zone.coordinates,
+                            strokeColor: zone.color,
+                            strokeOpacity: 0.8,
+                            strokeWeight: 2,
+                            fillColor: zone.color,
+                            fillOpacity: 0.35
+                        });
+
+                        polygon.setMap(map);
+
+                        // Calcular bounds
+                        const bounds = new google.maps.LatLngBounds();
+                        zone.coordinates.forEach(coord => bounds.extend(coord));
+
+                        if (zone.coordinates.length === 1) {
+                            // Solo un punto: setCenter + zoom
+                            map.setCenter(zone.coordinates[0]);
+                            map.setZoom(18);
+                        } else {
+                            // Varios puntos: ajustar a bounds
+                            map.fitBounds(bounds);
+                        }
+
+                        // Opcional: mostrar tooltip con nombre
+                        new google.maps.Marker({
+                            position: zone.coordinates[0],
+                            map: map,
+                            label: zone.name,
+                            icon: {
+                                path: google.maps.SymbolPath.CIRCLE,
+                                scale: 4,
+                                fillColor: zone.color,
+                                fillOpacity: 1,
+                                strokeWeight: 0
+                            }
+                        });
+                    });
+                });
+        }
+
+        $('#ModalCenter').on('hidden.bs.modal', function () {
+            $('#map_all').remove(); // elimina mapa para la próxima carga limpia
         });
 
         function refreshTable() {
