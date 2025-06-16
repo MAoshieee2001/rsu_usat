@@ -118,56 +118,52 @@
     </div>
 </div>
 
-<!-- Script para previsualizar la imagen seleccionada, validar contraseña y mostrar o ocultar campo licencia según tipo de empleado-->
 <script>
-    function previewPhoto(event) {
-        const input = event.target;
-        const preview = document.getElementById('photoPreview');
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                preview.src = e.target.result;
-            };
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-    document.addEventListener('DOMContentLoaded', function () {
-        // Validación de contraseña en tiempo real
-        const password = document.getElementById('password');
-        const passwordConfirmation = document.getElementById('password_confirmation');
-        const passwordMatchError = document.getElementById('passwordMatchError');
-        
-        if (password && passwordConfirmation) {
-            [password, passwordConfirmation].forEach(field => {
-                field.addEventListener('input', function () {
-                    if (password.value !== passwordConfirmation.value) {
-                        passwordMatchError.classList.remove('d-none');
-                    } else {
-                        passwordMatchError.classList.add('d-none');
-                    }
-                });
-            });
-        }
-    });
-
-    document.addEventListener('DOMContentLoaded', function () {
-        const employeeTypeSelect = document.getElementById('employeeTypesSelect');
-        const licenseContainer = document.getElementById('licenseContainer');
-        const licenseSelect = licenseContainer.querySelector('select');
-        function toggleLicenseField() {
-            const isDriver = employeeTypeSelect.value === '1'; // ID del tipo Conductor
+    $(function () {
+        const typeSelect = $('#employeeTypesSelect');
+        const licenseContainer = $('#licenseContainer');
+        const licenseSelect = licenseContainer.find('select');
+        // Mostrar u ocultar el campo de licencia según el tipo de empleado
+        function updateLicenseField() {
+            const isDriver = typeSelect.val() === '1'; // tipo_id 1 = Conductor
             if (isDriver) {
-                licenseContainer.style.display = 'block';
-                licenseSelect.required = true;
+                licenseContainer.show();
+                licenseSelect.prop('required', true);
             } else {
-                licenseContainer.style.display = 'none';
-                licenseSelect.required = false;
-                licenseSelect.selectedIndex = 0;
+                licenseContainer.hide();
+                licenseSelect.prop('required', false).val('');
             }
         }
-        if (employeeTypeSelect) {
-            employeeTypeSelect.addEventListener('change', toggleLicenseField);
-            toggleLicenseField(); // Ejecutar al cargar
+        // Ejecutar cuando cambia el tipo de empleado
+        typeSelect.on('change', function () {
+            updateLicenseField();
+        });
+        // Ejecutar al cargar si ya hay un tipo seleccionado (modo edición o validación fallida)
+        updateLicenseField();
+        // Validación de contraseña en tiempo real
+        const password = $('#password');
+        const passwordConfirmation = $('#password_confirmation');
+        const passwordMatchError = $('#passwordMatchError');
+        function validatePasswordMatch() {
+            if (password.val() !== passwordConfirmation.val()) {
+                passwordMatchError.removeClass('d-none');
+            } else {
+                passwordMatchError.addClass('d-none');
+            }
         }
+        password.on('input', validatePasswordMatch);
+        passwordConfirmation.on('input', validatePasswordMatch);
+        // Vista previa de imagen
+        $('#photoInput').on('change', function (event) {
+            const input = event.target;
+            const preview = $('#photoPreview')[0];
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        });
     });
 </script>
