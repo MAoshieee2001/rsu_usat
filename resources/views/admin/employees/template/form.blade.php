@@ -149,24 +149,25 @@
             });
         }
     });
-    window.onload = function () {
+
+    document.addEventListener('DOMContentLoaded', function () {
         const employeeTypeSelect = document.getElementById('employeeTypesSelect');
         const licenseContainer = document.getElementById('licenseContainer');
+        const licenseSelect = licenseContainer.querySelector('select');
         function toggleLicenseField() {
-            if (!employeeTypeSelect || !licenseContainer) {
-                console.error('No se encontraron los elementos necesarios');
-                return;
-            }
-            const isDriver = employeeTypeSelect.value === '1'; // Asegúrate que este es el ID de "Conductor"
+            const isDriver = employeeTypeSelect.value === '1'; // ID del tipo Conductor
             if (isDriver) {
                 licenseContainer.style.display = 'block';
-                licenseContainer.querySelector('select').required = true;
+                licenseSelect.required = true;
             } else {
                 licenseContainer.style.display = 'none';
-                licenseContainer.querySelector('select').required = false;
+                licenseSelect.required = false;
+                licenseSelect.selectedIndex = 0;
             }
         }
-        employeeTypeSelect.addEventListener('change', toggleLicenseField);
-        toggleLicenseField(); // Ejecutar al cargar
-    };
+        if (employeeTypeSelect) {
+            employeeTypeSelect.addEventListener('change', toggleLicenseField);
+            toggleLicenseField(); // Ejecutar al cargar
+        }
+    });
 </script>
