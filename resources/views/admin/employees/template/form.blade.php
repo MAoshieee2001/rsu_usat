@@ -131,7 +131,24 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
-    
+    document.addEventListener('DOMContentLoaded', function () {
+        // Validación de contraseña en tiempo real
+        const password = document.getElementById('password');
+        const passwordConfirmation = document.getElementById('password_confirmation');
+        const passwordMatchError = document.getElementById('passwordMatchError');
+        
+        if (password && passwordConfirmation) {
+            [password, passwordConfirmation].forEach(field => {
+                field.addEventListener('input', function () {
+                    if (password.value !== passwordConfirmation.value) {
+                        passwordMatchError.classList.remove('d-none');
+                    } else {
+                        passwordMatchError.classList.add('d-none');
+                    }
+                });
+            });
+        }
+    });
     window.onload = function () {
         const employeeTypeSelect = document.getElementById('employeeTypesSelect');
         const licenseContainer = document.getElementById('licenseContainer');
@@ -152,24 +169,4 @@
         employeeTypeSelect.addEventListener('change', toggleLicenseField);
         toggleLicenseField(); // Ejecutar al cargar
     };
-
-
-    document.addEventListener('DOMContentLoaded', function () {
-        // Validación de contraseña en tiempo real
-        const password = document.getElementById('password');
-        const passwordConfirmation = document.getElementById('password_confirmation');
-        const passwordMatchError = document.getElementById('passwordMatchError');
-        
-        if (password && passwordConfirmation) {
-            [password, passwordConfirmation].forEach(field => {
-                field.addEventListener('input', function () {
-                    if (password.value !== passwordConfirmation.value) {
-                        passwordMatchError.classList.remove('d-none');
-                    } else {
-                        passwordMatchError.classList.add('d-none');
-                    }
-                });
-            });
-        }
-    });
 </script>
