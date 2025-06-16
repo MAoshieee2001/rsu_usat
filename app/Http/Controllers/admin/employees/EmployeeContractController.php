@@ -87,44 +87,35 @@ class EmployeeContractController extends Controller
     {
         try {
             $contract = ContractType::find($request->contract_id);
-
-            // Verifica si ya existe un contrato activo tipo Nombrado o Permanente
-            $existingContract = EmployeeContract::where('employee_id', $request->employee_id)
-                ->whereHas('contractType', function ($query) {
-                    $query->whereIn('name', ['Nombrado', 'Permanente']);
-                })
+            // Nueva validación general: verificar si el empleado tiene algún contrato activo
+            $existingActiveContract = EmployeeContract::where('employee_id', $request->employee_id)
                 ->where('status', 'Activo')
                 ->first();
-
-            if ($existingContract) {
+            if ($existingActiveContract) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'El empleado ya tiene un contrato Nombrado o Permanente activo, no se puede agregar otro.',
+                    'message' => 'El empleado ya tiene un contrato activo. No se puede registrar un nuevo contrato hasta que el actual esté inactivo.',
                 ], 422);
             }
-
-            // Valida que contratos temporales tengan fecha de fin
+            // Validación para contratos temporales: fecha de fin obligatoria
             if (strtolower($contract->name) === 'temporal' && empty($request->date_end)) {
                 return response()->json([
                     'success' => false,
                     'message' => 'La fecha de finalización es obligatoria para contratos temporales.',
                 ], 422);
             }
-
-            // Crea el contrato guardando fecha y hora actual en date_start
+            // Crear nuevo contrato
             EmployeeContract::create([
                 'employee_id' => $request->employee_id,
                 'contract_id' => $request->contract_id,
-                'date_start' => now(), // 👈 Aquí guardamos con fecha y hora exacta
-                'date_end' => $request->date_end, // puede ser null o venir del request
+                'date_start' => now(),
+                'date_end' => $request->date_end,
                 'status' => $request->status ?? 'Activo',
             ]);
-
             return response()->json([
                 'success' => true,
                 'message' => 'Contrato registrado con éxito.',
             ], 200);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -139,7 +130,6 @@ class EmployeeContractController extends Controller
     {
         //
     }
-
     /**
      * Show the form for editing the specified resource.
      */
@@ -156,7 +146,6 @@ class EmployeeContractController extends Controller
                 ->with('error', 'Ocurrió un error al intentar editar el contrato.');
         }
     }
-
     /**
      * Update the specified resource in storage.
      */
@@ -164,32 +153,26 @@ class EmployeeContractController extends Controller
     {
         try {
             $contract = ContractType::find($request->contract_id);
-
             $employeeContract = EmployeeContract::findOrFail($id);
-
-            // Verificar si intenta cambiar a Nombrado o Permanente cuando ya tiene uno activo
-            $existingNamedOrPermanent = EmployeeContract::where('employee_id', $request->employee_id)
-                ->whereHas('contractType', function ($query) {
-                    $query->whereIn('name', ['Nombrado', 'Permanente']);
-                })
+            // Verificar si ya existe otro contrato activo para el mismo empleado
+            $existingActiveContract = EmployeeContract::where('employee_id', $request->employee_id)
                 ->where('status', 'Activo')
                 ->where('id', '!=', $id)
                 ->first();
-
-            if ($existingNamedOrPermanent) {
+            if ($existingActiveContract && ($request->status === 'Activo' || $employeeContract->status === 'Activo')) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'El empleado ya tiene un contrato Nombrado o Permanente activo. No se puede modificar este contrato.',
+                    'message' => 'El empleado ya tiene otro contrato activo. No se puede activar este contrato.',
                 ], 422);
             }
-            // Validar contrato temporal con fecha fin obligatoria
+            // Validación para contratos temporales
             if (strtolower($contract->name) === 'temporal' && empty($request->date_end)) {
                 return response()->json([
                     'success' => false,
                     'message' => 'La fecha de finalización es obligatoria para contratos temporales.',
                 ], 422);
             }
-
+            // Actualizar el contrato
             $employeeContract->update([
                 'employee_id' => $request->employee_id,
                 'contract_id' => $request->contract_id,
@@ -197,12 +180,10 @@ class EmployeeContractController extends Controller
                 'date_end' => $request->date_end,
                 'status' => $request->status ?? $employeeContract->status,
             ]);
-
             return response()->json([
                 'success' => true,
                 'message' => 'Contrato actualizado con éxito.',
             ], 200);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -210,7 +191,6 @@ class EmployeeContractController extends Controller
             ], 500);
         }
     }
-
     /**
      * Remove the specified resource from storage.
      */
