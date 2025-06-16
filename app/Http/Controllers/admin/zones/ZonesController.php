@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\admin\admin\zones;
+namespace App\Http\Controllers\admin\zones;
 
 use App\Http\Controllers\Controller;
 use App\Models\District;
