@@ -33,7 +33,7 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html \
     && sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
 
-# 💥 Línea para evitar el AH00558
+#  Línea para evitar el AH00558
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
 EXPOSE 80

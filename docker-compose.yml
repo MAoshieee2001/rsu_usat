@@ -1,4 +1,4 @@
-version: '3.8'  # Versión del dockers
+#version: '3.8'  # Versión del dockers
 services:  # Definimos los contenedores a utilizar
 
   app:  # Servicio para la aplicación Laravel
