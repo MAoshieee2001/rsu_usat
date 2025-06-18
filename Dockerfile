@@ -1,33 +1,40 @@
-FROM php:8.2-fpm
+FROM php:8.2-apache
 
-# Instalar extensiones necesarias para Laravel
+# Habilitar mod_rewrite para Laravel
+RUN a2enmod rewrite
+
+# Instalar dependencias necesarias para Laravel
 RUN apt-get update && apt-get install -y \
-    build-essential \
+    git \
+    curl \
+    zip \
+    unzip \
     libpng-dev \
     libjpeg-dev \
     libonig-dev \
     libxml2-dev \
-    zip \
-    unzip \
-    git \
-    curl \
     libzip-dev \
     && docker-php-ext-install pdo_mysql mbstring zip exif pcntl bcmath
 
-# Instalar Composer desde imagen oficial
+# Instalar Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Establecer carpeta de trabajo
-WORKDIR /var/www
+WORKDIR /var/www/html
 
-# Copiar todos los archivos del proyecto Laravel
+# Copiar los archivos del proyecto Laravel
 COPY . .
 
-# Instalar dependencias de Laravel
+# Instalamos la dependencias de Laravel
 RUN composer install
 
-# Exponer puerto (opcional, Laravel suele ejecutarse con php artisan serve)
-EXPOSE 9000
+# Configuramos Apache para trabajar bien con Laravel
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html \
+    && sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
 
-# Comando por defecto
-CMD ["php-fpm"]
+# 💥 Línea para evitar el AH00558
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+
+EXPOSE 80
+CMD ["apache2-foreground"]

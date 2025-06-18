@@ -1,45 +1,35 @@
+version: '3.8'  # Versión del dockers
+services:  # Definimos los contenedores a utilizar
 
-services:
-  app:
+  app:  # Servicio para la aplicación Laravel
     build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: laravel-app
+      context: .  # Ruta del directorio donde está el Dockerfile
+      dockerfile: Dockerfile  # Nombre del archivo Dockerfile a usar para construir la imagen
+    container_name: laravel-app  # Nombre de nuestro proyecto
     ports:
-      - "8000:8000"
+      - "8000:80"  # Puertos para ejecutar el proyecto laravel
     volumes:
-      - .:/var/www
+      - .:/var/www/html  # Sincroniza el proyecto local con el directorio dentro del contenedor
     depends_on:
-      - db
-    environment:
+      - db  # Se ejecuta con la base de datos
+    environment:  # Variables de entorno
       DB_HOST: db
       DB_PORT: 3306
       DB_DATABASE: laravel
       DB_USERNAME: root
       DB_PASSWORD: secret
-    command: sh -c "sleep 10 && php artisan serve --host=0.0.0.0 --port=8000"
 
-  db:
-    image: mysql:8
-    container_name: mysql-db
-    restart: always
+  db:  # Servicio para la base de datos MySQL
+    image: mysql:8  # Imagen del mysql
+    container_name: mysql-db  # Nombre del contenedor
+    restart: always  # Reinicia el contenedor si se detiene
     ports:
-      - "3306:3306"  # o "3307:3306" si tienes conflicto con XAMPP
-    environment:
+      - "3306:3306"  # Puertos para ejecutar la bd
+    environment:  # Variables de entorno
       MYSQL_DATABASE: laravel
       MYSQL_ROOT_PASSWORD: secret
     volumes:
-      - dbdata:/var/lib/mysql
-
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    ports:
-      - "8080:80"
-    environment:
-      PMA_HOST: db
-      MYSQL_ROOT_PASSWORD: secret
-    depends_on:
-      - db
+      - dbdata:/var/lib/mysql  # Guarda los datos de 
 
 volumes:
-  dbdata:
+  dbdata:  # Define un volumen llamado "dbdata" para conservar los datos aunque se elimine el contenedor
