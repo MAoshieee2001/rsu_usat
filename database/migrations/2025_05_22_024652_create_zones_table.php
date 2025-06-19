@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name', 100);
             $table->integer('area');
             $table->text('description')->nullable();
+            $table->integer('load_requirement');
             $table->foreignId('district_id')->constrained('districts')->onDelete('restrict');
             $table->timestamps();
         });

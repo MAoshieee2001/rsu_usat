@@ -16,7 +16,8 @@ return new class extends Migration
             $table->dateTime('date_joined');
             $table->foreignId('statu_id')->constrained('programing_status');
             $table->foreignId('schedule_id')->constrained('schedules');
-            $table->foreignId('route_id')->constrained('routes');
+            $table->foreignId('zone_id')->constrained('zones');
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }

@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\admin\zones\ZoneCoordController;
+use App\Http\Controllers\admin\admin\zones\ZoneCoordController;
 use App\Http\Controllers\admin\zones\ZonesController;
 use App\Http\Controllers\admin\AdminController;
 use App\Http\Controllers\admin\employees\AttendanceController;

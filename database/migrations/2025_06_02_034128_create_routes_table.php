@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('name',100);
             $table->text('description')->nullable();
-            $table->string('status',100);
             $table->foreignId('zone_id')->constrained('zones')->onDelete('restrict');
             $table->timestamps();
         });

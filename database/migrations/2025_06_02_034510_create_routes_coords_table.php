@@ -12,7 +12,6 @@ return new class extends Migration {
     {
         Schema::create('routes_coords', function (Blueprint $table) {
             $table->id();
-            $table->double('index', 10, 6);
             $table->double('latitud', 10, 6);
             $table->double('longitud', 10, 6);
             $table->foreignId('routes_id')->constrained('routes')->onDelete('restrict');
