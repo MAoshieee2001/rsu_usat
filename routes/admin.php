@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\admin\programing\ProgramingController;
 use App\Http\Controllers\admin\zones\RouteController;
 use App\Http\Controllers\admin\zones\RouteCoordController;
 use App\Http\Controllers\admin\zones\ZoneCoordController;
@@ -38,6 +39,7 @@ Route::resource('routescoords', RouteCoordController::class)->names('admin.route
 Route::resource('employeetypes', EmployeeTypeController::class)->names('admin.employeetypes');
 # RUTA DE GESTION DE PROGRAMACION
 Route::resource('schedules', ScheduleController::class)->names('admin.schedules');
+Route::resource('programing', ProgramingController::class)->names('admin.programing');
 
 
 

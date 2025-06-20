@@ -400,12 +400,17 @@ return [
 
         [
             'text' => 'Programación',
-            'icon' => 'fas fa-terminal',
+            'icon' => 'fas fa-desktop',
             'submenu' => [
                 [
                     'text' => 'Horarios',
                     'route' => 'admin.schedules.index',
                     'icon' => 'fas fa-calendar',
+                ],
+                [
+                    'text' => 'Programación',
+                    'url' => 'admin.schedules.index',
+                    'icon' => 'fas fa-terminal',
                 ],
 
 
