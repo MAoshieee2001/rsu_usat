@@ -92,7 +92,7 @@
                     "data": "options",
                     "orderable": false,
                     "searchable": false,
-                    "width": "4%",
+                    "width": "10%",
 
                 },
             ]

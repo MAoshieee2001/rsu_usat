@@ -9,7 +9,7 @@ use App\Models\ZoneCoord;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
-class ZonesController extends Controller
+class ZoneController extends Controller
 {
 
     public function index(Request $request)

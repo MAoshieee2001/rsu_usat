@@ -4,6 +4,7 @@ namespace App\Http\Controllers\admin\zones;
 
 use App\Http\Controllers\Controller;
 use App\Models\Route;
+use App\Models\RouteCoord;
 use App\Models\Zone;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
@@ -28,6 +29,9 @@ class RouteController extends Controller
             return DataTables::of($routes)
                 ->addColumn('options', function ($route) {
                     return '
+                        <a class="btn btn-sm btn-secondary" href="' . route('admin.routes.show', $route->id) . '">
+                            <i class="fas fa-paper-plane"></i>
+                        </a>       
                         <button class="btn btn-sm btn-warning btnEditar" id="' . $route->id . '">
                             <i class="fas fa-edit"></i>
                         </button>
@@ -46,9 +50,7 @@ class RouteController extends Controller
         }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+
     public function create()
     {
         try {
@@ -59,9 +61,8 @@ class RouteController extends Controller
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
+
     public function store(Request $request)
     {
         try {
@@ -88,9 +89,6 @@ class RouteController extends Controller
         }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         try {
@@ -110,11 +108,58 @@ class RouteController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+
     public function destroy(string $id)
     {
-        //
+        try {
+            $route = Route::findOrFail($id);
+            $route->delete();
+            return response()->json([
+                'success' => true,
+                'message' => 'Ruta eliminada con éxito.',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Hubo un error en al eliminar ruta.' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    // * -------------------------------------------------------
+
+        public function show(Request $request, string $id)
+    {
+        try {
+            $route = Route::find($id);
+            $oute = Route::with('zone')->find($id);
+            $coords = RouteCoord::where('route_id', $id)->get();
+            $vertice = RouteCoord::select('latitude as lat', 'longitude as lng')->where('route_id', $id)->get();
+            $lastcoord = RouteCoord::select('latitude as lat', 'longitude as lng')->where('route_id', $id)->latest()->first();
+            // return view('admin.zones.show', compact('zone'));
+
+            if ($request->ajax()) {
+                return DataTables::of($coords)
+                    ->addColumn('delete', function ($coords) {
+                        return '
+   
+                        <form action="' . route('admin.routecoords.destroy', $coords->id) . '" method="POST" class="d-inline frmDelete">
+                            ' . csrf_field() . method_field('DELETE') . '
+                            <button type="submit" class="btn btn-sm btn-danger">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    ';
+                    })
+                    ->rawColumns(['delete'])
+                    ->make(true);
+            } else {
+                return view('admin.routes.show', compact('route', 'vertice', 'lastcoord'));
+            }
+
+
+        } catch (\Exception $e) {
+            return redirect()->route('admin.routes.index')
+                ->with('error', 'Ocurrió un error al intentar visualizar rutas en  la zona.' . $e->getMessage());
+        }
     }
 }

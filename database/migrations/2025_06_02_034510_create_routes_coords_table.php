@@ -12,9 +12,9 @@ return new class extends Migration {
     {
         Schema::create('routes_coords', function (Blueprint $table) {
             $table->id();
-            $table->double('latitud', 10, 6);
-            $table->double('longitud', 10, 6);
-            $table->foreignId('routes_id')->constrained('routes')->onDelete('restrict');
+            $table->double('latitude', 10, 6);
+            $table->double('longitude', 10, 6);
+            $table->foreignId('route_id')->constrained('routes')->onDelete('restrict');
             $table->timestamps();
         });
     }

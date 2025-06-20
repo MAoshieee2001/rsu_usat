@@ -11,4 +11,10 @@ class Route extends Model
 
     protected $table = 'routes';
     protected $guarded = [];
+
+    
+    public function zone()
+{
+    return $this->belongsTo(Zone::class);
+}
 }
