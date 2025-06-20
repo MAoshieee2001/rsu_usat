@@ -390,7 +390,7 @@ return [
                 ],
                 [
                     'text' => 'Rutas',
-                    'url' => 'admin.contracts.index',
+                    'route' => 'admin.routes.index',
                     'icon' => 'fas fa-road',
                 ],
 
@@ -407,16 +407,7 @@ return [
                     'route' => 'admin.schedules.index',
                     'icon' => 'fas fa-calendar',
                 ],
-                [
-                    'text' => 'Zonas',
-                    'url' => 'admin.employees.index',
-                    'icon' => 'fas fa-border-none',
-                ],
-                [
-                    'text' => 'Rutas',
-                    'url' => 'admin.contracts.index',
-                    'icon' => 'fas fa-road',
-                ],
+
 
             ],
         ],

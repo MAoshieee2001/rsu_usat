@@ -21,6 +21,7 @@
                         <th>Nombre</th>
                         <th>Descripción</th>
                         <th>Área</th>
+                        <th>Carga R.</th>
                         <th>Creación</th>
                         <th>Actualización</th>
                         <th>Opciones</th>
@@ -95,6 +96,13 @@
                         }
                     },
                     {
+                        "data": "load_requirement",
+                        "width": "10%",
+                        "render": function (data, type, row) {
+                            return data + ' Kg.';
+                        }
+                    },
+                    {
                         "data": "created_at",
                         "width": "15%",
                     },
@@ -102,6 +110,7 @@
                         "data": "updated_at",
                         "width": "15%",
                     },
+
                     {
                         "data": "options",
                         "orderable": false,

@@ -130,6 +130,7 @@ class VehicleController extends Controller
             ], 500);
         }
     }
+
     public function create()
     {
         try {
@@ -143,9 +144,6 @@ class VehicleController extends Controller
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
 
     public function store(Request $request)
     {

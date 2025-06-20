@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Listado de rutas')
+@section('title', 'Rutas')
 
 @section('content')
     <div class="card">
@@ -65,11 +65,14 @@
             language: {
                 url: '/js/es-ES.json'
             },
-            "ajax": "{{ route('admin.types.index') }}",
+            "ajax": "{{ route('admin.routes.index') }}",
             columns: [
                 {
-                    data: 'name',
+                    data: 'zone_name',
                     "width": "15%",
+                },
+                {
+                    data: 'name'
                 },
                 {
                     data: 'description'
@@ -98,10 +101,10 @@
         $('#btnNuevo').click(function () {
             // Permite aperturar el modal y realizar peticion
             $.ajax({
-                url: "{{ route('admin.types.create') }}",
+                url: "{{ route('admin.routes.create') }}",
                 type: "GET",
                 success: function (response) {
-                    $('.modal-title').html("<i class='fas fa-plus'></i>  Nuevo Tipo Vehiculo");
+                    $('.modal-title').html("<i class='fas fa-plus'></i>  Nuevo Ruta");
                     $('#ModalCenter .modal-body').html(response);
                     $('#ModalCenter').modal('show');
 
@@ -149,10 +152,10 @@
         $(document).on('click', '.btnEditar', function () {
             var id = $(this).attr("id");
             $.ajax({
-                url: "{{ route('admin.types.edit', 'id') }}".replace('id', id),
+                url: "{{ route('admin.routes.edit', 'id') }}".replace('id', id),
                 type: "GET",
                 success: function (response) {
-                    $('.modal-title').html("<i class='fas fa-edit'></i> Editar Tipo Vehiculo");
+                    $('.modal-title').html("<i class='fas fa-edit'></i> Editar Ruta");
                     $('#ModalCenter .modal-body').html(response);
                     $('#ModalCenter').modal('show');
 

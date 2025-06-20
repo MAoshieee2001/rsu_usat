@@ -21,7 +21,7 @@
 
     <div class="form-group col-12">
         {!! Form::label('area', 'Área') !!}
-        {!! Form::text('area', null, [
+        {!! Form::number('area', null, [
     'class' => 'form-control',
     'placeholder' => 'Ingrese el área de la zona.',
     'required',
@@ -36,6 +36,17 @@
     'autocomplete' => 'off',
     'rows' => 7,
     'style' => 'resize:none'
+]) !!}
+    </div>
+
+    
+    <div class="form-group col-12">
+        {!! Form::label('load_requirement', 'Carga de requerimiento') !!}
+        {!! Form::text('load_requirement', null, [
+    'class' => 'form-control',
+    'placeholder' => 'Ingrese la carga de requerimiento.',
+    'required',
+    'autocomplete' => 'off'
 ]) !!}
     </div>
 </div>

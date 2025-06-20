@@ -20,6 +20,7 @@ class ZonesController extends Controller
             'zones.name',
             'zones.area',
             'zones.description',
+            'zones.load_requirement',
             'zones.created_at',
             'zones.updated_at'
         )
