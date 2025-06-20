@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\admin\zones\RouteController;
+use App\Http\Controllers\admin\zones\RouteCoordController;
 use App\Http\Controllers\admin\zones\ZoneCoordController;
 use App\Http\Controllers\admin\zones\ZoneController;
 use App\Http\Controllers\admin\AdminController;
@@ -33,6 +34,7 @@ Route::resource('attendances', AttendanceController::class)->names('admin.attend
 Route::resource('zones', ZoneController::class)->names('admin.zones');
 Route::resource('zonescoords', ZoneCoordController::class)->names('admin.zonescoords');
 Route::resource('routes', RouteController::class)->names('admin.routes');
+Route::resource('routescoords', RouteCoordController::class)->names('admin.routescoords');
 Route::resource('employeetypes', EmployeeTypeController::class)->names('admin.employeetypes');
 # RUTA DE GESTION DE PROGRAMACION
 Route::resource('schedules', ScheduleController::class)->names('admin.schedules');
@@ -43,7 +45,8 @@ Route::resource('schedules', ScheduleController::class)->names('admin.schedules'
 Route::get('/attendances/buscar', [AttendanceController::class, 'buscar'])->name('admin.attendances.buscar');
 #* RUTAS PARAMETRIZADAS PARA ZONAS
 Route::get('maps', [ZoneController::class, 'getAllZones'])->name('admin.zones.all');
-Route::get('coords/{id}', [ZoneController::class, 'getCoords'])->name('admin.zones.getCoords');
+Route::get('coords_zone/{id}', [ZoneController::class, 'getCoords'])->name('admin.zones.getCoords');
+Route::get('coords/{id}', [RouteController::class, 'getCoords'])->name('admin.routes.getCoords');
 
 //? RUTAS PARAMETRIZADAS PARA VEHICLES
 // Rutas para gestión de imágenes de vehículos

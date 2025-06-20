@@ -11,4 +11,10 @@ class RouteCoord extends Model
 
     protected $table = 'routes_coords';
     protected $guarded = [];
+
+
+    public function route()
+    {
+        return $this->belongsTo(Route::class);
+    }
 }

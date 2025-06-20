@@ -12,9 +12,14 @@ class Route extends Model
     protected $table = 'routes';
     protected $guarded = [];
 
-    
+
     public function zone()
-{
-    return $this->belongsTo(Zone::class);
-}
+    {
+        return $this->belongsTo(Zone::class);
+    }
+    public function coords()
+    {
+        return $this->hasMany(RouteCoord::class);
+    }
+
 }

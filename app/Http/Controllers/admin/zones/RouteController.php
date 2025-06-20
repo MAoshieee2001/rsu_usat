@@ -61,7 +61,7 @@ class RouteController extends Controller
         }
     }
 
-    
+
 
     public function store(Request $request)
     {
@@ -127,39 +127,78 @@ class RouteController extends Controller
 
     // * -------------------------------------------------------
 
-        public function show(Request $request, string $id)
+    public function getCoords($id)
+    {
+        $route = Route::with(['zone.coordinates', 'coords'])->findOrFail($id);
+
+        // Polígono (zona)
+        $zoneCoords = $route->zone->coordinates->map(function ($coord) {
+            return [
+                'lat' => (float) $coord->latitude,
+                'lng' => (float) $coord->longitude,
+            ];
+        });
+
+        // Ruta (polyline)
+        $routeCoords = $route->coords->map(function ($coord) {
+            return [
+                'lat' => (float) $coord->latitude,
+                'lng' => (float) $coord->longitude,
+            ];
+        });
+
+        return response()->json([
+            'zone' => $zoneCoords,
+            'route' => $routeCoords,
+        ]);
+    }
+
+
+    public function show(Request $request, string $id)
     {
         try {
-            $route = Route::find($id);
-            $oute = Route::with('zone')->find($id);
+            // Ruta con zona y coordenadas de la zona
+            $route = Route::with('zone.coordinates')->findOrFail($id);
+
+            // Coordenadas de la ruta
             $coords = RouteCoord::where('route_id', $id)->get();
-            $vertice = RouteCoord::select('latitude as lat', 'longitude as lng')->where('route_id', $id)->get();
-            $lastcoord = RouteCoord::select('latitude as lat', 'longitude as lng')->where('route_id', $id)->latest()->first();
-            // return view('admin.zones.show', compact('zone'));
+
+            // Para el mapa (Polyline de ruta)
+            $vertice = RouteCoord::select('latitude as lat', 'longitude as lng')
+                ->where('route_id', $id)
+                ->get();
+
+            // Último punto como marcador inicial
+            $lastcoord = RouteCoord::select('latitude as lat', 'longitude as lng')
+                ->where('route_id', $id)
+                ->latest()
+                ->first();
+
+            // Coordenadas del polígono de la zona
+            $zonePolygonCoords = $route->zone->coordinates->map(function ($coord) {
+                return ['lat' => (float) $coord->latitude, 'lng' => (float) $coord->longitude];
+            })->values();
 
             if ($request->ajax()) {
                 return DataTables::of($coords)
-                    ->addColumn('delete', function ($coords) {
+                    ->addColumn('delete', function ($coord) {
                         return '
-   
-                        <form action="' . route('admin.routecoords.destroy', $coords->id) . '" method="POST" class="d-inline frmDelete">
+                        <form action="' . route('admin.routescoords.destroy', $coord->id) . '" method="POST" class="d-inline frmDelete">
                             ' . csrf_field() . method_field('DELETE') . '
                             <button type="submit" class="btn btn-sm btn-danger">
                                 <i class="fas fa-trash"></i>
                             </button>
-                        </form>
-                    ';
+                        </form>';
                     })
                     ->rawColumns(['delete'])
                     ->make(true);
-            } else {
-                return view('admin.routes.show', compact('route', 'vertice', 'lastcoord'));
             }
 
+            return view('admin.routes.show', compact('route', 'vertice', 'lastcoord', 'zonePolygonCoords'));
 
         } catch (\Exception $e) {
             return redirect()->route('admin.routes.index')
-                ->with('error', 'Ocurrió un error al intentar visualizar rutas en  la zona.' . $e->getMessage());
+                ->with('error', 'Ocurrió un error al intentar visualizar rutas en la zona. ' . $e->getMessage());
         }
     }
 }

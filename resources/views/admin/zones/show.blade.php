@@ -20,7 +20,7 @@
                     <div class="card-body">
                         <b>Distrito: {{$zone->district->name}}</b> <br>
                         <b>Nombre: {{$zone->name}}</b><br>
-                        <b>Área: {{$zone->area}}</b><br>
+                        <b>Área: {{$zone->area}} m2</b><br>
                         <b>Descripción: {{$zone->description}}</b>
                     </div>
                 </div>
