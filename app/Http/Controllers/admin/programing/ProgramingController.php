@@ -213,4 +213,25 @@ class ProgramingController extends Controller
 
         return response()->json(['success' => true, 'message' => 'Recorridos procesados.']);
     }
+
+    public function precargarPorZona(Request $request)
+    {
+        $request->validate([
+            'zona_id' => 'required|exists:zones,id'
+        ]);
+        $zonaId = $request->zona_id;
+        $vehiculo = Vehicle::where('zone_id', $zonaId)->where('status', 'ACTIVO')->first();
+        $turno = Schedule::where('zone_id', $zonaId)->first();
+        $empleados = Employee::whereHas('contracts', function ($q) {
+                $q->where('status', 'Activo');
+            })
+            ->where('zone_id', $zonaId)
+            ->selectRaw("CONCAT(names, ' ', lastnames) as fullnames, id")
+            ->pluck('fullnames', 'id');
+        return response()->json([
+            'vehiculo' => $vehiculo,
+            'turno' => $turno,
+            'empleados' => $empleados
+        ]);
+    }
 }
