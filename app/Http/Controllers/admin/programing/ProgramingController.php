@@ -233,5 +233,5 @@ class ProgramingController extends Controller
             'turno' => $turno,
             'empleados' => $empleados
         ]);
-    }
+    }   
 }
