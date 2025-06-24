@@ -4,25 +4,28 @@
         {!! Form::select('zona_id', $zonas, null, [
             'class' => 'form-control',
             'placeholder' => 'Seleccione una zona',
-            'required'
+            'required',
+            'id' => 'zona_id'
         ]) !!}
     </div>
 
     <div class="form-group col-md-6">
         {!! Form::label('id_vehicles', 'Vehículo') !!}
-        {!! Form::select('id_vehicles', $vehiculos, null, [
+        {!! Form::select('id_vehicles', [], null, [
             'class' => 'form-control',
             'placeholder' => 'Seleccione un vehículo',
-            'required'
+            'required',
+            'id' => 'id_vehicles'
         ]) !!}
     </div>
 
     <div class="form-group col-md-6">
         {!! Form::label('horario_id', 'Turno') !!}
-        {!! Form::select('horario_id', $horarios, null, [
+        {!! Form::select('horario_id', [], null, [
             'class' => 'form-control',
             'placeholder' => 'Seleccione un turno',
-            'required'
+            'required',
+            'id' => 'horario_id'
         ]) !!}
     </div>
 
@@ -37,7 +40,7 @@
 
     <div class="form-group col-md-6">
         {!! Form::label('employee_ids[]', 'Empleados') !!}
-        {!! Form::select('employee_ids[]', $empleados, null, [
+        {!! Form::select('employee_ids[]', [], null, [
             'class' => 'form-control select2',
             'id' => 'employee_ids',
             'multiple' => 'multiple',
@@ -78,26 +81,55 @@
     $(function () {
         $('.select2').select2({ width: '100%' });
 
-        $('#tipo_id').on('change', function () {
-            let tipoId = $(this).val();
+        $('#zona_id').on('change', function () {
+            let zonaId = $(this).val();
 
-            $('#employee_ids').empty().append('<option value="">Cargando...</option>');
+            if (zonaId) {
+                // Cargar vehículos por zona
+                $.get(`/admin/zona/${zonaId}/vehiculos`, function (data) {
+                    $('#id_vehicles').empty().append('<option value="">Seleccione un vehículo</option>');
+                    $.each(data, function (id, name) {
+                        $('#id_vehicles').append(new Option(name, id));
+                    });
+                });
 
-            if (tipoId) {
-                $.ajax({
-                    url: "{{ url('/admin/employees/by-type') }}/" + tipoId,
-                    type: "GET",
-                    success: function (data) {
-                        $('#employee_ids').empty();
-                        $.each(data, function (id, name) {
-                            $('#employee_ids').append(new Option(name, id));
-                        });
-                    },
-                    error: function () {
-                        $('#employee_ids').html('<option>Error al cargar</option>');
-                    }
+                // Cargar turnos por zona
+                $.get(`/admin/zona/${zonaId}/horarios`, function (data) {
+                    $('#horario_id').empty().append('<option value="">Seleccione un turno</option>');
+                    $.each(data, function (id, name) {
+                        $('#horario_id').append(new Option(name, id));
+                    });
+                });
+
+                // Cargar empleados contratados por zona
+                $.get(`/admin/zona/${zonaId}/empleados-contratados`, function (data) {
+                    $('#employee_ids').empty();
+                    $.each(data, function (id, name) {
+                        $('#employee_ids').append(new Option(name, id));
+                    });
                 });
             }
+        });
+
+        $('#tipo_id').on('change', function () {
+            let tipoId = $(this).val();
+            let zonaId = $('#zona_id').val();
+
+            if (!zonaId) {
+                alert("Primero debe seleccionar una zona.");
+                return;
+            }
+
+            $('#employee_ids').empty().append('<option>Cargando...</option>');
+
+            $.get(`/admin/zona/${zonaId}/empleados-tipo/${tipoId}`, function (data) {
+                $('#employee_ids').empty();
+                $.each(data, function (id, name) {
+                    $('#employee_ids').append(new Option(name, id));
+                });
+            }).fail(function () {
+                $('#employee_ids').html('<option>Error al cargar</option>');
+            });
         });
     });
 </script>
