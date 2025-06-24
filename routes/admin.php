@@ -39,8 +39,13 @@ Route::resource('routescoords', RouteCoordController::class)->names('admin.route
 Route::resource('employeetypes', EmployeeTypeController::class)->names('admin.employeetypes');
 # RUTA DE GESTION DE PROGRAMACION
 Route::resource('schedules', ScheduleController::class)->names('admin.schedules');
-Route::resource('programing', ProgramingController::class)->names('admin.programing');
-
+Route::resource('programming', ProgramingController::class)->names('admin.programming');
+Route::get('/admin/employees/by-type/{id}', function ($id) {
+    return \App\Models\Employee::where('type_id', $id)
+        ->whereHas('contracts', fn($q) => $q->where('status', 'Activo'))
+        ->selectRaw("CONCAT(names, ' ', lastnames) as fullnames, id")
+        ->pluck('fullnames', 'id');
+})->name('admin.programming.employeesByType');
 
 
 //? RUTAS PARAMETRIZADAS PARA ASISTENCIAS 

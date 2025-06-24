@@ -409,7 +409,7 @@ return [
                 ],
                 [
                     'text' => 'Programación',
-                    'url' => 'admin.schedules.index',
+                    'url' => 'admin/programming',
                     'icon' => 'fas fa-terminal',
                 ],
 

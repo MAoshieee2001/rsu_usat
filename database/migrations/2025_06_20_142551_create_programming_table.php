@@ -14,10 +14,15 @@ return new class extends Migration
         Schema::create('programming', function (Blueprint $table) {
             $table->id();
             $table->date('date_joined');
-            $table->foreignId('schedule_id')->constrained('schedules');
-            $table->foreignId('zone_id')->constrained('zones');
             $table->dateTime('date_start');
             $table->dateTime('date_end');
+
+            $table->foreignId('schedule_id')->constrained('schedules');
+            $table->foreignId('zone_id')->constrained('zones');
+            $table->foreignId('vehicle_id')->constrained('vehicles');
+
+            $table->json('dias_semana');
+
             $table->timestamps();
         });
     }
