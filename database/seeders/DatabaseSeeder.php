@@ -22,5 +22,10 @@ class DatabaseSeeder extends Seeder
         ];
 
         DB::table('colors')->insert($colors);
+        $this->call([
+        EmployeeTypeSeeder::class,
+        TiposContratoSeeder::class,
+        UbigeoLambayequeSeeder::class,
+        ]);
     }
 }
