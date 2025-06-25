@@ -36,4 +36,8 @@ class Programming extends Model
     {
         return $this->hasMany(DetailsPrograming::class, 'programming_id');
     }
+    public function dailyProgramming()
+    {
+        return $this->hasOne(DailyProgramming::class, 'programming_id');
+    }
 }

@@ -31,12 +31,12 @@
 
     <div class="form-group col-md-3">
         {!! Form::label('date_start', 'Fecha de inicio') !!}
-        {!! Form::date('date_start', null, ['class' => 'form-control', 'required']) !!}
+        {!! Form::date('date_start', isset($programacion->date_start) ? \Carbon\Carbon::parse($programacion->date_start)->format('Y-m-d') : null, ['class' => 'form-control', 'required']) !!}
     </div>
 
     <div class="form-group col-md-3">
         {!! Form::label('date_end', 'Fecha de fin') !!}
-        {!! Form::date('date_end', null, ['class' => 'form-control', 'required']) !!}
+        {!! Form::date('date_end', isset($programacion->date_end) ? \Carbon\Carbon::parse($programacion->date_end)->format('Y-m-d') : null, ['class' => 'form-control', 'required']) !!}
     </div>
 </div>
 
