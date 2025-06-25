@@ -15,12 +15,10 @@
                 <thead class="thead-dark">
                     <tr>
                         <th>Zona</th>
-                        <th>Vehículo</th>
-                        <th>Turno</th>
+                        <th>Horario</th>
+                        <th>Modalidad</th>
                         <th>Inicio</th>
                         <th>Fin</th>
-                        <th>Días</th>
-                        <th>Personal</th>
                         <th>Opciones</th>
                     </tr>
                 </thead>
@@ -60,13 +58,11 @@
             language: { url: '/js/es-ES.json' },
             ajax: "{{ route('admin.programming.index') }}",
             columns: [
-                { data: 'zona_name' },
-                { data: 'vehiculo_name' },
-                { data: 'turno_name' },
-                { data: 'date_joined' },
+                { data: 'zone_name' },
+                { data: 'schedule_name' },
+                { data: 'modality_name' },
+                { data: 'date_start' },
                 { data: 'date_end' },
-                { data: 'dias_semana' },
-                { data: 'empleados' },
                 {
                     data: 'options',
                     orderable: false,

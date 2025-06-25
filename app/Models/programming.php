@@ -27,10 +27,9 @@ class Programming extends Model
     {
         return $this->belongsTo(Schedule::class, 'schedule_id');
     }
-
-    public function vehiculo()
+    public function modalidad()
     {
-        return $this->belongsTo(Vehicle::class, 'vehicle_id');
+        return $this->belongsTo(Modality::class, 'modality_id');
     }
 
     public function detalles()
