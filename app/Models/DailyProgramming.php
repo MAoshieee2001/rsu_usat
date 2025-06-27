@@ -16,4 +16,15 @@ class DailyProgramming extends Model
         'date_start',
         // agrega aquí otros campos si los usas
     ];
+    
+    public function programming()
+    {
+        return $this->belongsTo(Programming::class, 'programming_id');
+    }
+
+    public function vehicle()
+    {
+        return $this->belongsTo(Vehicle::class, 'vehicle_id');
+    }
+    
 }

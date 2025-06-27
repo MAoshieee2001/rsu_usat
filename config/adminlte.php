@@ -396,6 +396,24 @@ return [
 
             ],
         ],
+        [
+            'text' => 'Mantenimiento',
+            'icon' => 'fas fa-globe',
+            'submenu' => [
+                [
+                    'text' => 'Mantenimiento Vehiculos',
+                    'route' => 'admin.maintenances.index',
+                    'icon' => 'fas fa-border-none',
+                ],
+                [
+                    'text' => 'Horarios de Mantenimiento',
+                    'route' => 'admin.maintenance-schedules.redirect', // CAMBIA ESTO
+                    'icon' => 'fas fa-clock',
+                ],
+                
+
+            ],
+        ],
 
 
         [

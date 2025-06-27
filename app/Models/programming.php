@@ -40,4 +40,6 @@ class Programming extends Model
     {
         return $this->hasOne(DailyProgramming::class, 'programming_id');
     }
+    // app/Models/DailyProgramming.php
+
 }

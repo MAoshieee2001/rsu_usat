@@ -16,4 +16,10 @@ class Vehicle extends Model
     {
         return $this->hasMany(VehicleImage::class);
     }
+
+    // app/Models/Vehicle.php
+    public function dailyProgrammings()
+    {
+        return $this->hasMany(DailyProgramming::class, 'vehicle_id');
+    }
 }

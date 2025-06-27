@@ -18,6 +18,8 @@ use App\Http\Controllers\admin\employees\VacationController;
 use App\Http\Controllers\admin\vehicles\VehicleController;
 use App\Http\Controllers\admin\vehicles\ColorController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\MaintenanceController;
+use App\Http\Controllers\Admin\MaintenanceScheduleController;
 
 Route::resource('/', AdminController::class)->names('admin');
 # RUTAS DE GESTION VEHICULOS
@@ -40,6 +42,9 @@ Route::resource('employeetypes', EmployeeTypeController::class)->names('admin.em
 # RUTA DE GESTION DE PROGRAMACION
 Route::resource('schedules', ScheduleController::class)->names('admin.schedules');
 Route::resource('programming', ProgramingController::class)->names('admin.programming');
+use App\Http\Controllers\admin\programing\DailyProgrammingController;
+
+Route::post('/daily-programming', [DailyProgrammingController::class, 'store'])->name('daily-programming.store');
 Route::get('/admin/employees/by-type/{id}', function ($id) {
     return \App\Models\Employee::where('type_id', $id)
         ->whereHas('contracts', fn($q) => $q->where('status', 'Activo'))
@@ -64,4 +69,19 @@ Route::get('vehicles/images/{id}', [VehicleController::class, 'getImages']);
 Route::post('vehicles/images/{image}/set-profile', [VehicleController::class, 'setProfileImage'])->name('admin.vehicles.images.set-profile');
 // Ruta para eliminar una imagene
 Route::delete('vehicles/images/{image}', [VehicleController::class, 'deleteImage'])->name('admin.vehicles.images.delete');
-
+Route::resource('maintenances', MaintenanceController::class)->names('admin.maintenances');
+Route::prefix('maintenances/{maintenance}')->group(function () {
+    Route::get('schedules', [MaintenanceScheduleController::class, 'index'])->name('admin.maintenances.schedules.index');
+    Route::get('schedules/create', [MaintenanceScheduleController::class, 'create'])->name('admin.maintenances.schedules.create');
+    Route::post('schedules', [MaintenanceScheduleController::class, 'store'])->name('admin.maintenances.schedules.store');
+    Route::get('schedules/{schedule}/edit', [MaintenanceScheduleController::class, 'edit'])->name('admin.maintenances.schedules.edit');
+    Route::put('schedules/{schedule}', [MaintenanceScheduleController::class, 'update'])->name('admin.maintenances.schedules.update');
+    Route::delete('schedules/{schedule}', [MaintenanceScheduleController::class, 'destroy'])->name('admin.maintenances.schedules.destroy');
+});
+Route::get('maintenance-schedules', function () {
+    $maintenance = \App\Models\Maintenance::first();
+    if (!$maintenance) {
+        abort(404, 'No hay mantenimientos registrados.');
+    }
+    return redirect()->route('admin.maintenances.schedules.index', $maintenance);
+})->name('admin.maintenance-schedules.redirect');

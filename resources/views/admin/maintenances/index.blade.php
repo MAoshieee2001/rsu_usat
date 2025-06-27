@@ -100,7 +100,8 @@
                                 icon: "success",
                                 text: response.message,
                                 timer: 2000,
-                                timerProgressBar: true
+                                timerProgressBar: true,
+                                draggable: true
                             });
                         },
                         error: function (xhr) {
@@ -110,7 +111,8 @@
                                 icon: "error",
                                 text: response.message || "Ha ocurrido un error",
                                 timer: 2000,
-                                timerProgressBar: true
+                                timerProgressBar: true,
+                                draggable: true
                             });
                         }
                     });
@@ -147,7 +149,8 @@
                                 icon: "success",
                                 text: response.message,
                                 timer: 2000,
-                                timerProgressBar: true
+                                timerProgressBar: true,
+                                draggable: true
                             });
                         },
                         error: function (xhr) {
@@ -157,7 +160,8 @@
                                 icon: "error",
                                 text: response.message || "Ha ocurrido un error",
                                 timer: 2000,
-                                timerProgressBar: true
+                                timerProgressBar: true,
+                                draggable: true
                             });
                         }
                     });
@@ -166,72 +170,83 @@
         });
     });
 
-    $(document).on('submit', '.frmDelete', function (e) {
-        e.preventDefault();
-        var form = $(this);
-        Swal.fire({
-            title: "¿Está seguro de eliminar?",
-            text: "Este proceso no es reversible!",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Sí, eliminar!",
-            cancelButtonText: "No, cancelar!"
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: form.attr('action'),
-                    type: form.attr('method'),
-                    data: form.serialize(),
-                    success: function (response) {
-                        refreshTable();
-                        Swal.fire({
-                            title: "Proceso exitoso",
-                            icon: "success",
-                            timer: 2000,
-                            timerProgressBar: true,
-                            text: response.message
-                        });
-                    },
-                    error: function (xhr) {
-                        var response = xhr.responseJSON;
-                        Swal.fire({
-                            title: "Error",
-                            icon: "error",
-                            timer: 2000,
-                            timerProgressBar: true,
-                            text: response.message
-                        });
-                    }
-                });
-            }
-        });
-    });
-
     function refreshTable() {
-        $('#tbtEntity').DataTable().ajax.reload(null, false);
+        var table = $('#tbtEntity').DataTable();
+        table.ajax.reload(null, false);
     }
 
-    function confirmDelete(id) {
-        Swal.fire({
-            title: '¿Estás seguro?',
-            text: "¡No podrás revertir esto!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                document.getElementById(`delete-form-${id}`).submit();
-            }
+    $(document).on('submit', '.frmDelete', function (e) {
+            e.preventDefault();
+            var form = $(this);
+            Swal.fire({
+                title: "Está seguro de eliminar?",
+                text: "Este proceso no es reversible!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Si, eliminar!",
+                cancelButtonText: "No, Cancelar!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    //this.submit();
+                    $.ajax({
+                        url: form.attr('action'),
+                        type: form.attr('method'),
+                        data: form.serialize(),
+                        success: function (response) {
+                            refreshTable();
+                            Swal.fire({
+                                title: "Proceso exitoso",
+                                icon: "success",
+                                timer: 2000,
+                                timerProgressBar: true,
+                                text: response.message,
+                                confirmButtonText: 'Continuar.',
+                                draggable: true
+                            });
+                        },
+                        error: function (xhr) {
+                            var response = xhr.responseJSON;
+                            Swal.fire({
+                                title: "Error",
+                                icon: "error",
+                                timer: 2000,
+                                timerProgressBar: true,
+                                text: response.message,
+                                draggable: true
+                            });
+                        }
+                    });
+                }
+            });
         });
-    }
+
+        function refreshTable() {
+            var table = $('#entity').DataTable();
+            table.ajax.reload(null, false);
+        }
+
+        function confirmDelete(id) {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¡No podrás revertir esto!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById(`delete-form-${id}`).submit();
+                }
+            });
+        }
 </script>
 @endsection
 
 @section('css')
 {{-- Puedes agregar estilos personalizados aquí si necesitas --}}
 @stop
+ 	

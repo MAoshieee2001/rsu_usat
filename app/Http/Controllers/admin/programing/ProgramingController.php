@@ -12,47 +12,51 @@ use App\Models\Schedule;
 use App\Models\Modality;
 use App\Models\Employee;
 use App\Models\Vacation;
-use App\Models\DetailsPrograming;
 use App\Models\EmployeeType;
+use App\Models\Vehicle;
+use App\Models\DailyProgramming;
+use Carbon\Carbon;
+
+
 
 class ProgramingController extends Controller
 {
     public function index(Request $request)
-{
-    if ($request->ajax()) {
-        $programaciones = Programming::with(['zona', 'horario', 'modalidad'])->get();
+    {
+        if ($request->ajax()) {
+            $programaciones = Programming::with(['zona', 'horario', 'modalidad'])->get();
 
-        $data = $programaciones->map(function ($p) {
-            return [
-                'id'             => $p->id, // necesario para los botones
-                'zone_name'      => $p->zona?->name ?? 'Sin zona',
-                'schedule_name'  => $p->horario?->name ?? 'Sin horario',
-                'modality_name'  => $p->modalidad?->name ?? 'Sin modalidad',
-                'date_start'     => $p->date_start,
-                'date_end'       => $p->date_end,
-            ];
-        });
+            $data = $programaciones->map(function ($p) {
+                return [
+                    'id'             => $p->id, // necesario para los botones
+                    'zone_name'      => $p->zona?->name ?? 'Sin zona',
+                    'schedule_name'  => $p->horario?->name ?? 'Sin horario',
+                    'modality_name'  => $p->modalidad?->name ?? 'Sin modalidad',
+                    'date_start'     => $p->date_start,
+                    'date_end'       => $p->date_end,
+                ];
+            });
 
-        return datatables()->of($data)
-            ->addColumn('options', function ($model) {
-                return '
-                    <button class="btn btn-sm btn-warning btnEditar" id="' . $model['id'] . '">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <form action="' . route('admin.programming.destroy', $model['id']) . '" method="POST" class="d-inline frmDelete">
-                        ' . csrf_field() . method_field('DELETE') . '
-                        <button type="submit" class="btn btn-sm btn-danger">
-                            <i class="fas fa-trash"></i>
+            return datatables()->of($data)
+                ->addColumn('options', function ($model) {
+                    return '
+                        <button class="btn btn-sm btn-warning btnEditar" id="' . $model['id'] . '">
+                            <i class="fas fa-edit"></i>
                         </button>
-                    </form>
-                ';
-            })
-            ->rawColumns(['options']) 
-            ->make(true);
-    }
+                        <form action="' . route('admin.programming.destroy', $model['id']) . '" method="POST" class="d-inline frmDelete">
+                            ' . csrf_field() . method_field('DELETE') . '
+                            <button type="submit" class="btn btn-sm btn-danger">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    ';
+                })
+                ->rawColumns(['options']) 
+                ->make(true);
+        }
 
-    return view('admin.programming.index');
-}
+        return view('admin.programming.index');
+    }
 
     public function create()
     {
@@ -70,60 +74,69 @@ class ProgramingController extends Controller
     public function store(Request $request)
     {
         DB::beginTransaction();
-        try {
-            $programacion = Programming::create($request->only([
-                'date_start', 'date_end', 'schedule_id', 'zone_id', 'modality_id'
-            ]));
 
-            $empleadosSeleccionados = $request->input('employee_ids', []);
-            $empleadosValidos = [];
+            try {
+        // 1. Validar datos
+        $validated = $request->validate([
+            'zone_id' => 'required|exists:zones,id',
+            'schedule_id' => 'required|exists:schedules,id',
+            'modality_id' => 'required|exists:modalities,id',
+            'date_start' => 'required|date',
+            'date_end' => 'required|date|after_or_equal:date_start',
+        ]);
 
-            foreach ($empleadosSeleccionados as $empId) {
-                $tieneContratoVigente = \App\Models\EmployeeContract::where('employee_id', $empId)
-                    ->where('status', 'Activo')
-                    ->whereDate('date_start', '<=', $programacion->date_start)
-                    ->whereDate('date_end', '>=', $programacion->date_end)
-                    ->exists();
+        // 2. Obtener rango de fechas como array
+        $fechasRango = collect();
+        $start = Carbon::parse($validated['date_start']);
+        $end = Carbon::parse($validated['date_end']);
 
-                if ($tieneContratoVigente) {
-                    $empleadosValidos[] = $empId;
-                }
-            }
+        while ($start->lte($end)) {
+            $fechasRango->push($start->copy()->format('Y-m-d'));
+            $start->addDay();
+        }
 
-            if (count($empleadosValidos) !== count($empleadosSeleccionados)) {
-                DB::rollBack();
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Uno o más empleados no tienen contrato activo que cubra el rango de fechas.',
-                ], 422);
-            }
+        // 3. Buscar un vehículo que NO esté ocupado en ninguna de esas fechas
+        $vehiculoDisponible = Vehicle::whereDoesntHave('dailyProgrammings', function ($q) use ($fechasRango) {
+            $q->whereIn('date_start', $fechasRango);
+        })->first();
 
-            $dailyProgramming = $programacion->dailyProgramming()->create([
-                'date_start' => $programacion->date_start,
-                'vehicle_id' => $request->input('vehicle_id')
-            ]);
-
-            foreach ($empleadosValidos as $empId) {
-                $dailyProgramming->employees()->create([
-                    'employee_id' => $empId
-                ]);
-            }
-
-            DB::commit();
-            return response()->json([
-                'success' => true,
-                'message' => 'Programación registrada con éxito.',
-            ], 200);
-
-        } catch (\Exception $e) {
+        if (!$vehiculoDisponible) {
             DB::rollBack();
             return response()->json([
-                'success' => false,
-                'message' => 'Error al crear programación: ' . $e->getMessage(),
-            ], 500);
+                'message' => 'No hay vehículos disponibles para el rango de fechas seleccionado.',
+            ], 422);
         }
-    }
 
+        // 4. Crear la programación general
+        $programming = Programming::create([
+            'zone_id' => $validated['zone_id'],
+            'schedule_id' => $validated['schedule_id'],
+            'modality_id' => $validated['modality_id'],
+            'date_start' => $validated['date_start'],
+            'date_end' => $validated['date_end'],
+        ]);
+
+        // 5. Registrar un DailyProgramming por cada día del rango
+        foreach ($fechasRango as $fecha) {
+            DailyProgramming::create([
+                'programming_id' => $programming->id,
+                'vehicle_id' => $vehiculoDisponible->id,
+                'date_start' => $fecha,
+            ]);
+        }
+
+        DB::commit();
+        return response()->json([
+            'message' => 'Programación registrada exitosamente.',
+        ], 200);
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return response()->json([
+            'message' => 'Error al registrar: ' . $e->getMessage(),
+        ], 500);
+    }
+}
 
 
     public function edit($id)
@@ -173,11 +186,12 @@ class ProgramingController extends Controller
                 ], 422);
             }
 
+            $vehicleId = Vehicle::first()?->id;
             $dailyProgramming = $programacion->dailyProgramming()->firstOrCreate([
                 'programming_id' => $programacion->id
             ], [
                 'date_start' => $programacion->date_start,
-                'vehicle_id' => $request->input('vehicle_id')
+                'vehicle_id' => $vehicleId ?? $request->input('vehicle_id')
             ]);
 
             $dailyProgramming->employees()->delete();
@@ -201,24 +215,35 @@ class ProgramingController extends Controller
             ], 500);
         }
     }
-
-
-    public function destroy(String $id)
+    public function destroy(string $id)
     {
+        DB::beginTransaction();
+
         try {
-            $programacion = Programming::findOrFail($id);
-            $programacion->delete();
+            // Buscar la programación principal
+            $programming = Programming::findOrFail($id);
+
+            // Eliminar todas las programaciones diarias asociadas
+            DailyProgramming::where('programming_id', $programming->id)->delete();
+
+            // Eliminar la programación principal
+            $programming->delete();
+
+            DB::commit();
 
             return response()->json([
                 'success' => true,
                 'message' => 'Programación eliminada con éxito.',
             ], 200);
+
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json([
                 'success' => false,
                 'message' => 'Error al eliminar la programación: ' . $e->getMessage(),
             ], 500);
         }
     }
-  
+
 }
+
