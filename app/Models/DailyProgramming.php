@@ -26,5 +26,9 @@ class DailyProgramming extends Model
     {
         return $this->belongsTo(Vehicle::class, 'vehicle_id');
     }
+    public function employees()
+    {
+        return $this->hasMany(DailyEmployee::class);
+    }
     
 }

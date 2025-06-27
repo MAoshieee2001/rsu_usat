@@ -16,6 +16,8 @@ use App\Models\EmployeeType;
 use App\Models\Vehicle;
 use App\Models\DailyProgramming;
 use Carbon\Carbon;
+use App\Models\DailyEmployee;
+
 
 
 
@@ -75,68 +77,96 @@ class ProgramingController extends Controller
     {
         DB::beginTransaction();
 
-            try {
-        // 1. Validar datos
-        $validated = $request->validate([
-            'zone_id' => 'required|exists:zones,id',
-            'schedule_id' => 'required|exists:schedules,id',
-            'modality_id' => 'required|exists:modalities,id',
-            'date_start' => 'required|date',
-            'date_end' => 'required|date|after_or_equal:date_start',
-        ]);
+        try {
+            $validated = $request->validate([
+                'zone_id' => 'required|exists:zones,id',
+                'schedule_id' => 'required|exists:schedules,id',
+                'modality_id' => 'required|exists:modalities,id',
+                'date_start' => 'required|date',
+                'date_end' => 'required|date|after_or_equal:date_start',
+            ]);
 
-        // 2. Obtener rango de fechas como array
-        $fechasRango = collect();
-        $start = Carbon::parse($validated['date_start']);
-        $end = Carbon::parse($validated['date_end']);
+            $fechasRango = collect();
+            $start = Carbon::parse($validated['date_start']);
+            $end = Carbon::parse($validated['date_end']);
 
-        while ($start->lte($end)) {
-            $fechasRango->push($start->copy()->format('Y-m-d'));
-            $start->addDay();
-        }
+            while ($start->lte($end)) {
+                $fechasRango->push($start->copy()->format('Y-m-d'));
+                $start->addDay();
+            }
 
-        // 3. Buscar un vehículo que NO esté ocupado en ninguna de esas fechas
-        $vehiculoDisponible = Vehicle::whereDoesntHave('dailyProgrammings', function ($q) use ($fechasRango) {
-            $q->whereIn('date_start', $fechasRango);
-        })->first();
+            // Verificar disponibilidad de vehículo para las fechas
+            $vehiculoDisponible = Vehicle::whereDoesntHave('dailyProgrammings', function ($q) use ($fechasRango) {
+                $q->whereIn('date_start', $fechasRango);
+            })->first();
 
-        if (!$vehiculoDisponible) {
+            if (!$vehiculoDisponible) {
+                DB::rollBack();
+                return response()->json([
+                    'message' => 'No hay vehículos disponibles para el rango de fechas seleccionado.',
+                ], 422);
+            }
+
+            // Obtener IDs de tipos
+            $tipoConductor = DB::table('employeetypes')->where('name', 'Conductor')->value('id');
+            $tipoAsistente = DB::table('employeetypes')->where('name', 'Asistente')->value('id');
+
+            // Buscar empleados disponibles aleatoriamente
+            $conductor = Employee::where('status', 1)->where('type_id', $tipoConductor)->inRandomOrder()->first();
+            $asistente = Employee::where('status', 1)->where('type_id', $tipoAsistente)->inRandomOrder()->first();
+
+            if (!$conductor || !$asistente) {
+                DB::rollBack();
+                return response()->json([
+                    'message' => 'No hay suficientes empleados activos disponibles (conductor o asistente).',
+                ], 422);
+            }
+
+            // Crear la programación principal
+            $programming = Programming::create([
+                'zone_id' => $validated['zone_id'],
+                'schedule_id' => $validated['schedule_id'],
+                'modality_id' => $validated['modality_id'],
+                'date_start' => $validated['date_start'],
+                'date_end' => $validated['date_end'],
+            ]);
+
+            foreach ($fechasRango as $fecha) {
+                $dailyProgramming = DailyProgramming::create([
+                    'programming_id' => $programming->id,
+                    'vehicle_id' => $vehiculoDisponible->id,
+                    'date_start' => $fecha,
+                ]);
+
+                // Asignar conductor y asistente
+                DailyEmployee::create([
+                    'daily_programming_id' => $dailyProgramming->id,
+                    'employee_id' => $conductor->id,
+                    'employee_type_id' => $tipoConductor,
+                ]);
+
+                DailyEmployee::create([
+                    'daily_programming_id' => $dailyProgramming->id,
+                    'employee_id' => $asistente->id,
+                    'employee_type_id' => $tipoAsistente,
+                ]);
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Programación registrada con éxito.',
+            ]);
+
+        } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
-                'message' => 'No hay vehículos disponibles para el rango de fechas seleccionado.',
-            ], 422);
+                'success' => false,
+                'message' => 'Error al registrar la programación: ' . $e->getMessage(),
+            ], 500);
         }
-
-        // 4. Crear la programación general
-        $programming = Programming::create([
-            'zone_id' => $validated['zone_id'],
-            'schedule_id' => $validated['schedule_id'],
-            'modality_id' => $validated['modality_id'],
-            'date_start' => $validated['date_start'],
-            'date_end' => $validated['date_end'],
-        ]);
-
-        // 5. Registrar un DailyProgramming por cada día del rango
-        foreach ($fechasRango as $fecha) {
-            DailyProgramming::create([
-                'programming_id' => $programming->id,
-                'vehicle_id' => $vehiculoDisponible->id,
-                'date_start' => $fecha,
-            ]);
-        }
-
-        DB::commit();
-        return response()->json([
-            'message' => 'Programación registrada exitosamente.',
-        ], 200);
-
-    } catch (\Exception $e) {
-        DB::rollBack();
-        return response()->json([
-            'message' => 'Error al registrar: ' . $e->getMessage(),
-        ], 500);
     }
-}
 
 
     public function edit($id)
